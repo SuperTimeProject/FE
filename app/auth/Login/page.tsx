@@ -1,3 +1,10 @@
 export default function Login() {
-  return <>login page</>;
+  return (
+    <>
+      <div>
+        <h1>Login</h1>
+        <form></form>
+      </div>
+    </>
+  );
 }
