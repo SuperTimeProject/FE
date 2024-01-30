@@ -7,13 +7,13 @@ export default function Footer() {
         <Link href="/board/info">
           <img src="./icons/coding.png" alt="정보" />
         </Link>
-        <Link href="/board/list">
+        <Link href="/board/community">
           <img src="./icons/list.png" alt="게시판" />
         </Link>
         <Link href="/chat">
           <img src="./icons/chat.png" alt="채팅" />
         </Link>
-        <Link href="/profile">
+        <Link href="/profile/user">
           <img src="./icons/user.png" alt="프로필" />
         </Link>
       </nav>
