@@ -11,8 +11,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        button_color: "#787ff6",
-        icon_color: "#C4B0FF",
+        main_blue: "#787ff6",
+        sub_purple: "#c4b0ff",
       },
     },
   },
