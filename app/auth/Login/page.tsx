@@ -3,15 +3,14 @@
 import React from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
-import "../../../styles/login.module.css";
 
 export default function Login() {
   return (
     <>
       <header>로그인</header>
       <main>
-        <section>
-          <form>
+        <section className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4">
             <Input type="email" label="이메일" />
             <Input type="password" label="비밀번호" />
           </form>

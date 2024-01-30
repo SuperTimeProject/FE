@@ -3,7 +3,6 @@
 import React from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
-import "../../../styles/signup.module.css";
 
 interface DropdownItem {
   key: string;
