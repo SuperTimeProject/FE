@@ -1,7 +1,8 @@
-"use client"; // csr로 돌려줘야 사용 가능
+"use client";
 
 import React from "react";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
+import Link from "next/link";
 
 export default function Login() {
   return (
@@ -10,11 +11,17 @@ export default function Login() {
         <section>
           <h1>Login</h1>
           <form>
-            <Input type="email" label="Email" color="secondary" />
-            <button>로그인</button>
-            <button>소셜 로그인</button>
+            <article>
+              <Input type="email" label="이메일" />
+
+              <Input type="password" label="비밀번호" />
+            </article>
+            <Button>로그인</Button>
+            <Button>소셜 로그인</Button>
           </form>
-          <button>회원가입</button>
+          <Link href="/auth/signup">
+            <Button>회원가입</Button>
+          </Link>
         </section>
       </main>
     </>
