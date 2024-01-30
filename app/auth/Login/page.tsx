@@ -10,20 +10,7 @@ export default function Login() {
         <section>
           <h1>Login</h1>
           <form>
-            <article>
-              <Input
-                type="email"
-                label="Email"
-                placeholder="Enter your email"
-              />
-            </article>
-            <article>
-              <Input
-                type="password"
-                label="Password"
-                placeholder="Enter your password"
-              />
-            </article>
+            <Input type="email" label="Email" color="secondary" />
             <button>로그인</button>
             <button>소셜 로그인</button>
           </form>

@@ -1,7 +1,9 @@
+import TestUi from "@/components/test/test";
+
 export default function Home() {
   return (
-    <div>
-      <div>Main Home</div>
+    <div className=" w-full h-screen flex justify-center items-center">
+      <TestUi></TestUi>
     </div>
   );
 }
