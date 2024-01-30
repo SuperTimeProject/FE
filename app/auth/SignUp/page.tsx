@@ -23,7 +23,7 @@ export default function SignUp() {
   ];
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="w-full h-screen flex flex-col justify-center items-center">
       <header className="m-8">회원가입</header>
       <main className="flex flex-col justify-center items-center gap-4">
         <section className="flex flex-col gap-4">

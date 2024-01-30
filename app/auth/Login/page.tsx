@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Login() {
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="w-full h-screen flex flex-col justify-center items-center">
       <header className="m-10">로그인</header>
       <main className="flex flex-col justify-center items-center gap-4">
         <section className="flex flex-col gap-4">
