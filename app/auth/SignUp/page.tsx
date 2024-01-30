@@ -11,28 +11,26 @@ interface DropdownItem {
 
 export default function SignUp() {
   return (
-    <>
-      <main>
-        <section>
-          <h1>SignUp</h1>
-          <form>
-            <article>
-              <Input type="email" label="이메일" />
-              <Input type="text" label="이름" />
-              <Input type="text" label="닉네임" />
-              <span>닉네임 중복 메세지</span>
-              <Button>기수 선택</Button>
+    <main>
+      <section>
+        <h1>회원가입</h1>
+        <form>
+          <article>
+            <Input type="email" label="이메일" />
+            <Input type="text" label="이름" />
+            <Input type="text" label="닉네임" />
+            <span>닉네임 중복 메세지</span>
+            <Button>기수 선택</Button>
 
-              <Input type="password" label="비밀번호" />
-              <Input type="password" label="비밀번호 확인" />
-            </article>
-            <Button>회원가입</Button>
-          </form>
-          <Link href="/auth/login">
-            <Button>로그인</Button>
-          </Link>
-        </section>
-      </main>
-    </>
+            <Input type="password" label="비밀번호" />
+            <Input type="password" label="비밀번호 확인" />
+          </article>
+          <Button className="bg-button_color text-white">회원가입</Button>
+        </form>
+        <Link href="/auth/login">
+          <Button className="bg-button_color text-white">로그인</Button>
+        </Link>
+      </section>
+    </main>
   );
 }

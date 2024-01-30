@@ -9,7 +9,12 @@ const config: Config = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        button_color: "#787ff6",
+        icon_color: "#C4B0FF",
+      },
+    },
   },
   plugins: [nextui()],
 };
