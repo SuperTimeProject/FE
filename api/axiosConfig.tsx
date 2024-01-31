@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-const BASE_URL = "베이스 url";
+const BASE_URL = "http://54.180.122.9:8080/";
 
 export const publicApi: AxiosInstance = axios.create({
   baseURL: BASE_URL,

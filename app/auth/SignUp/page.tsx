@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dropdown,
@@ -10,17 +10,109 @@ import {
   Input,
 } from "@nextui-org/react";
 import Link from "next/link";
+import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
 
-interface SemesterItem {
-  key: string;
-  label: string;
+interface SignUpData {
+  userId: string;
+  userName: string;
+  userNickname: string;
+  semesterCid: number;
+  userPassword: string;
+}
+
+interface SemesterListItem {
+  semesterCid: number;
+  semesterDetailName: string;
 }
 
 export default function SignUp() {
-  const items: SemesterItem[] = [
-    { key: "1", label: "기수 1" },
-    { key: "2", label: "기수 2" },
-  ];
+  const [signUpData, setSignUpData] = useState<SignUpData>({
+    userId: "",
+    userName: "",
+    userNickname: "",
+    semesterCid: 0,
+    userPassword: "",
+  });
+
+  const [semesterList, setSemesterList] = useState<SemesterListItem[]>([]);
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+  const [passwordMismatch, setPasswordMismatch] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const fetchSemesterList = async () => {
+      try {
+        const response = await publicApi.get("/semester/getAllSemester");
+
+        if (response.data.success) {
+          const semesterListData = response.data.semesterList;
+          setSemesterList(semesterListData);
+        } else {
+          setErrorMessage("기수를 불러오는데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error(error);
+        setErrorMessage("서버 오류로 기수를 불러오는데 실패했습니다.");
+      }
+    };
+
+    fetchSemesterList();
+  }, []);
+
+  useEffect(() => {
+    if (signUpData.userPassword !== passwordConfirm) {
+      setPasswordMismatch(true);
+    } else {
+      setPasswordMismatch(false);
+    }
+  }, [signUpData.userPassword, passwordConfirm]);
+
+  const handleSignup = async () => {
+    try {
+      // 유효성 검사
+      if (!Object.values(signUpData).every(Boolean)) {
+        setErrorMessage("모든 필드를 입력해주세요.");
+        return;
+      }
+
+      // 비밀번호 일치 여부 확인
+      if (signUpData.userPassword !== passwordConfirm) {
+        setPasswordMismatch(true);
+        setErrorMessage("비밀번호가 일치하지 않습니다.");
+        return;
+      } else {
+        setPasswordMismatch(false);
+        setErrorMessage(""); // 비밀번호 일치 시 에러 메시지 초기화
+      }
+
+      // 기수 리스트에 있는 학기인지 확인
+      const semesterCidExists = semesterList.some(
+        (semester) => semester.semesterCid === signUpData.semesterCid
+      );
+
+      if (!semesterCidExists) {
+        setErrorMessage("유효한 기수를 선택해주세요.");
+        return;
+      }
+
+      // 회원가입 요청 보내기
+      const response = await privateApi.post("/auth/signup", signUpData, {
+        data: signUpData, // JSON 형식으로 데이터 전송
+      });
+
+      // 응답 처리
+      if (response.data.success) {
+        setToken(response.data.token);
+        setErrorMessage("회원가입이 성공적으로 완료되었습니다.");
+        // login 페이지로
+      } else {
+        setErrorMessage("회원가입에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("서버 오류로 회원가입에 실패했습니다.");
+    }
+  };
 
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
@@ -28,25 +120,75 @@ export default function SignUp() {
       <main className="flex flex-col justify-center items-center gap-4">
         <section className="flex flex-col gap-4">
           <form className="flex flex-col gap-4">
-            <Input type="email" label="이메일" />
-            <Input type="text" label="이름" />
-            <Input type="text" label="닉네임" />
-            {/* <p className="flex justify-center">닉네임 중복</p> */}
+            <Input
+              type="email"
+              label="이메일"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userId: e.target.value })
+              }
+            />
+            <Input
+              type="text"
+              label="이름"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userName: e.target.value })
+              }
+            />
+            <Input
+              type="text"
+              label="닉네임"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userNickname: e.target.value })
+              }
+            />
             <Dropdown>
               <DropdownTrigger>
-                <Button className="bg-[#f5f5f5]">기수 선택</Button>
+                <Button className="bg-[#f5f5f5]">
+                  {signUpData.semesterCid
+                    ? semesterList.find(
+                        (semester) =>
+                          semester.semesterCid === signUpData.semesterCid
+                      )?.semesterDetailName || "기수 선택"
+                    : "기수 선택"}
+                </Button>
               </DropdownTrigger>
-              <DropdownMenu items={items}>
-                {(item) => (
-                  <DropdownItem key={item.key}>{item.label}</DropdownItem>
-                )}
+              <DropdownMenu>
+                {semesterList.map((semester) => (
+                  <DropdownItem
+                    key={semester.semesterCid}
+                    onClick={() =>
+                      setSignUpData({
+                        ...signUpData,
+                        semesterCid: semester.semesterCid,
+                      })
+                    }
+                  >
+                    {semester.semesterDetailName}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
-            <Input type="password" label="비밀번호" />
-            <Input type="password" label="비밀번호 확인" />
-            {/* <p className="flex justify-center">비밀번호 일치</p> */}
+            <Input
+              type="password"
+              label="비밀번호"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userPassword: e.target.value })
+              }
+            />
+            <Input
+              type="password"
+              label="비밀번호 확인"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userPassword: e.target.value })
+              }
+            />
           </form>
-          <Button className="bg-main_blue text-white">회원가입</Button>
+
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
+          <Button className="bg-main_blue text-white" onClick={handleSignup}>
+            회원가입
+          </Button>
         </section>
       </main>
       <footer className="m-10">
