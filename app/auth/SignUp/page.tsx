@@ -36,7 +36,6 @@ export default function SignUp() {
   const [semesterList, setSemesterList] = useState<SemesterListItem[]>([]);
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const [passwordMismatch, setPasswordMismatch] = useState<boolean>(false);
-  const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
