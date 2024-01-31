@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
-
+import { GetAllSemester } from "../../../api/mock/getAllSemester";
 interface SignUpData {
   userId: string;
   userName: string;
@@ -19,7 +19,6 @@ interface SignUpData {
   semesterCid: number;
   userPassword: string;
 }
-
 interface SemesterListItem {
   semesterCid: number;
   semesterDetailName: string;
@@ -37,10 +36,11 @@ export default function SignUp() {
   const [semesterList, setSemesterList] = useState<SemesterListItem[]>([]);
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const [passwordMismatch, setPasswordMismatch] = useState<boolean>(false);
+  const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    const fetchSemesterList = async () => {
+    /* const fetchSemesterList = async () => {
       try {
         const response = await publicApi.get("/semester/getAllSemester");
 
@@ -56,7 +56,8 @@ export default function SignUp() {
       }
     };
 
-    fetchSemesterList();
+    fetchSemesterList(); */
+    setSemesterList(GetAllSemester);
   }, []);
 
   useEffect(() => {
@@ -92,6 +93,29 @@ export default function SignUp() {
 
       if (!semesterCidExists) {
         setErrorMessage("유효한 기수를 선택해주세요.");
+        return;
+      }
+
+      // 닉네임 중복 확인
+      const nicknameCheck = await privateApi.post(
+        "/auth/duplicateTest/nickname",
+        {
+          userNickname: signUpData.userNickname,
+        }
+      );
+
+      if (nicknameCheck.data.duplicate) {
+        setErrorMessage("이미 사용 중인 닉네임입니다.");
+        return;
+      }
+
+      // 이메일 중복 확인
+      const emailCheck = await privateApi.post("/auth/duplicateTest/email", {
+        userId: signUpData.userId,
+      });
+
+      if (emailCheck.data.duplicate) {
+        setErrorMessage("이미 사용 중인 이메일 주소입니다.");
         return;
       }
 
@@ -178,9 +202,10 @@ export default function SignUp() {
             <Input
               type="password"
               label="비밀번호 확인"
-              onChange={(e) =>
+              /* onChange={(e) =>
                 setSignUpData({ ...signUpData, userPassword: e.target.value })
-              }
+              } */
+              onChange={(e) => setPasswordConfirm(e.target.value)}
             />
           </form>
 
@@ -192,7 +217,7 @@ export default function SignUp() {
         </section>
       </main>
       <footer className="m-10">
-        <Link href="/auth/login">
+        <Link href="/auth/Login">
           <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
             로그인
           </Button>
