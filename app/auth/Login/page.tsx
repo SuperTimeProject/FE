@@ -20,7 +20,7 @@ export default function Login() {
         </section>
       </main>
       <footer className="m-10">
-        <Link href="/auth/SignUp">
+        <Link href="/auth/signup">
           <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
             회원가입
           </Button>
