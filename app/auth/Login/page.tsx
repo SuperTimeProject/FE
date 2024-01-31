@@ -3,6 +3,7 @@
 import React from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
+import { privateApi } from "@/api/axiosConfig";
 
 export default function Login() {
   return (
