@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
-import { GetAllSemester } from "../../../api/mock/getAllSemester";
+import { GetAllSemester } from "@/api/mock/getAllSemester";
 interface SignUpData {
   userId: string;
   userName: string;
@@ -216,7 +216,7 @@ export default function SignUp() {
         </section>
       </main>
       <footer className="m-10">
-        <Link href="/auth/Login">
+        <Link href="/auth/login">
           <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
             로그인
           </Button>
