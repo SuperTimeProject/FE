@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
-import { GetAllSemester } from "@/api/mock/getAllSemester";
+// import { GetAllSemester } from "@/api/mock/getAllSemester";
 
 interface SignUpData {
   userId: string;
@@ -222,7 +222,7 @@ export default function SignUp() {
             </form>
 
             {errorMessage && (
-              <p className="flex justify-center text-red-400">{errorMessage}</p>
+              <p className="flex justify-center text-red-500">{errorMessage}</p>
             )}
 
             <Button className="bg-main_blue text-white" onClick={handleSignup}>

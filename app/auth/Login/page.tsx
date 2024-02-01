@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
 import { privateApi, setToken } from "@/api/axiosConfig";
+import { useRouter } from "next/navigation";
 
 interface LoginData {
   userId: string;
@@ -11,6 +12,7 @@ interface LoginData {
 }
 
 export default function Login() {
+  const router = useRouter();
   const [loginData, setLoginData] = useState<LoginData>({
     userId: "",
     userPassword: "",
@@ -40,7 +42,7 @@ export default function Login() {
       if (response.data.success) {
         setToken(response.data.token);
         setErrorMessage("로그인이 성공적으로 완료되었습니다.");
-        // 회원인증 페이지
+        router.push("/auth/verify/request"); // 회원인증 페이지 - /auth/verify/request
       } else {
         setErrorMessage("로그인에 실패했습니다.");
       }
@@ -74,7 +76,7 @@ export default function Login() {
             </form>
 
             {errorMessage && (
-              <p className="flex justify-center text-red-400">{errorMessage}</p>
+              <p className="flex justify-center text-red-500">{errorMessage}</p>
             )}
 
             <Button className="bg-main_blue text-white" onClick={handleLogin}>
