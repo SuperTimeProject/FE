@@ -40,7 +40,7 @@ export default function Login() {
       if (response.data.success) {
         setToken(response.data.token);
         setErrorMessage("로그인이 성공적으로 완료되었습니다.");
-        // /board/main
+        // 회원인증 페이지
       } else {
         setErrorMessage("로그인에 실패했습니다.");
       }

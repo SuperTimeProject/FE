@@ -40,7 +40,7 @@ export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    /* const fetchSemesterList = async () => {
+    const fetchSemesterList = async () => {
       try {
         const response = await publicApi.get("/semester/getAllSemester");
 
@@ -56,8 +56,8 @@ export default function SignUp() {
       }
     };
 
-    fetchSemesterList(); */
-    setSemesterList(GetAllSemester);
+    fetchSemesterList();
+    // setSemesterList(GetAllSemester);
   }, []);
 
   useEffect(() => {
@@ -104,10 +104,12 @@ export default function SignUp() {
       }
 
       // 닉네임 중복 확인
-      const nicknameCheck = await privateApi.post(
+      const nicknameCheck = await publicApi.get(
         "/auth/duplicateTest/nickname",
         {
-          userNickname: signUpData.userNickname,
+          params: {
+            nickname: signUpData.userNickname,
+          },
         }
       );
 
@@ -117,8 +119,10 @@ export default function SignUp() {
       }
 
       // 이메일 중복 확인
-      const emailCheck = await privateApi.post("/auth/duplicateTest/email", {
-        userId: signUpData.userId,
+      const emailCheck = await publicApi.get("/auth/duplicateTest/email", {
+        params: {
+          userEmail: signUpData.userId,
+        },
       });
 
       if (emailCheck.data.duplicate) {
@@ -127,7 +131,7 @@ export default function SignUp() {
       }
 
       // 회원가입 요청 보내기
-      const response = await privateApi.post("/auth/signup", signUpData, {
+      const response = await publicApi.post("/auth/signup", signUpData, {
         data: signUpData, // JSON 형식으로 데이터 전송
       });
 
