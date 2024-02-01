@@ -152,7 +152,9 @@ export default function SignUp() {
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
-        <header className="flex justify-center text-3xl m-8">회원가입</header>
+        <header className="flex justify-center text-3xl font-mono m-8">
+          회원가입
+        </header>
         <main className="flex flex-col gap-4">
           <section className="flex flex-col gap-4">
             <form className="flex flex-col gap-4">
@@ -225,7 +227,10 @@ export default function SignUp() {
               <p className="flex justify-center text-red-500">{errorMessage}</p>
             )}
 
-            <Button className="bg-main_blue text-white" onClick={handleSignup}>
+            <Button
+              className="bg-main_blue font-semibold text-white"
+              onClick={handleSignup}
+            >
               회원가입
             </Button>
           </section>

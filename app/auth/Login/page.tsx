@@ -55,7 +55,9 @@ export default function Login() {
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
-        <header className="flex justify-center text-3xl m-8">로그인</header>
+        <header className="flex justify-center text-3xl font-mono m-8">
+          로그인
+        </header>
         <main className="flex flex-col gap-4">
           <section className="flex flex-col gap-4">
             <form className="flex flex-col gap-4">
@@ -79,10 +81,15 @@ export default function Login() {
               <p className="flex justify-center text-red-500">{errorMessage}</p>
             )}
 
-            <Button className="bg-main_blue text-white" onClick={handleLogin}>
+            <Button
+              className="bg-main_blue font-semibold text-white"
+              onClick={handleLogin}
+            >
               로그인
             </Button>
-            <Button className="bg-sub_purple text-white">소셜 로그인</Button>
+            <Button className="bg-sub_purple font-semibold text-white">
+              소셜 로그인
+            </Button>
           </section>
         </main>
         <footer className="flex justify-center m-10">
