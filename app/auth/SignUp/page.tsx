@@ -138,90 +138,94 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center">
-      <header className="m-8">회원가입</header>
-      <main className="flex flex-col justify-center items-center gap-4">
-        <section className="flex flex-col gap-4">
-          <form className="flex flex-col gap-4">
-            <Input
-              type="email"
-              label="이메일"
-              onChange={(e) =>
-                setSignUpData({ ...signUpData, userId: e.target.value })
-              }
-            />
-            <Input
-              type="text"
-              label="이름"
-              onChange={(e) =>
-                setSignUpData({ ...signUpData, userName: e.target.value })
-              }
-            />
-            <Input
-              type="text"
-              label="닉네임"
-              onChange={(e) =>
-                setSignUpData({ ...signUpData, userNickname: e.target.value })
-              }
-            />
-            <Dropdown>
-              <DropdownTrigger>
-                <Button className="bg-[#f5f5f5]">
-                  {signUpData.semesterCid
-                    ? semesterList.find(
-                        (semester) =>
-                          semester.semesterCid === signUpData.semesterCid
-                      )?.semesterDetailName || "기수 선택"
-                    : "기수 선택"}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                {semesterList.map((semester) => (
-                  <DropdownItem
-                    key={semester.semesterCid}
-                    onClick={() =>
-                      setSignUpData({
-                        ...signUpData,
-                        semesterCid: semester.semesterCid,
-                      })
-                    }
-                  >
-                    {semester.semesterDetailName}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Input
-              type="password"
-              label="비밀번호"
-              onChange={(e) =>
-                setSignUpData({ ...signUpData, userPassword: e.target.value })
-              }
-            />
-            <Input
-              type="password"
-              label="비밀번호 확인"
-              /* onChange={(e) =>
+    <div className="flex flex-col h-screen justify-center items-center">
+      <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-md rounded-lg">
+        <header className="flex justify-center text-3xl m-8">회원가입</header>
+        <main className="flex flex-col gap-4">
+          <section className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4">
+              <Input
+                type="email"
+                label="이메일"
+                onChange={(e) =>
+                  setSignUpData({ ...signUpData, userId: e.target.value })
+                }
+              />
+              <Input
+                type="text"
+                label="이름"
+                onChange={(e) =>
+                  setSignUpData({ ...signUpData, userName: e.target.value })
+                }
+              />
+              <Input
+                type="text"
+                label="닉네임"
+                onChange={(e) =>
+                  setSignUpData({ ...signUpData, userNickname: e.target.value })
+                }
+              />
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button className="bg-[#f5f5f5]">
+                    {signUpData.semesterCid
+                      ? semesterList.find(
+                          (semester) =>
+                            semester.semesterCid === signUpData.semesterCid
+                        )?.semesterDetailName || "기수 선택"
+                      : "기수 선택"}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu>
+                  {semesterList.map((semester) => (
+                    <DropdownItem
+                      key={semester.semesterCid}
+                      onClick={() =>
+                        setSignUpData({
+                          ...signUpData,
+                          semesterCid: semester.semesterCid,
+                        })
+                      }
+                    >
+                      {semester.semesterDetailName}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+              <Input
+                type="password"
+                label="비밀번호"
+                onChange={(e) =>
+                  setSignUpData({ ...signUpData, userPassword: e.target.value })
+                }
+              />
+              <Input
+                type="password"
+                label="비밀번호 확인"
+                /* onChange={(e) =>
                 setSignUpData({ ...signUpData, userPassword: e.target.value })
               } */
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-            />
-          </form>
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+              />
+            </form>
 
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            {errorMessage && (
+              <p className="flex justify-center text-red-500">{errorMessage}</p>
+            )}
 
-          <Button className="bg-main_blue text-white" onClick={handleSignup}>
-            회원가입
-          </Button>
-        </section>
-      </main>
-      <footer className="m-10">
-        <Link href="/auth/login">
-          <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
-            로그인
-          </Button>
-        </Link>
-      </footer>
+            <Button className="bg-main_blue text-white" onClick={handleSignup}>
+              회원가입
+            </Button>
+          </section>
+        </main>
+        <footer className="flex justify-center m-10">
+          <Link href="/auth/login">
+            <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
+              로그인
+            </Button>
+          </Link>
+        </footer>
+      </div>
     </div>
   );
 }
