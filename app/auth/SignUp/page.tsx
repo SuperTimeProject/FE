@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
 import { GetAllSemester } from "@/api/mock/getAllSemester";
+
 interface SignUpData {
   userId: string;
   userName: string;
@@ -75,6 +76,13 @@ export default function SignUp() {
         return;
       }
 
+      // Email 형식 검사
+      const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailFormat.test(signUpData.userId)) {
+        setErrorMessage("올바른 이메일 주소를 입력해주세요.");
+        return;
+      }
+
       // 비밀번호 일치 여부 확인
       if (signUpData.userPassword !== passwordConfirm) {
         setPasswordMismatch(true);
@@ -127,7 +135,7 @@ export default function SignUp() {
       if (response.data.success) {
         setToken(response.data.token);
         setErrorMessage("회원가입이 성공적으로 완료되었습니다.");
-        // login 페이지로
+        // /auth/login
       } else {
         setErrorMessage("회원가입에 실패했습니다.");
       }
@@ -138,8 +146,8 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex flex-col h-screen justify-center items-center">
-      <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-md rounded-lg">
+    <div className="flex h-screen justify-center items-center">
+      <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <header className="flex justify-center text-3xl m-8">회원가입</header>
         <main className="flex flex-col gap-4">
           <section className="flex flex-col gap-4">
@@ -210,7 +218,7 @@ export default function SignUp() {
             </form>
 
             {errorMessage && (
-              <p className="flex justify-center text-red-500">{errorMessage}</p>
+              <p className="flex justify-center text-red-400">{errorMessage}</p>
             )}
 
             <Button className="bg-main_blue text-white" onClick={handleSignup}>
