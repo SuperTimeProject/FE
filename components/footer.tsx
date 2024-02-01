@@ -51,10 +51,13 @@ export default function Footer() {
             </Link>
           </li>
           <li>
-            <Link href="/chat" onClick={() => handleLinkClick("/chat")}>
+            <Link
+              href="/chat/list"
+              onClick={() => handleLinkClick("/chat/list")}
+            >
               <img
                 src={
-                  isActive("/chat")
+                  isActive("/chat/list")
                     ? "/icons/chat_color.png"
                     : "/icons/chat.png"
                 }
@@ -66,12 +69,12 @@ export default function Footer() {
           </li>
           <li>
             <Link
-              href="/profile/user"
-              onClick={() => handleLinkClick("/profile/user")}
+              href="/profile/users"
+              onClick={() => handleLinkClick("/profile/users")}
             >
               <img
                 src={
-                  isActive("/profile/user")
+                  isActive("/profile/users")
                     ? "/icons/_color.png"
                     : "/icons/user.png"
                 }
