@@ -8,11 +8,16 @@ export default function Request() {
   // "/auth/verify/request" - 로그인 후 처음 인증 요청
   // "/auth/verify/wait" - 대기 페이지로 이동
 
-  // const [uploadFile, setUploadFile] = useState(null);
-  // const handleImageUpload = (e) => {
-  //   const file = e.target.files[0];
-  //   setUploadFile(file);
-  // };
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
+      setUploadFile(file);
+    } else {
+      setUploadFile(null);
+    }
+  };
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -23,20 +28,30 @@ export default function Request() {
         </header>
         <main className="flex flex-col items-center gap-4">
           <section className="flex flex-col items-center gap-4">
-            <p className="text-tiny">이미지 미리보기</p>
-            <label htmlFor="imageUpload">
-              <Button
-                size="sm"
-                className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
-              >
-                이미지 업로드
-                <input
-                  type="file"
-                  accept="image/*"
-                  // onChange={handleImageUpload}
-                />
-              </Button>
-            </label>
+            {uploadFile && (
+              <img
+                src={URL.createObjectURL(uploadFile)}
+                alt="Uploaded Preview"
+                width="350"
+                height="350"
+                className="m-2 max-w-full"
+              />
+            )}
+            <Button
+              size="sm"
+              className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+            >
+              이미지 업로드
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{
+                  opacity: 0,
+                  position: "absolute",
+                }}
+              />
+            </Button>
           </section>
 
           <Link href="/auth/verify/wait">
