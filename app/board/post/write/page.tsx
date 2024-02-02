@@ -20,7 +20,6 @@ export default function Write() {
     postContent: "",
     postImages: [],
   });
-  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
