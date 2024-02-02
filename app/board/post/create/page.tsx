@@ -4,21 +4,25 @@ import { publicApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface postInfo {
   userCid: number;
   postTitle: string;
   postContent: string;
-  postImages: File[];
+  postImage: File[];
 }
 
-export default function Write() {
+export default function CreatePost() {
+  const router = useRouter();
+  // const { boardCid } = router.query;
+
   const [postInfo, setPostInfo] = useState<postInfo>({
     userCid: 0,
     postTitle: "",
     postContent: "",
-    postImages: [],
+    postImage: [],
   });
 
   const handleInputChange = (
@@ -35,12 +39,12 @@ export default function Write() {
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files).slice(0, 5);
-      if (newFiles.length + postInfo.postImages.length > 5) {
+      if (newFiles.length + postInfo.postImage.length > 5) {
         alert("이미지는 최대 5개까지 선택 가능합니다.");
       } else {
         setPostInfo((prevInfo) => ({
           ...prevInfo,
-          postImages: [...prevInfo.postImages, ...newFiles],
+          postImage: [...prevInfo.postImage, ...newFiles],
         }));
       }
     }
@@ -58,26 +62,26 @@ export default function Write() {
       formData.append("postTitle", postInfo.postTitle);
       formData.append("postContent", postInfo.postContent);
 
-      postInfo.postImages.forEach((image, index) => {
-        formData.append(`postImages[${index}]`, image);
+      postInfo.postImage.forEach((image, index) => {
+        formData.append(`postImage[${index}]`, image);
       });
 
-      const response = await publicApi.post(
-        "/Board/create/{boardCid}",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // const response = await publicApi.post(
+      //   `/Board/create/${boardCid}`,
+      //   formData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   }
+      // );
 
-      if (response.data.success) {
-        alert("게시글 작성이 완료되었습니다.");
-        // 게시판 페이지로
-      } else {
-        alert("게시글 작성에 실패했습니다.");
-      }
+      // if (response.data.success) {
+      //   alert("게시글 작성이 완료되었습니다.");
+      //   // 게시판 페이지로
+      // } else {
+      //   alert("게시글 작성에 실패했습니다.");
+      // }
     } catch (error) {
       console.error(error);
       alert("서버 오류로 작성에 실패했습니다.");
@@ -113,7 +117,7 @@ export default function Write() {
                 size="sm"
                 className="bg-sub_purple font-semibold text-white"
               >
-                이미지 업로드
+                이미지 선택
                 <input
                   type="file"
                   accept="image/*"
@@ -124,7 +128,7 @@ export default function Write() {
               </Button>
             </div>
             <section className="h-[120px] flex justify-start items-center">
-              {postInfo.postImages.map((file, index) => (
+              {postInfo.postImage.map((file, index) => (
                 <img
                   key={index}
                   src={URL.createObjectURL(file)}
