@@ -43,6 +43,7 @@ export default function Login() {
         setToken(response.data.token);
         setErrorMessage("로그인이 성공적으로 완료되었습니다.");
         router.push("/auth/verify/request"); // 회원인증 페이지 - /auth/verify/request
+        // /board/main으로 간 후 인증페이지로?
       } else {
         setErrorMessage("로그인에 실패했습니다.");
       }
