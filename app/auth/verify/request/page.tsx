@@ -42,9 +42,7 @@ export default function Request() {
               <img
                 src={URL.createObjectURL(uploadFile)}
                 alt="Uploaded Preview"
-                width="350"
-                height="350"
-                className="m-2 max-w-full"
+                className="m-2 w-64 h-64"
               />
             )}
             <Button
@@ -56,10 +54,7 @@ export default function Request() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                style={{
-                  opacity: 0,
-                  position: "absolute",
-                }}
+                className="opacity-0 absolute"
               />
             </Button>
           </section>
