@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
-import { GetAllSemester } from "@/api/mock/getAllSemester";
+// import { GetAllSemester } from "@/api/mock/getAllSemester";
 
 interface SignUpData {
   userId: string;
@@ -40,7 +40,7 @@ export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    /* const fetchSemesterList = async () => {
+    const fetchSemesterList = async () => {
       try {
         const response = await publicApi.get("/semester/getAllSemester");
 
@@ -56,8 +56,8 @@ export default function SignUp() {
       }
     };
 
-    fetchSemesterList(); */
-    setSemesterList(GetAllSemester);
+    fetchSemesterList();
+    // setSemesterList(GetAllSemester);
   }, []);
 
   useEffect(() => {
@@ -104,10 +104,12 @@ export default function SignUp() {
       }
 
       // 닉네임 중복 확인
-      const nicknameCheck = await privateApi.post(
+      const nicknameCheck = await publicApi.get(
         "/auth/duplicateTest/nickname",
         {
-          userNickname: signUpData.userNickname,
+          params: {
+            nickname: signUpData.userNickname,
+          },
         }
       );
 
@@ -117,8 +119,10 @@ export default function SignUp() {
       }
 
       // 이메일 중복 확인
-      const emailCheck = await privateApi.post("/auth/duplicateTest/email", {
-        userId: signUpData.userId,
+      const emailCheck = await publicApi.get("/auth/duplicateTest/email", {
+        params: {
+          userEmail: signUpData.userId,
+        },
       });
 
       if (emailCheck.data.duplicate) {
@@ -127,7 +131,7 @@ export default function SignUp() {
       }
 
       // 회원가입 요청 보내기
-      const response = await privateApi.post("/auth/signup", signUpData, {
+      const response = await publicApi.post("/auth/signup", signUpData, {
         data: signUpData, // JSON 형식으로 데이터 전송
       });
 
@@ -148,7 +152,9 @@ export default function SignUp() {
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
-        <header className="flex justify-center text-3xl m-8">회원가입</header>
+        <header className="flex justify-center text-3xl font-mono m-8">
+          회원가입
+        </header>
         <main className="flex flex-col gap-4">
           <section className="flex flex-col gap-4">
             <form className="flex flex-col gap-4">
@@ -218,10 +224,13 @@ export default function SignUp() {
             </form>
 
             {errorMessage && (
-              <p className="flex justify-center text-red-400">{errorMessage}</p>
+              <p className="flex justify-center text-red-500">{errorMessage}</p>
             )}
 
-            <Button className="bg-main_blue text-white" onClick={handleSignup}>
+            <Button
+              className="bg-main_blue font-semibold text-white"
+              onClick={handleSignup}
+            >
               회원가입
             </Button>
           </section>

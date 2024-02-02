@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
 import { privateApi, setToken } from "@/api/axiosConfig";
+import { useRouter } from "next/navigation";
 
 interface LoginData {
   userId: string;
@@ -11,6 +12,7 @@ interface LoginData {
 }
 
 export default function Login() {
+  const router = useRouter();
   const [loginData, setLoginData] = useState<LoginData>({
     userId: "",
     userPassword: "",
@@ -40,7 +42,7 @@ export default function Login() {
       if (response.data.success) {
         setToken(response.data.token);
         setErrorMessage("로그인이 성공적으로 완료되었습니다.");
-        // /board/main
+        router.push("/auth/verify/request"); // 회원인증 페이지 - /auth/verify/request
       } else {
         setErrorMessage("로그인에 실패했습니다.");
       }
@@ -53,7 +55,9 @@ export default function Login() {
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
-        <header className="flex justify-center text-3xl m-8">로그인</header>
+        <header className="flex justify-center text-3xl font-mono m-8">
+          로그인
+        </header>
         <main className="flex flex-col gap-4">
           <section className="flex flex-col gap-4">
             <form className="flex flex-col gap-4">
@@ -74,13 +78,18 @@ export default function Login() {
             </form>
 
             {errorMessage && (
-              <p className="flex justify-center text-red-400">{errorMessage}</p>
+              <p className="flex justify-center text-red-500">{errorMessage}</p>
             )}
 
-            <Button className="bg-main_blue text-white" onClick={handleLogin}>
+            <Button
+              className="bg-main_blue font-semibold text-white"
+              onClick={handleLogin}
+            >
               로그인
             </Button>
-            <Button className="bg-sub_purple text-white">소셜 로그인</Button>
+            <Button className="bg-sub_purple font-semibold text-white">
+              소셜 로그인
+            </Button>
           </section>
         </main>
         <footer className="flex justify-center m-10">
