@@ -11,11 +11,7 @@ export default function Community() {
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>커뮤니티 게시판 메인</main>
           <Link href="/board/post/write">
-            <Button
-              isIconOnly
-              aria-label="post"
-              style={{ background: "#c4b0ff" }}
-            >
+            <Button isIconOnly aria-label="post" className="bg-sub_purple">
               <img
                 src="/icons/post.png"
                 width="30"
