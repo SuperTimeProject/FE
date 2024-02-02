@@ -27,8 +27,8 @@ export default function Footer() {
                     ? "/icons/coding_color.png"
                     : "/icons/coding.png"
                 }
-                width="45"
-                height="45"
+                width="40"
+                height="40"
                 alt="전체 게시판"
               />
             </Link>
@@ -44,8 +44,8 @@ export default function Footer() {
                     ? "/icons/list_color.png"
                     : "/icons/list.png"
                 }
-                width="45"
-                height="45"
+                width="40"
+                height="40"
                 alt="커뮤니티 게시판"
               />
             </Link>
@@ -61,8 +61,8 @@ export default function Footer() {
                     ? "/icons/chat_color.png"
                     : "/icons/chat.png"
                 }
-                width="45"
-                height="45"
+                width="40"
+                height="40"
                 alt="채팅"
               />
             </Link>
@@ -78,8 +78,8 @@ export default function Footer() {
                     ? "/icons/_color.png"
                     : "/icons/user.png"
                 }
-                width="45"
-                height="45"
+                width="40"
+                height="40"
                 alt="프로필"
               />
             </Link>
