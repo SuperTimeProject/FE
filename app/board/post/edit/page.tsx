@@ -96,7 +96,7 @@ export default function EditPost() {
 
       //   if (response.data.success) {
       //     alert("게시글 수정이 완료되었습니다.");
-      //     // 페이지 이돌
+      //      // router.push(/board/{boardCid}) ?
       //   } else {
       //     alert("게시글 수정에 실패했습니다.");
       //   }

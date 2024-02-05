@@ -78,7 +78,7 @@ export default function CreatePost() {
 
       // if (response.data.success) {
       //   alert("게시글 작성이 완료되었습니다.");
-      //   // 게시판 페이지로
+      //   // router.push(/board/{boardCid}) ?
       // } else {
       //   alert("게시글 작성에 실패했습니다.");
       // }
