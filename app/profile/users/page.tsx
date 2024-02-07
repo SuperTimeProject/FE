@@ -131,16 +131,18 @@ export default function Users() {
                   </div>
                 </li>
                 <li>
-                  <button onClick={() => router.push("/profile/users/myboard")}>
-                    <p>내가 쓴 게시글 {">"}</p>
-                  </button>
+                  <Button onClick={() => router.push("/profile/users/myboard")}>
+                    <p>내가 쓴 게시글</p>
+                    <p> {">"}</p>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
                     onClick={() => router.push("/profile/users/myservice")}
                   >
-                    <p>문의 하기 {">"}</p>
-                  </button>
+                    <p>문의 하기</p>
+                    <p> {">"}</p>
+                  </Button>
                 </li>
                 <li>
                   <Button color="danger" variant="light" onPress={onOpen}>
@@ -173,10 +175,11 @@ export default function Users() {
                       )}
                     </ModalContent>
                   </Modal>
+
+                  <Button variant="light" onClick={() => handleLogout()}>
+                    로그아웃
+                  </Button>
                 </li>
-                <Button variant="light" onClick={() => handleLogout()}>
-                  로그아웃
-                </Button>
               </ul>
             </section>
           </main>

@@ -8,15 +8,14 @@ import Link from "next/link";
 
 export default function MyBoard() {
   //   const { postCid } = router.query;
-  const handleDelete = async (postCid) => {
+  const handleDelete = async (/*postCid*/) => {
     try {
-      const response = await privateApi.delete(`/Board/delete/${postCid}`);
-
-      if (response.data.success) {
-        alert("게시글이 삭제되었습니다.");
-      } else {
-        alert("게시글을 삭제할 수 없습니다.");
-      }
+      // const response = await privateApi.delete(`/Board/delete/${postCid}`);
+      // if (response.data.success) {
+      //   alert("게시글이 삭제되었습니다.");
+      // } else {
+      //   alert("게시글을 삭제할 수 없습니다.");
+      // }
     } catch (error) {
       console.error(error);
       alert("서버 오류로 게시글을 삭제할 수 없습니다.");
@@ -32,7 +31,7 @@ export default function MyBoard() {
           <Link href="/profile/users/myboard/edit">
             <Button>게시글 수정</Button>
           </Link>
-          <Button onClick={() => handleDelete(postCid)}>게시글 삭제</Button>
+          <Button /*onClick={() => handleDelete(postCid)}*/>게시글 삭제</Button>
         </div>
         <Footer />
       </div>
