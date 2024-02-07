@@ -138,7 +138,11 @@ export default function SignUp() {
       // 응답 처리
       if (response.data.success) {
         setToken(response.data.token);
+<<<<<<< HEAD
         alert("회원가입이 성공적으로 완료되었습니다.");
+=======
+        setErrorMessage("회원가입이 성공적으로 완료되었습니다.");
+>>>>>>> f0c5f56 (feat: 로그인페이지에서 메인페이지로 가도록 수정)
 
         router.push("/auth/login");
       } else {

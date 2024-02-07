@@ -54,10 +54,17 @@ export default function Login() {
       });
       // 응답 처리
       if (response.data.success) {
+<<<<<<< HEAD
         setToken(response.data.token); // axios 인스턴스에 token값 추가
         alert("로그인이 성공적으로 완료되었습니다."); // 메세지 수정 에러메세지 말고 성공메세지를 따로 만들거나 삭제, alert 콘솔창 띄우기
         // TODO - 로컬스토리지에 token값 저장
         router.push("/board/main"); // /board/main -> 인증페이지
+=======
+        setToken(response.data.token);
+        setErrorMessage("로그인이 성공적으로 완료되었습니다.");
+        router.push("/board/main");
+        // /board/main -> 인증페이지
+>>>>>>> f0c5f56 (feat: 로그인페이지에서 메인페이지로 가도록 수정)
       } else {
         setErrorMessage("로그인에 실패했습니다.");
       }
