@@ -37,6 +37,14 @@ export default function Main() {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>전체 게시판 메인</main>
+          {errorMessage && <p>{errorMessage}</p>}
+          {boardData && (
+            <div>
+              {/* <h2>{boardData.title}</h2>
+              <p>{boardData.content}</p> */}
+              {/* 게시판의 기타 정보 표시 */}
+            </div>
+          )}
           <Link href="/board/post/create">
             <Button isIconOnly aria-label="post" className="bg-sub_purple">
               <img
