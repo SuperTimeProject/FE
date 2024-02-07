@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
-// import { GetAllSemester } from "@/api/mock/getAllSemester";
+import { useRouter } from "next/navigation";
 
 interface SignUpData {
   userId: string;
@@ -26,6 +26,7 @@ interface SemesterListItem {
 }
 
 export default function SignUp() {
+  const router = useRouter();
   const [signUpData, setSignUpData] = useState<SignUpData>({
     userId: "",
     userName: "",
@@ -57,7 +58,6 @@ export default function SignUp() {
     };
 
     fetchSemesterList();
-    // setSemesterList(GetAllSemester);
   }, []);
 
   useEffect(() => {
@@ -131,15 +131,16 @@ export default function SignUp() {
       }
 
       // 회원가입 요청 보내기
-      const response = await publicApi.post("/auth/signup", signUpData, {
+      const response = await privateApi.post("/auth/signup", signUpData, {
         data: signUpData, // JSON 형식으로 데이터 전송
       });
 
       // 응답 처리
       if (response.data.success) {
         setToken(response.data.token);
-        setErrorMessage("회원가입이 성공적으로 완료되었습니다.");
-        // /auth/login
+        alert("회원가입이 성공적으로 완료되었습니다.");
+
+        router.push("/auth/login");
       } else {
         setErrorMessage("회원가입에 실패했습니다.");
       }
@@ -216,9 +217,6 @@ export default function SignUp() {
               <Input
                 type="password"
                 label="비밀번호 확인"
-                /* onChange={(e) =>
-                setSignUpData({ ...signUpData, userPassword: e.target.value })
-              } */
                 onChange={(e) => setPasswordConfirm(e.target.value)}
               />
             </form>
