@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
 import { privateApi, setToken } from "@/api/axiosConfig";
@@ -19,6 +19,20 @@ export default function Login() {
   });
 
   const [errorMessage, setErrorMessage] = useState("");
+
+  // useEffect(() => {
+  //   // 회원가입 시 저장된 데이터 불러오기
+  //   const storedSignupData = sessionStorage.getItem("signupData");
+  //   if (storedSignupData) {
+  //     const parsedSignupData = JSON.parse(storedSignupData);
+  //     setLoginData({
+  //       userId: parsedSignupData.userId,
+  //       userPassword: parsedSignupData.userPassword,
+  //     });
+  //     // 저장된 데이터 지우기
+  //     sessionStorage.removeItem("signupData");
+  //   }
+  // }, []);
 
   const handleLogin = async () => {
     try {
@@ -42,8 +56,8 @@ export default function Login() {
       if (response.data.success) {
         setToken(response.data.token);
         setErrorMessage("로그인이 성공적으로 완료되었습니다.");
-        router.push("/auth/verify/request"); // 회원인증 페이지 - /auth/verify/request
-        // /board/main으로 간 후 인증페이지로?
+        router.push("/board/main");
+        // /board/main -> 인증페이지
       } else {
         setErrorMessage("로그인에 실패했습니다.");
       }
