@@ -1,10 +1,22 @@
 "use client";
 
+import { privateApi } from "@/api/axiosConfig";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [userCid, setUserCid] = useState<number>();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const res = await privateApi.get("/auth/getUserInfo");
+      if (res.data) {
+        setUserCid(res.data.getUserInfo.userCid);
+      }
+    };
+    getUser();
+  }, []);
 
   const handleIconHover = (icon: string | null) => {
     setHoveredIcon(icon);
@@ -63,7 +75,7 @@ export default function Footer() {
             </Link>
           </li>
           <li>
-            <Link href="/profile/users">
+            <Link href={`/profile/${userCid}`}>
               <img
                 src={
                   hoveredIcon === "user"

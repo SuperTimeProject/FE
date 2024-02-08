@@ -17,6 +17,44 @@ interface postInfo {
 export default function Inquiry() {
   const router = useRouter();
 
+  const handleInquirySubmit = async () => {
+    try {
+      // if (!postInfo.postTitle || !postInfo.postContent) {
+      //   alert("제목과 내용은 필수 입력 사항입니다.");
+      //   return;
+      // }
+
+      // const formData = new FormData();
+      // formData.append("userCid", String(postInfo.userCid));
+      // formData.append("postTitle", postInfo.postTitle);
+      // formData.append("postContent", postInfo.postContent);
+
+      // postInfo.postImage.forEach((image, index) => {
+      //   formData.append(`postImage[${index}]`, image);
+      // });
+
+      // const response = await publicApi.post(
+      //   `/Board/create/${boardCid}`,
+      //   formData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   }
+      // );
+
+      // if (response.data.success) {
+      alert("문의가 제출되었습니다.");
+      router.push("../myservice");
+      // } else {
+      //   alert("문의에 실패했습니다.");
+      // }
+    } catch (error) {
+      console.error(error);
+      alert("서버 오류로 문의에 실패했습니다.");
+    }
+  };
+
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
@@ -70,7 +108,7 @@ export default function Inquiry() {
               <Button
                 size="sm"
                 className="bg-sub_purple font-semibold text-white"
-                // onClick={handlePostSubmit} router.push("/profile/users/myservice")
+                onClick={handleInquirySubmit}
               >
                 제출
               </Button>

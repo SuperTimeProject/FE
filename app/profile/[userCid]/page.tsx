@@ -7,6 +7,7 @@ import { privateApi, setToken } from "@/api/axiosConfig";
 import {
   Avatar,
   Button,
+  Divider,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -19,7 +20,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface UserInfo {
   userCid: number;
@@ -45,49 +46,46 @@ interface UserProfile {
   userProfileFilePath: string;
 }
 
-interface ProfileProps {
-  params: {
-    userCid: number;
-  };
-}
+// interface ProfileProps {
+//   params: {
+//     userCid: number;
+//   };
+// }
 
-// localhost:3000
-
-export default function Users({ params }: ProfileProps) {
+export default function Users(/*{ params }: ProfileProps*/) {
   // console.log({ params });
   const router = useRouter();
-  // const pathname = usePathname();
+  const pathname = usePathname();
   // const { userCid } = pathname.query;
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
+  const PART_OPTIONS = ["FE", "BE", "FULL"];
 
   const handleProfileEditMode = () => {
     setProfileEditMode(true);
   };
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const getUserInfo = async () => {
       try {
         const response = await privateApi.get("/auth/getUserInfo");
 
         if (response.data.success) {
-          const userInfoData = response.data.userInfo;
-          setToken(response.data.token);
+          const userInfoData = response.data.getUserInfo;
           setUserInfo(userInfoData);
         } else {
-          setErrorMessage("유저 정보를 불러오는데 실패했습니다.");
+          alert("유저 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
         console.error(error);
-        setErrorMessage("서버 오류로 유저 정보를 불러오는데 실패했습니다.");
+        alert("서버 오류로 유저 정보를 불러오는데 실패했습니다.");
       }
     };
 
-    fetchUserInfo();
-  }, [[params.userCid]]);
+    getUserInfo();
+  }, []);
 
   const handleProfileSave = () => {
     // 프로필 update 요청
@@ -103,21 +101,14 @@ export default function Users({ params }: ProfileProps) {
       setUploadFile(null);
     }
   };
+
   const handleLogout = async () => {
     try {
-      const response = await privateApi.post("api");
-      if (response.data.success) {
-        // const logoutUser = response.data.;
-        // setUserInfo(logoutUser);
-        // setToken(null);
-        setErrorMessage("로그아웃이 완료되었습니다.");
-        router.push("/auth/login");
-      } else {
-        setErrorMessage("로그아웃에 실패했습니다.");
-      }
+      localStorage.removeItem("TOKEN"); // 로컬스토리지에 토큰값 삭제
+      alert("로그아웃이 성공적으로 완료되었습니다.");
+      router.push("/auth/login");
     } catch (error) {
       console.error(error);
-      setErrorMessage("서버 오류로 로그아웃에 실패했습니다.");
     }
   };
 
@@ -128,14 +119,14 @@ export default function Users({ params }: ProfileProps) {
         // const deleteUser = response.data.;
         // setUserInfo(deleteUser);
         // setToken(null);
-        setErrorMessage("회원 탈퇴가 완료되었습니다.");
+        alert("회원 탈퇴가 완료되었습니다.");
         router.push("/auth/login");
       } else {
-        setErrorMessage("회원 탈퇴에 실패했습니다.");
+        alert("회원 탈퇴에 실패했습니다.");
       }
     } catch (error) {
       console.error(error);
-      setErrorMessage("서버 오류로 회원 탈퇴에 실패했습니다.");
+      alert("서버 오류로 회원 탈퇴에 실패했습니다.");
     }
   };
 
@@ -149,14 +140,14 @@ export default function Users({ params }: ProfileProps) {
               마이페이지
             </p>
             <ul className="flex flex-col gap-4">
-              <li className="flex justify-evenly p-2">
+              <li className="flex justify-evenly items-center p-2">
                 <div className="relative">
                   <Avatar
                     className="w-24 h-24 bg-white"
                     src={
                       uploadFile
                         ? URL.createObjectURL(uploadFile)
-                        : userInfo?.userProfile.userProfileFilePath
+                        : userInfo?.userProfile?.userProfileFilePath
                     }
                   />
                   {isProfileEditMode && (
@@ -176,9 +167,12 @@ export default function Users({ params }: ProfileProps) {
                   )}
                 </div>
                 <div className="flex flex-col justify-center gap-2">
-                  <p>이메일{userInfo?.userId}</p>
-                  <p>이름{userInfo?.userName}</p>
-                  <p>닉네임{userInfo?.userNickname}</p>
+                  <p>이메일</p>
+                  <p>{userInfo?.userId}</p>
+                  <p>이름</p>
+                  <p>{userInfo?.userName}</p>
+                  <p>닉네임</p>
+                  <p>{userInfo?.userNickname}</p>
                 </div>
               </li>
 
@@ -203,19 +197,29 @@ export default function Users({ params }: ProfileProps) {
               </div>
 
               <li className="flex flex-col gap-2 p-2">
-                <div className="flex justify-evenly gap-2">
-                  <p>기수 {userInfo?.semester.semesterDetailName}</p>
-                  <p>FULL or HALF {userInfo?.semester.isFull} TIME</p>
+                <div className="flex justify-evenly items-center">
+                  <p>기수</p>
+                  <p>{userInfo?.semester.semesterDetailName} TIME</p>
                 </div>
-                <div className="flex justify-center items-center gap-2">
+                <div className="flex justify-evenly items-center gap-2">
+                  {/* <p>{userInfo?.semester.isFull} TIME</p> */}
                   <Dropdown>
                     <DropdownTrigger>
                       <Button variant="bordered">
-                        {userInfo?.part || "FE / BE / FULL"}
+                        {userInfo?.part || "주특기 선택"}
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu>
-                      <DropdownItem></DropdownItem>
+                      {PART_OPTIONS.map((partOption) => (
+                        <DropdownItem
+                          key={partOption}
+                          // onClick={(e) =>
+                          //   setUserInfo({ ...userInfo, part: partOption.part })
+                          // }
+                        >
+                          {partOption}
+                        </DropdownItem>
+                      ))}
                     </DropdownMenu>
                   </Dropdown>
                   <p className="text-xs text-red-500">
@@ -225,7 +229,7 @@ export default function Users({ params }: ProfileProps) {
               </li>
               <li className="flex flex-col">
                 <Button
-                  onClick={() => router.push("/profile/users/myboard")}
+                  onClick={() => router.push(`${pathname}/myboard`)}
                   className="flex justify-between font-semibold bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
                 >
                   <p>내가 쓴 게시글</p>
@@ -234,7 +238,7 @@ export default function Users({ params }: ProfileProps) {
               </li>
               <li className="flex flex-col">
                 <Button
-                  onClick={() => router.push("/profile/users/myservice")}
+                  onClick={() => router.push(`${pathname}/myservice`)}
                   className="flex justify-between font-semibold bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
                 >
                   <p>문의하기</p>
