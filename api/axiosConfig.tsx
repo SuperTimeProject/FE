@@ -9,11 +9,11 @@ export const publicApi: AxiosInstance = axios.create({
 export const privateApi: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
-    TOKEN: "",
+    Authorization: "",
   },
 });
 
 export const setToken = (token: string) => {
-  privateApi.defaults.headers["TOKEN"] = token;
+  privateApi.defaults.headers["Authorization"] = `Bearer ${token}`;
   console.log("토큰 설정 완료");
 };

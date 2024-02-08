@@ -20,20 +20,6 @@ export default function Login() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  // useEffect(() => {
-  //   // 회원가입 시 저장된 데이터 불러오기
-  //   const storedSignupData = sessionStorage.getItem("signupData");
-  //   if (storedSignupData) {
-  //     const parsedSignupData = JSON.parse(storedSignupData);
-  //     setLoginData({
-  //       userId: parsedSignupData.userId,
-  //       userPassword: parsedSignupData.userPassword,
-  //     });
-  //     // 저장된 데이터 지우기
-  //     sessionStorage.removeItem("signupData");
-  //   }
-  // }, []);
-
   const handleLogin = async () => {
     try {
       // 유효성 검사
@@ -54,7 +40,7 @@ export default function Login() {
       });
       // 응답 처리
       if (response.data.success) {
-        setToken(response.data.token); // axios 인스턴스에 token값 추가
+        localStorage.setItem("TOKEN", response.headers.authorization);
         alert("로그인이 성공적으로 완료되었습니다."); // 메세지 수정 에러메세지 말고 성공메세지를 따로 만들거나 삭제, alert 콘솔창 띄우기
         // TODO - 로컬스토리지에 token값 저장
         router.push("/board/main"); // /board/main -> 인증페이지
