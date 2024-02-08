@@ -1,5 +1,6 @@
 "use client";
 
+import { setToken } from "@/api/axiosConfig";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -16,13 +17,17 @@ export default function AuthCheck() {
   // 유즈이펙트 사용해서 언제언제 사용되게 할지 생각,,
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const exceptions = ["/auth/Login", "/auth/SignUp"];
+    const token = localStorage.getItem("TOKEN");
+    const exceptions = ["/auth/login", "/auth/signup"];
     const isException = exceptions.includes(pathname);
+
+    if (token && token !== "") {
+      setToken(token);
+    }
 
     if (!token && !isException) {
       // 토큰이 없으면 로그인 페이지로 리다이렉트
-      router.push("/auth/Login");
+      router.push("/auth/login");
     } else if (token && isException) {
       // 로그인상태에서 강제로 유저가 url입력해서 로그인창이나 회원가입 창으로갔을때 main페이지로 리다이렉트 시키는 코드
       router.push("/");
