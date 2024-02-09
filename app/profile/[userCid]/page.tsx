@@ -7,7 +7,6 @@ import { privateApi, setToken } from "@/api/axiosConfig";
 import {
   Avatar,
   Button,
-  Divider,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -59,10 +58,10 @@ export default function Users(/*{ params }: ProfileProps*/) {
   const pathname = usePathname();
   // const { userCid } = pathname.query;
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [partOptions, setPartOptions] = useState<string[]>([]);
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
-  const PART_OPTIONS = ["FE", "BE", "FULL"];
 
   const handleProfileEditMode = () => {
     setProfileEditMode(true);
@@ -76,7 +75,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
         if (response.data.success) {
           const userInfoData = response.data.getUserInfo;
           setUserInfo(userInfoData);
-          console.log(userInfoData);
+          // console.log(userInfoData);
         } else {
           alert("유저 정보를 불러오는데 실패했습니다.");
         }
@@ -179,14 +178,12 @@ export default function Users(/*{ params }: ProfileProps*/) {
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu>
-                        {PART_OPTIONS.map((partOption) => (
+                        {partOptions.map((part) => (
                           <DropdownItem
-                            key={partOption}
-                            // onClick={(e) =>
-                            //   setUserInfo({ ...userInfo, part: partOption.part })
-                            // }
+                            key={part}
+                            //  onClick={}
                           >
-                            {partOption}
+                            {part}
                           </DropdownItem>
                         ))}
                       </DropdownMenu>
