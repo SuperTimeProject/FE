@@ -29,15 +29,20 @@ export default function Footer() {
           <li>
             <Link href="/board/main">
               <img
+                className={`transition-transform duration-300 ${
+                  hoveredIcon === "home"
+                    ? "transform scale-125"
+                    : "transform scale-100"
+                }`}
                 src={
-                  hoveredIcon === "coding"
+                  hoveredIcon === "home"
                     ? "/icons/coding_color.png"
                     : "/icons/coding.png"
                 }
-                width="40"
-                height="40"
+                width="35"
+                height="35"
                 alt="전체 게시판"
-                onMouseEnter={() => handleIconHover("coding")}
+                onMouseEnter={() => handleIconHover("home")}
                 onMouseLeave={() => handleIconHover(null)}
               />
             </Link>
@@ -45,15 +50,20 @@ export default function Footer() {
           <li>
             <Link href="/board/community">
               <img
+                className={`transition-transform duration-300 ${
+                  hoveredIcon === "board"
+                    ? "transform scale-125"
+                    : "transform scale-100"
+                }`}
                 src={
-                  hoveredIcon === "list"
+                  hoveredIcon === "board"
                     ? "/icons/list_color.png"
                     : "/icons/list.png"
                 }
-                width="40"
-                height="40"
+                width="33"
+                height="33"
                 alt="커뮤니티 게시판"
-                onMouseEnter={() => handleIconHover("list")}
+                onMouseEnter={() => handleIconHover("board")}
                 onMouseLeave={() => handleIconHover(null)}
               />
             </Link>
@@ -61,13 +71,18 @@ export default function Footer() {
           <li>
             <Link href="/chat">
               <img
+                className={`transition-transform duration-300 ${
+                  hoveredIcon === "chat"
+                    ? "transform scale-125"
+                    : "transform scale-100"
+                }`}
                 src={
                   hoveredIcon === "chat"
                     ? "/icons/chat_color.png"
                     : "/icons/chat.png"
                 }
-                width="40"
-                height="40"
+                width="35"
+                height="35"
                 alt="채팅"
                 onMouseEnter={() => handleIconHover("chat")}
                 onMouseLeave={() => handleIconHover(null)}
@@ -77,13 +92,18 @@ export default function Footer() {
           <li>
             <Link href={`/profile/${userCid}`}>
               <img
+                className={`transition-transform duration-300 ${
+                  hoveredIcon === "user"
+                    ? "transform scale-125"
+                    : "transform scale-100"
+                }`}
                 src={
                   hoveredIcon === "user"
                     ? "/icons/user_color.png"
                     : "/icons/user.png"
                 }
-                width="40"
-                height="40"
+                width="35"
+                height="35"
                 alt="프로필"
                 onMouseEnter={() => handleIconHover("user")}
                 onMouseLeave={() => handleIconHover(null)}
