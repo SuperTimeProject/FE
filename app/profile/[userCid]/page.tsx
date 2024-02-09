@@ -12,6 +12,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -75,6 +76,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
         if (response.data.success) {
           const userInfoData = response.data.getUserInfo;
           setUserInfo(userInfoData);
+          console.log(userInfoData);
         } else {
           alert("유저 정보를 불러오는데 실패했습니다.");
         }
@@ -90,7 +92,6 @@ export default function Users(/*{ params }: ProfileProps*/) {
   const handleProfileSave = () => {
     // 프로필 update 요청
     setProfileEditMode(false);
-    setUploadFile(null);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,14 +137,14 @@ export default function Users(/*{ params }: ProfileProps*/) {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>
-            <p className="flex justify-center text-xl font-semibold m-2">
+            <p className="flex justify-center text-xl font-mono font-semibold m-4">
               마이페이지
             </p>
             <ul className="flex flex-col gap-4">
               <li className="flex justify-evenly items-center p-2">
                 <div className="relative">
                   <Avatar
-                    className="w-24 h-24 bg-white"
+                    className="w-16 h-16 bg-white"
                     src={
                       uploadFile
                         ? URL.createObjectURL(uploadFile)
@@ -166,71 +167,97 @@ export default function Users(/*{ params }: ProfileProps*/) {
                     </Button>
                   )}
                 </div>
+                <div className="flex flex-col justify-center items-center gap-2">
+                  <div className="flex justify-center items-center gap-2">
+                    <p className="font-mono">
+                      {userInfo?.semester.semesterDetailName}
+                    </p>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button size="sm" variant="ghost">
+                          {userInfo?.part || "주특기 선택"}
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu>
+                        {PART_OPTIONS.map((partOption) => (
+                          <DropdownItem
+                            key={partOption}
+                            // onClick={(e) =>
+                            //   setUserInfo({ ...userInfo, part: partOption.part })
+                            // }
+                          >
+                            {partOption}
+                          </DropdownItem>
+                        ))}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                  <p className="text-xs text-red-500">
+                    *2일 동안 선택 가능합니다.
+                  </p>
+                </div>
+              </li>
+              <li>
                 <div className="flex flex-col justify-center gap-2">
-                  <p>이메일</p>
-                  <p>{userInfo?.userId}</p>
-                  <p>이름</p>
-                  <p>{userInfo?.userName}</p>
-                  <p>닉네임</p>
-                  <p>{userInfo?.userNickname}</p>
+                  <Input
+                    isDisabled={isProfileEditMode}
+                    isReadOnly={!isProfileEditMode}
+                    size="sm"
+                    type="email"
+                    label="이메일"
+                    variant="underlined"
+                    value={userInfo?.userId}
+                  />
+                  <Input
+                    isDisabled={isProfileEditMode}
+                    isReadOnly={!isProfileEditMode}
+                    size="sm"
+                    type="text"
+                    label="이름"
+                    variant="underlined"
+                    value={userInfo?.userName}
+                  />
+                  <Input
+                    // isDisabled={isProfileEditMode} // 닉네임만 수정 가능
+                    isReadOnly={!isProfileEditMode}
+                    size="sm"
+                    type="text"
+                    label="닉네임"
+                    variant="underlined"
+                    value={userInfo?.userNickname}
+                  />
                 </div>
               </li>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end items-center mb-4">
                 {isProfileEditMode ? (
-                  <Button
-                    size="sm"
-                    onClick={handleProfileSave}
-                    className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
-                  >
-                    저장
-                  </Button>
+                  <>
+                    <p className="text-xs text-red-500 pr-4">
+                      *프로필 사진과 닉네임만 변경 가능합니다.
+                    </p>
+                    <Button
+                      size="sm"
+                      onClick={handleProfileSave}
+                      className="bg-sub_purple text-white"
+                    >
+                      저장
+                    </Button>
+                  </>
                 ) : (
                   <Button
                     size="sm"
                     onClick={handleProfileEditMode}
-                    className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+                    className="bg-sub_purple text-white"
                   >
                     프로필 수정
                   </Button>
                 )}
               </div>
 
-              <li className="flex flex-col gap-2 p-2">
-                <div className="flex justify-evenly items-center">
-                  <p>기수</p>
-                  <p>{userInfo?.semester.semesterDetailName} TIME</p>
-                </div>
-                <div className="flex justify-evenly items-center gap-2">
-                  {/* <p>{userInfo?.semester.isFull} TIME</p> */}
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button variant="bordered">
-                        {userInfo?.part || "주특기 선택"}
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu>
-                      {PART_OPTIONS.map((partOption) => (
-                        <DropdownItem
-                          key={partOption}
-                          // onClick={(e) =>
-                          //   setUserInfo({ ...userInfo, part: partOption.part })
-                          // }
-                        >
-                          {partOption}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </Dropdown>
-                  <p className="text-xs text-red-500">
-                    *2일 동안 자유롭게 선택 가능합니다.
-                  </p>
-                </div>
-              </li>
               <li className="flex flex-col">
                 <Button
                   onClick={() => router.push(`${pathname}/myboard`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
                 >
                   <p>내가 쓴 게시글</p>
                   <p> {">"}</p>
@@ -239,13 +266,13 @@ export default function Users(/*{ params }: ProfileProps*/) {
               <li className="flex flex-col">
                 <Button
                   onClick={() => router.push(`${pathname}/myservice`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
                 >
                   <p>문의하기</p>
                   <p> {">"}</p>
                 </Button>
               </li>
-              <li className="flex justify-between">
+              <li className="flex justify-between mt-4">
                 <Button color="danger" variant="light" onPress={onOpen}>
                   회원탈퇴
                 </Button>
