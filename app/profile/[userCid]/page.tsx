@@ -27,11 +27,53 @@ interface UserInfo {
   userId: string;
   userName: string;
   userNickname: string;
-  part: string | null;
-  role: string | null;
-  boardList: number[];
+  part: string;
   semester: Semester;
+  posts: Post[];
   userProfile: UserProfile;
+}
+
+interface Post {
+  createdAt: string;
+  updatedAt: string;
+  postCid: number;
+  boardEntity: BoardEntity;
+  userEntity: UserEntity;
+  postImages: PostImage[];
+  postTitle: string;
+  postContent: string;
+  postView: number;
+}
+
+interface BoardEntity {
+  boardCid: number;
+  boardName: string;
+  userList: string[];
+}
+
+interface UserEntity {
+  createdAt: string;
+  updatedAt: string;
+  userCid: number;
+  semester: number;
+  userProfileCid: number;
+  userId: string;
+  userPassword: string;
+  userName: string;
+  userNickname: string;
+  게시판리스트: BoardEntity[];
+  valified: string;
+  part: string;
+  roles: string;
+  isDeleted: number;
+}
+
+interface PostImage {
+  createdAt: string;
+  updatedAt: string;
+  postImageCid: number;
+  postImageFileName: string;
+  postImageFilePath: string;
 }
 
 interface Semester {
@@ -46,22 +88,17 @@ interface UserProfile {
   userProfileFilePath: string;
 }
 
-// interface ProfileProps {
-//   params: {
-//     userCid: number;
-//   };
-// }
-
-export default function Users(/*{ params }: ProfileProps*/) {
-  // console.log({ params });
+export default function Users() {
   const router = useRouter();
   const pathname = usePathname();
-  // const { userCid } = pathname.query;
+
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [partOptions, setPartOptions] = useState<string[]>([]);
+  // const [userEntity, setUserEntity] = useState<UserEntity | null>(null);
+
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
+  const [partOption, setPartOption] = useState<string[]>([]);
 
   const handleProfileEditMode = () => {
     setProfileEditMode(true);
@@ -77,51 +114,32 @@ export default function Users(/*{ params }: ProfileProps*/) {
           setUserInfo(userInfoData);
           // console.log(userInfoData);
         } else {
-          alert("유저 정보를 불러오는데 실패했습니다.");
+          alert("로그인한 유저 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
         console.error(error);
-        alert("서버 오류로 유저 정보를 불러오는데 실패했습니다.");
+        alert("서버 오류로 로그인한 유저 정보를 불러오는데 실패했습니다.");
       }
     };
 
     getUserInfo();
   }, []);
 
-  useEffect(() => {
-    const getUserPart = async () => {
-      try {
-        const response = await privateApi.get("/user/part");
+  // const getUserEntity = async () => {
+  //   const response = await privateApi.get("/user/info");
 
-        if (response.data.success) {
-          const partData = response.data.getUserInfo.part;
-          setPartOptions(partData);
-        } else {
-          alert("유저 파트를 불러오는데 실패했습니다.");
-        }
-      } catch (error) {
-        console.error(error);
-        alert("서버 오류로 유저 파트를 불러오는데 실패했습니다.");
-      }
-    };
+  //   if (response.data.success) {
+  //     const userEntityData = response.data.userEntity;
+  //     setUserInfo(userEntityData);
+  //   }
+  //   getUserEntity();
+  // };
 
-    getUserPart();
-  }, []);
-
-  const handlePartSelect = async () => {
-    try {
-      const response = await privateApi.put("/user/part/");
-
-      if (response.data.success) {
-        const updatedpartData = response.data.getUserInfo.part;
-        setUserInfo(updatedpartData);
-        alert("주특기 선택이 완료되었습니다.");
-      } else {
-        alert("주특기 선택에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("서버 오류로 주특기 선택에 실패했습니다.");
+  const handlePartSelect = async (partName: string) => {
+    const response = await privateApi.put(`/user/part/${partName}`);
+    if (response.data.success) {
+      const partData = response.data.part;
+      setPartOption(partData);
     }
   };
 
@@ -129,15 +147,15 @@ export default function Users(/*{ params }: ProfileProps*/) {
     try {
       const formData = new FormData();
 
-      if (uploadFile) {
-        formData.append("userImage", uploadFile);
-      }
+      // if (uploadFile) {
+      //   formData.append("userImage", uploadFile);
+      // }
       formData.append("userNickname", userInfo?.userNickname || "");
 
       const response = await privateApi.put("/user/info/edit", formData);
 
       if (response.data.success) {
-        const updatedUserInfo = response.data.getUserInfo;
+        const updatedUserInfo = response.data;
         setUserInfo(updatedUserInfo);
         alert("프로필 수정이 완료되었습니다.");
         setProfileEditMode(false);
@@ -235,10 +253,10 @@ export default function Users(/*{ params }: ProfileProps*/) {
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu>
-                        {partOptions.map((part) => (
+                        {partOption.map((part) => (
                           <DropdownItem
                             key={part}
-                            onClick={() => handlePartSelect()}
+                            onClick={() => handlePartSelect(part)}
                           >
                             {part}
                           </DropdownItem>
@@ -272,7 +290,6 @@ export default function Users(/*{ params }: ProfileProps*/) {
                     value={userInfo?.userName}
                   />
                   <Input
-                    // isDisabled={isProfileEditMode} // 닉네임만 수정 가능
                     isReadOnly={!isProfileEditMode}
                     size="sm"
                     type="text"
@@ -287,7 +304,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
                 {isProfileEditMode ? (
                   <>
                     <p className="text-xs text-red-500 pr-4">
-                      *프로필 사진과 닉네임만 변경 가능합니다.
+                      *닉네임만 변경 가능합니다.
                     </p>
                     <Button
                       size="sm"
