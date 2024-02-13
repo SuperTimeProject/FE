@@ -1,60 +1,55 @@
 "use client";
 
-import { publicApi } from "@/api/axiosConfig";
+import { privateApi, publicApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface editPostInfo {
+interface PostInfo {
   postTitle: string;
   postContent: string;
   deleteImageList: number[];
   postImage: File[];
 }
 
-export default function EditPost() {
+export default function EditPost(postCid: number) {
   const router = useRouter();
-  //   const { postCid } = router.query;
 
-  const [editPostInfo, setEditPostInfo] = useState<editPostInfo>({
+  const [postInfo, setPostInfo] = useState<PostInfo>({
     postTitle: "",
     postContent: "",
     deleteImageList: [],
     postImage: [],
   });
 
-  //   useEffect(() => {
-  //     const fetchPostData = async () => {
-  //       try {
-  //         const response = await publicApi.get(`/Board/get/${postCid}`);
+  useEffect(() => {
+    const getPostData = async () => {
+      try {
+        const response = await privateApi.get(`/board/getPost/${postCid}`);
 
-  //         if (response.data.success) {
-  //           const editPostInfo = response.data.editPostInfo;
-  //           setEditPostInfo({
-  //             postTitle: editPostInfo.postTitle,
-  //             postContent: editPostInfo.postContent,
-  //             postImage: [],
-  //           });
-  //         } else {
-  //           alert("게시글을 불러올 수 없습니다.");
-  //         }
-  //       } catch (error) {
-  //         console.error(error);
-  //         alert("서버 오류로 게시글을 불러올 수 없습니다.");
-  //       }
-  //     };
+        if (response.data.success) {
+          const getPostInfo = response.data.postInfo;
+          setPostInfo(getPostInfo);
+        } else {
+          alert("게시글을 불러올 수 없습니다.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("서버 오류로 게시글을 불러올 수 없습니다.");
+      }
+    };
 
-  //     fetchPostData();
-  //   }, [postCid]);
+    getPostData();
+  }, [postCid]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setEditPostInfo((prevEditInfo) => ({
-      ...prevEditInfo,
+    setPostInfo((prevPostInfo) => ({
+      ...prevPostInfo,
       [name]: value,
     }));
   };
@@ -63,12 +58,12 @@ export default function EditPost() {
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files).slice(0, 5);
-      if (newFiles.length + editPostInfo.postImage.length > 5) {
+      if (newFiles.length + postInfo.postImage.length > 5) {
         alert("이미지는 최대 5개까지 선택 가능합니다.");
       } else {
-        setEditPostInfo((prevEditInfo) => ({
-          ...prevEditInfo,
-          postImages: [...prevEditInfo.postImage, ...newFiles],
+        setPostInfo((prevPostInfo) => ({
+          ...prevPostInfo,
+          postImages: [...prevPostInfo.postImage, ...newFiles],
         }));
       }
     }
@@ -77,29 +72,21 @@ export default function EditPost() {
   const handlePostEdit = async () => {
     try {
       const formData = new FormData();
-      formData.append("postTitle", editPostInfo.postTitle);
-      formData.append("postContent", editPostInfo.postContent);
+      formData.append("postTitle", postInfo.postTitle);
+      formData.append("postContent", postInfo.postContent);
 
-      editPostInfo.postImage.forEach((image, index) => {
+      postInfo.postImage.forEach((image, index) => {
         formData.append(`postImage[${index}]`, image);
       });
 
-      //   const response = await publicApi.put(
-      //     `/Board/update/${postCid}`,
-      //     formData,
-      //     {
-      //       headers: {
-      //         "Content-Type": "multipart/form-data",
-      //       },
-      //     }
-      //   );
+      const response = await publicApi.put(`/board/edit/${postCid}`, formData);
 
-      //   if (response.data.success) {
-      //     alert("게시글이 수정되었습니다.");
-      //      // router.push(/board/{boardCid}) ?
-      //   } else {
-      //     alert("게시글 수정에 실패했습니다.");
-      //   }
+      if (response.data.success) {
+        alert("게시글이 수정되었습니다.");
+        router.push("../myboard");
+      } else {
+        alert("게시글 수정에 실패했습니다.");
+      }
     } catch (error) {
       console.error(error);
       alert("서버 오류로 수정에 실패했습니다.");
@@ -118,14 +105,14 @@ export default function EditPost() {
                 type="text"
                 label="제목"
                 name="postTitle"
-                value={editPostInfo.postTitle}
+                value={postInfo.postTitle}
                 onChange={handleInputChange}
               />
               <Divider className="my-2" />
               <Textarea
                 placeholder="내용"
                 name="postContent"
-                value={editPostInfo.postContent}
+                value={postInfo.postContent}
                 onChange={handleInputChange}
                 className="h-[178px]"
               />
@@ -146,7 +133,7 @@ export default function EditPost() {
               </Button>
             </div>
             <section className="h-[120px] flex justify-start items-center">
-              {editPostInfo.postImage.map((file, index) => (
+              {postInfo.postImage.map((file, index) => (
                 <img
                   key={index}
                   src={URL.createObjectURL(file)}
