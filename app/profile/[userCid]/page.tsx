@@ -88,9 +88,66 @@ export default function Users(/*{ params }: ProfileProps*/) {
     getUserInfo();
   }, []);
 
-  const handleProfileSave = () => {
-    // 프로필 update 요청
-    setProfileEditMode(false);
+  useEffect(() => {
+    const getUserPart = async () => {
+      try {
+        const response = await privateApi.get("/user/part");
+
+        if (response.data.success) {
+          const partData = response.data.getUserInfo.part;
+          setPartOptions(partData);
+        } else {
+          alert("유저 파트를 불러오는데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("서버 오류로 유저 파트를 불러오는데 실패했습니다.");
+      }
+    };
+
+    getUserPart();
+  }, []);
+
+  const handlePartSelect = async (selectedPart: string) => {
+    try {
+      const response = await privateApi.put(`/user/part/${selectedPart}`);
+
+      if (response.data.success) {
+        const updatedpartData = response.data.getUserInfo.part;
+        setUserInfo(updatedpartData);
+        alert("주특기 선택이 완료되었습니다.");
+      } else {
+        alert("주특기 선택에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("서버 오류로 주특기 선택에 실패했습니다.");
+    }
+  };
+
+  const handleInfoEdit = async () => {
+    try {
+      const formData = new FormData();
+
+      if (uploadFile) {
+        formData.append("userImage", uploadFile);
+      }
+      formData.append("userNickname", userInfo?.userNickname || "");
+
+      const response = await privateApi.put("/user/info/edit", formData);
+
+      if (response.data.success) {
+        const updatedUserInfo = response.data.getUserInfo;
+        setUserInfo(updatedUserInfo);
+        alert("프로필 수정이 완료되었습니다.");
+        setProfileEditMode(false);
+      } else {
+        alert("프로필 수정에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("서버 오류로 프로필 수정에 실패했습니다.");
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,7 +238,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
                         {partOptions.map((part) => (
                           <DropdownItem
                             key={part}
-                            //  onClick={}
+                            onClick={() => handlePartSelect(part)}
                           >
                             {part}
                           </DropdownItem>
@@ -234,7 +291,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
                     </p>
                     <Button
                       size="sm"
-                      onClick={handleProfileSave}
+                      onClick={handleInfoEdit}
                       className="bg-sub_purple text-white"
                     >
                       저장
