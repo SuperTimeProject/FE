@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function MyService() {
+export default function MyInquiry() {
   const pathname = usePathname();
   return (
     <div className="flex h-screen justify-center items-center">
@@ -14,8 +14,8 @@ export default function MyService() {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <div>문의 리스트</div>
-          <Link href={`${pathname}/inquiry`}>
-            <Button isIconOnly aria-label="inquiry" className="bg-sub_purple">
+          <Link href={`${pathname}/request`}>
+            <Button isIconOnly className="bg-sub_purple">
               <img
                 src="/icons/post.png"
                 width="30"

@@ -7,15 +7,16 @@ import { Button, Divider, Input, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface postInfo {
+interface InquiryInfo {
   userCid: number;
   postTitle: string;
   postContent: string;
   postImage: File[];
 }
 
-export default function Inquiry() {
+export default function InquiryRequest() {
   const router = useRouter();
+  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo | null>(null);
 
   const handleInquirySubmit = async () => {
     try {
@@ -45,7 +46,7 @@ export default function Inquiry() {
 
       // if (response.data.success) {
       alert("문의가 제출되었습니다.");
-      router.push("../myservice");
+      router.push("../myinquiry");
       // } else {
       //   alert("문의에 실패했습니다.");
       // }

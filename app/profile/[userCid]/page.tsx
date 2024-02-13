@@ -108,9 +108,9 @@ export default function Users(/*{ params }: ProfileProps*/) {
     getUserPart();
   }, []);
 
-  const handlePartSelect = async (selectedPart: string) => {
+  const handlePartSelect = async () => {
     try {
-      const response = await privateApi.put(`/user/part/${selectedPart}`);
+      const response = await privateApi.put("/user/part/");
 
       if (response.data.success) {
         const updatedpartData = response.data.getUserInfo.part;
@@ -238,7 +238,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
                         {partOptions.map((part) => (
                           <DropdownItem
                             key={part}
-                            onClick={() => handlePartSelect(part)}
+                            onClick={() => handlePartSelect()}
                           >
                             {part}
                           </DropdownItem>
@@ -319,7 +319,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
               </li>
               <li className="flex flex-col">
                 <Button
-                  onClick={() => router.push(`${pathname}/myservice`)}
+                  onClick={() => router.push(`${pathname}/myinquiry`)}
                   className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
                 >
                   <p>문의하기</p>
