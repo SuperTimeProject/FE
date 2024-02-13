@@ -6,6 +6,7 @@ import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { privateApi } from "@/api/axiosConfig";
+import GetUserInfo from "@/hook/getUserInfo";
 
 interface Board {
   boardCid: number;
@@ -15,20 +16,40 @@ interface Post {
   postCid: number;
 }
 
+interface IPostInfo {
+  author: string;
+  createdAt: string;
+  postCid: number;
+  postTitle: string;
+  postView: number;
+}
+
 export default function Main() {
-  const [boardData, setBoardData] = useState(null);
+  const [boardData, setBoardData] = useState<IPostInfo[] | null>([]);
   const [postData, setPostData] = useState(null);
   /*   const [boardData, setBoardData] = useState<Board>({ boardCid: 0 });
   const [postData, setPostData] = useState<Post>({ postCid: 0 }); */
   const [errorMessage, setErrorMessage] = useState("");
+  const [page, setPage] = useState(1);
+
+  // 추후에 사용 다른페이지에서
+  // const [boardCid, setBoardCid] = useState(1);
+  // const [userBoardInfo, setuserBoardInfo] = useState();
+  // useEffect(() => {
+  //   const getUserinfo = async () => {
+  //     const userInfo = await GetUserInfo();
+  //     setuserBoardInfo(userInfo.boardList);
+  //   };
+  //   getUserinfo();
+  // }, []);
 
   useEffect(() => {
     const fetchBoardData = async () => {
       try {
-        const response = await privateApi.get("/board/getBoard/{boardCid}");
+        const response = await privateApi.get(`/board/getBoard/1/${page}`);
         // 응답 처리
         if (response.data.success) {
-          setBoardData(response.data.board);
+          setBoardData(response.data.postList);
           setErrorMessage("");
         } else {
           setErrorMessage("게시판을 불러오는데 실패했습니다.");
@@ -38,29 +59,10 @@ export default function Main() {
         setErrorMessage("서버 오류로 게시판을 불러오는데 실패했습니다.");
       }
     };
-
     fetchBoardData(); // 게시판 데이터 불러오기
-  }, []);
+  }, [page]);
 
-  useEffect(() => {
-    const fetchPostData = async () => {
-      try {
-        const response = await privateApi.get("/board/getPost/{postCid}");
-        // 응답 처리
-        if (response.data.success) {
-          setPostData(response.data.post); // 성공 시 게시물 데이터 설정
-          setErrorMessage(""); // 에러 메시지 초기화
-        } else {
-          setErrorMessage("게시물을 불러오는데 실패했습니다.");
-        }
-      } catch (error) {
-        console.error(error);
-        setErrorMessage("서버 오류로 게시물을 불러오는데 실패했습니다.");
-      }
-    };
-
-    fetchPostData(); // 게시물 데이터 불러오기
-  }, []);
+  console.log(boardData);
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -69,13 +71,15 @@ export default function Main() {
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>전체 게시판 메인</main>
           {errorMessage && <p>{errorMessage}</p>}
-          {boardData && (
-            <div>
-              {/* <h2>{postData.title}</h2> */}
-              {/* <p>{postData.content}</p> */}
-              {/* 게시물의 기타 정보 표시 */}
-            </div>
-          )}
+          {boardData &&
+            boardData.map((post) => (
+              <div className=" flex justify-between border-1 border-black">
+                <span>{post.author}</span>
+                <span>{post.postTitle}</span>
+                <span>{post.postView}</span>
+                <span>{post.createdAt}</span>
+              </div>
+            ))}
           <Link href="/board/post/create">
             <Button isIconOnly aria-label="post" className="bg-sub_purple">
               <img
@@ -92,3 +96,10 @@ export default function Main() {
     </div>
   );
 }
+
+// 전체 페이지 ui
+// 위에 제가 작성해 드린부분 이해해오기
+// TODO
+// 각 개시판별 데이터 불러오기
+// 잠 자기
+// 혼자 울지 않기 -> 울기 전에 같이 공유해보기
