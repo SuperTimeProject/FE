@@ -1,21 +1,83 @@
+"use client";
+
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { privateApi } from "@/api/axiosConfig";
+
+interface Board {
+  boardCid: number;
+}
+
+interface Post {
+  postCid: number;
+}
 
 export default function Main() {
+  const [boardData, setBoardData] = useState(null);
+  const [postData, setPostData] = useState(null);
+  /*   const [boardData, setBoardData] = useState<Board>({ boardCid: 0 });
+  const [postData, setPostData] = useState<Post>({ postCid: 0 }); */
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const fetchBoardData = async () => {
+      try {
+        const response = await privateApi.get("/board/getBoard/{boardCid}");
+        // 응답 처리
+        if (response.data.success) {
+          setBoardData(response.data.board);
+          setErrorMessage("");
+        } else {
+          setErrorMessage("게시판을 불러오는데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error(error);
+        setErrorMessage("서버 오류로 게시판을 불러오는데 실패했습니다.");
+      }
+    };
+
+    fetchBoardData(); // 게시판 데이터 불러오기
+  }, []);
+
+  useEffect(() => {
+    const fetchPostData = async () => {
+      try {
+        const response = await privateApi.get("/board/getPost/{postCid}");
+        // 응답 처리
+        if (response.data.success) {
+          setPostData(response.data.post); // 성공 시 게시물 데이터 설정
+          setErrorMessage(""); // 에러 메시지 초기화
+        } else {
+          setErrorMessage("게시물을 불러오는데 실패했습니다.");
+        }
+      } catch (error) {
+        console.error(error);
+        setErrorMessage("서버 오류로 게시물을 불러오는데 실패했습니다.");
+      }
+    };
+
+    fetchPostData(); // 게시물 데이터 불러오기
+  }, []);
+
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>전체 게시판 메인</main>
-          <Link href="/board/post/write">
-            <Button
-              isIconOnly
-              aria-label="post"
-              style={{ background: "#c4b0ff" }}
-            >
+          {errorMessage && <p>{errorMessage}</p>}
+          {boardData && (
+            <div>
+              {/* <h2>{postData.title}</h2> */}
+              {/* <p>{postData.content}</p> */}
+              {/* 게시물의 기타 정보 표시 */}
+            </div>
+          )}
+          <Link href="/board/post/create">
+            <Button isIconOnly aria-label="post" className="bg-sub_purple">
               <img
                 src="/icons/post.png"
                 width="30"
