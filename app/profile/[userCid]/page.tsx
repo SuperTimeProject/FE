@@ -155,7 +155,7 @@ export default function Users() {
       const response = await privateApi.put("/user/info/edit", formData);
 
       if (response.data.success) {
-        const updatedUserInfo = response.data;
+        const updatedUserInfo = response.data.getUserInfo;
         setUserInfo(updatedUserInfo);
         alert("프로필 수정이 완료되었습니다.");
         setProfileEditMode(false);
