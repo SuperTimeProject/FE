@@ -11,6 +11,7 @@ import axios from "axios";
 
 interface Board {
   boardCid: number;
+  boardName: string;
 }
 
 interface Post {
@@ -34,19 +35,13 @@ export default function Main() {
 
   //추후에 사용 다른페이지에서
   const boardCid = 1;
-  const [userBoardInfo, setuserBoardInfo] = useState<number[]>();
-  useEffect(() => {
-    const getUserinfo = async () => {
-      const userInfo = await GetUserInfo();
-      setuserBoardInfo(userInfo.boardList);
-    };
-    getUserinfo();
-  }, []);
 
   useEffect(() => {
     const fetchBoardData = async () => {
       try {
-        const response = await privateApi.get(`/board/getBoard/1/${page}`);
+        const response = await privateApi.get(
+          `/board/getBoard/${boardCid}/${page}`
+        );
         // 응답 처리
         if (response.data.success) {
           setBoardData(response.data.postList);
@@ -55,7 +50,6 @@ export default function Main() {
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.log(error.response);
           setErrorMessage(error.response?.data.message);
         }
       }
@@ -63,16 +57,14 @@ export default function Main() {
     fetchBoardData(); // 게시판 데이터 불러오기
   }, [page]);
 
-  //console.log(boardData);
-
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white overflow-y-auto">
+        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="pb-2 flex justify-between text-xl tracking-widest items-center border-b-2 border-gray-700 pl-1 pr-1">
             전체 게시판
-            <Link href="/board/post/create">
+            <Link href="/board/post/write">
               <Button
                 isIconOnly
                 aria-label="post"
@@ -87,8 +79,8 @@ export default function Main() {
               </Button>
             </Link>
           </main>
-          {errorMessage && <p>{errorMessage}</p>}
           <div className="h-[450px] overflow-auto scrollbar-none">
+            {errorMessage && <p>{errorMessage}</p>}
             {boardData &&
               boardData.map((post) => (
                 <Link
@@ -97,7 +89,11 @@ export default function Main() {
                 >
                   <div className="border-b-1 border-gray-400 pb-2 pt-2 cursor-pointer pl-1">
                     <div>
-                      <span className="flex text-lg">{post.postTitle}</span>
+                      <span className="flex text-lg">
+                        {post?.postTitle && post.postTitle.length > 20
+                          ? post.postTitle.slice(0, 20) + "..."
+                          : post?.postTitle}
+                      </span>
                     </div>
                     <div className="flex gap-2 text-sm text-gray-500">
                       <span>{post.author} |</span>
