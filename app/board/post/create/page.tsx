@@ -94,26 +94,28 @@ export default function CreatePost() {
         postTitle: postInfo.postTitle,
         postContent: postInfo.postContent,
       };
+      const postInfoJson = JSON.stringify(postInfoData);
+      const postInfoBlob = new Blob([postInfoJson], {
+        type: "application/json",
+      });
 
       const formData = new FormData();
-      formData.append("postInfo", JSON.stringify(postInfoData));
-
+      formData.append("postInfo", postInfoBlob);
       for (let i = 0; i < postInfo.postImage.length; i++) {
-        formData.append("postImages", postInfo.postImage[i]);
+        formData.append("postImage", postInfo.postImage[i]);
       }
 
       const response = await privateApi.post(
         `/board/create/${selectedBoard.boardCid}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formData
       );
       if (response.data.success) {
-        alert("게시글 작성되었습니다.");
-        router.back();
+        alert("게시글이 작성되었습니다.");
+        if (selectedBoard.boardCid === 1) {
+          router.push("/board/main");
+        } else {
+          router.push("/board/community");
+        }
       } else {
         alert("게시글 작성에 실패했습니다.");
       }

@@ -35,6 +35,7 @@ export default function MyBoard() {
         setUserBoard(userBoardData);
       }
     };
+
     const getUserPost = async () => {
       if (userBoard) {
         try {

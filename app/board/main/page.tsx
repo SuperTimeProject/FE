@@ -10,7 +10,7 @@ export default function Main() {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>전체 게시판 메인</main>
-          <Link href="/board/post/write">
+          <Link href="/board/post/create">
             <Button isIconOnly aria-label="post" className="bg-sub_purple">
               <img
                 src="/icons/post.png"

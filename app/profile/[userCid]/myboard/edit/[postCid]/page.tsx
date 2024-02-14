@@ -21,7 +21,7 @@ interface PostInfoReq {
   postTitle: string | null;
   postContent: string | null;
   deleteImageList: (number | null)[];
-  imageList: (IPostImage | null)[];
+  imageList: (IPostImage | File | null)[];
 }
 
 interface IPostImage {
@@ -30,26 +30,34 @@ interface IPostImage {
   postImageFilePath: string;
 }
 
-interface EditPostProps {
-  params: {
-    postCid: number;
-  };
+interface BoardInfo {
+  boardName: string;
+  boardCid: number;
 }
 
-export default function EditPost({ params }: EditPostProps) {
+export default function EditPost({ params }: { params: { postCid: number } }) {
   const router = useRouter();
+  const [boardInfo, setBoardInfo] = useState<BoardInfo | null>(null);
 
   // 기존 게시물 정보
-  const [postInfo, setPostInfo] = useState<PostInfoRes | undefined>(undefined);
+  const [postInfo, setPostInfo] = useState<PostInfoRes>();
   // 수정 게시물 정보
   const [editPost, setEditPost] = useState<PostInfoReq>({
-    postTitle: null,
-    postContent: null,
+    postTitle: "",
+    postContent: "",
     deleteImageList: [],
     imageList: [],
   });
 
   useEffect(() => {
+    // const getBoardData = async () => {
+    //   const res = await privateApi.get("/auth/getUserInfo");
+    //   if (res.data.success) {
+    //     const boardData = res.data.getUserInfo.boardList;
+    //     setBoardInfo(boardData);
+    //   }
+    // };
+
     const getPostData = async () => {
       try {
         const response = await privateApi.get(
@@ -59,6 +67,13 @@ export default function EditPost({ params }: EditPostProps) {
         if (response.data.success) {
           const getPostInfo = response.data.postInfo;
           setPostInfo(getPostInfo);
+
+          setEditPost({
+            postTitle: getPostInfo?.postTitle || "",
+            postContent: getPostInfo?.postContent || "",
+            deleteImageList: [],
+            imageList: [],
+          });
         } else {
           alert("게시글을 불러올 수 없습니다.");
         }
@@ -67,7 +82,7 @@ export default function EditPost({ params }: EditPostProps) {
         alert("서버 오류로 게시글을 불러올 수 없습니다.");
       }
     };
-
+    // getBoardData();
     getPostData();
   }, []);
 
@@ -89,14 +104,17 @@ export default function EditPost({ params }: EditPostProps) {
   //  이미올라가있는 이미지 1, 2, 3  새로운 이미지 4, 5, 6 삭제할 이미지 2, 3
 
   const deleteImage = (postImageCid: number) => {
-    setEditPost((prevEditPost) => ({
-      ...prevEditPost,
-      deleteImageList: [...prevEditPost.deleteImageList, postImageCid],
-      imageList:
-        prevEditPost.imageList?.filter(
-          (image) => image?.postImageCid !== postImageCid
-        ) || [],
-    }));
+    if (postImageCid !== undefined) {
+      const isSelected = editPost.deleteImageList.includes(postImageCid);
+      const updatedDeleteImageList = isSelected
+        ? editPost.deleteImageList.filter((id) => id !== postImageCid)
+        : [...editPost.deleteImageList, postImageCid];
+
+      setEditPost((prevEditPost) => ({
+        ...prevEditPost,
+        deleteImageList: updatedDeleteImageList,
+      }));
+    }
   };
 
   const editNewImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +129,7 @@ export default function EditPost({ params }: EditPostProps) {
       } else {
         setEditPost({
           ...editPost,
-          // imageList: [...newFiles],
+          imageList: [...editPost.imageList, ...newFiles],
         });
       }
     }
@@ -119,26 +137,29 @@ export default function EditPost({ params }: EditPostProps) {
 
   const editPostInfo = async () => {
     try {
-      const formData = new FormData();
-      formData.append("postTitle", editPost.postTitle || "");
-      formData.append("postContent", editPost.postContent || "");
-      formData.append(
-        "deleteImageList",
-        JSON.stringify(editPost.deleteImageList)
-      );
+      const editData = {
+        postTitle: editPost.postTitle,
+        postContent: editPost.postContent,
+        deleteImage: editPost.deleteImageList,
+      };
+      const editPostJson = JSON.stringify(editData);
+      const editPostBlob = new Blob([editPostJson], {
+        type: "application/json",
+      });
 
+      const formData = new FormData();
+      formData.append("editImageList", editPostBlob);
       for (let i = 0; i < editPost.imageList.length; i++) {
-        // formData.append("newImages", editPost.imageList[i]);
+        const image = editPost.imageList[i];
+        formData.append("newImage", image as File);
+        console.log(image);
       }
 
+      console.log(editData);
+
       const response = await privateApi.put(
-        `/board/edit/${params.postCid}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        `/board/edit/${postInfo?.postCid}`,
+        formData
       );
 
       if (response.data.success) {
@@ -160,21 +181,29 @@ export default function EditPost({ params }: EditPostProps) {
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="flex flex-col gap-2">
             <p className="flex justify-center">게시글 수정</p>
+            <Button
+              size="sm"
+              variant="ghost"
+              key={boardInfo?.boardCid}
+              isDisabled
+            >
+              {boardInfo?.boardName}
+            </Button>
             <form className="flex flex-col gap-4">
               <Input
                 type="text"
                 label="제목"
                 name="postTitle"
+                value={editPost.postTitle || ""}
                 // defaultValue={postInfo?.postTitle ? postInfo.postTitle : ""}
-                defaultValue={postInfo?.postTitle ?? ""}
                 onChange={handleInputChange}
               />
               <Divider className="my-2" />
               <Textarea
                 placeholder="내용"
                 name="postContent"
+                value={editPost.postContent || ""}
                 // defaultValue={postInfo?.postContent ? postInfo.postContent : ""}
-                defaultValue={postInfo?.postContent ?? ""}
                 onChange={handleInputChange}
                 className="h-[178px]"
               />
@@ -193,37 +222,49 @@ export default function EditPost({ params }: EditPostProps) {
                 />
               </Button>
             </div>
-            <section className="h-[120px] flex justify-start items-center">
-              {/* 기존 이미지 배열 */}
-              {postInfo?.imageList !== null &&
-                postInfo?.imageList?.map((file, index) => (
-                  <img
-                    key={index}
-                    src={file?.postImageFilePath}
-                    alt={`미리보기 ${index + 1}`}
-                    className="m-1 w-16 h-16 object-cover"
-                    onClick={() => {
-                      // PostInfoReq.deleteImageList에 삭제 클릭된 imageCid추가
-                      deleteImage(file?.postImageCid || 0);
-                      // postInfo.postImage에서 해당하는 cid를 가진 이미지 삭제
-                    }}
-                  />
-                ))}
-              {/* 새로운 이미지 배열 */}
-              {/* 
+            <section className="h-[120px] flex flex-col justify-center items-center gap-2">
+              <p className="text-xs">
+                기존 이미지 (삭제할 이미지를 선택해주세요.)
+              </p>
+              <div className="flex">
+                {/* 기존 이미지 배열 */}
+                {postInfo?.imageList !== null &&
+                  postInfo?.imageList?.map((file, index) => (
+                    <div
+                      key={index}
+                      className={"relative m-1 w-8 h-8 cursor-pointer"}
+                      onClick={() => {
+                        deleteImage(file?.postImageCid || 0);
+                      }}
+                    >
+                      <img
+                        src={file?.postImageFilePath}
+                        alt={`미리보기 ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {editPost.deleteImageList.includes(
+                        file?.postImageCid || 0
+                      ) && (
+                        <div className="absolute inset-0 border-2 rounded-lg border-red-500"></div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+              <p className="text-xs">새로운 이미지</p>
+              <div className="flex">
+                {/* 새로운 이미지 배열 */}
+                {/* 
                 새로운 이미지 map함수 postInfoReq.imageList에 file타입으로 추가가
                 */}
-              {editPost?.imageList?.map(
-                (file, index) =>
-                  file && (
-                    <img
-                      key={index}
-                      // src={URL.createObjectURL(file)}
-                      alt={`미리보기 ${index + 1}`}
-                      className="m-1 w-16 h-16 object-cover"
-                    />
-                  )
-              )}
+                {editPost?.imageList?.map((file, index) => (
+                  <img
+                    key={index}
+                    // src={URL.createObjectURL(file)}
+                    alt={`미리보기 ${index + 1}`}
+                    className="m-1 w-8 h-8 object-cover"
+                  />
+                ))}
+              </div>
             </section>
             <div className="flex justify-end">
               <Button
