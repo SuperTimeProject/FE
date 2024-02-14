@@ -108,7 +108,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
     getUserPart();
   }, []);
 
-  const handlePartSelect = async () => {
+  const partSelect = async () => {
     try {
       const response = await privateApi.put("/user/part/");
 
@@ -236,10 +236,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
                       </DropdownTrigger>
                       <DropdownMenu>
                         {partOptions.map((part) => (
-                          <DropdownItem
-                            key={part}
-                            onClick={() => handlePartSelect()}
-                          >
+                          <DropdownItem key={part} onClick={() => partSelect()}>
                             {part}
                           </DropdownItem>
                         ))}

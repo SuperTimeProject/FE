@@ -13,8 +13,13 @@ interface PostInfo {
   deleteImageList: number[];
   postImage: File[];
 }
+interface EditPostProps {
+  params: {
+    postCid: number;
+  };
+}
 
-export default function EditPost(postCid: number) {
+export default function EditPost({ params }: EditPostProps) {
   const router = useRouter();
 
   const [postInfo, setPostInfo] = useState<PostInfo>({
@@ -27,10 +32,12 @@ export default function EditPost(postCid: number) {
   useEffect(() => {
     const getPostData = async () => {
       try {
-        const response = await privateApi.get(`/board/getPost/${postCid}`);
+        const response = await privateApi.get(
+          `/board/getPost/${params.postCid}`
+        );
 
         if (response.data.success) {
-          const getPostInfo = response.data.postInfo;
+          const getPostInfo = response.data.post;
           setPostInfo(getPostInfo);
         } else {
           alert("게시글을 불러올 수 없습니다.");
@@ -42,7 +49,7 @@ export default function EditPost(postCid: number) {
     };
 
     getPostData();
-  }, [postCid]);
+  }, [params.postCid]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -79,7 +86,10 @@ export default function EditPost(postCid: number) {
         formData.append(`postImage[${index}]`, image);
       });
 
-      const response = await publicApi.put(`/board/edit/${postCid}`, formData);
+      const response = await publicApi.put(
+        `/board/edit/${params.postCid}`,
+        formData
+      );
 
       if (response.data.success) {
         alert("게시글이 수정되었습니다.");
