@@ -29,76 +29,48 @@ interface UserInfo {
   userNickname: string;
   part: string;
   semester: Semester;
-  posts: Post[];
   userProfile: UserProfile;
 }
-
-interface Post {
-  createdAt: string;
-  updatedAt: string;
-  postCid: number;
-  boardEntity: BoardEntity;
-  userEntity: UserEntity;
-  postImages: PostImage[];
-  postTitle: string;
-  postContent: string;
-  postView: number;
-}
-
-interface BoardEntity {
-  boardCid: number;
-  boardName: string;
-  userList: string[];
-}
-
-interface UserEntity {
-  createdAt: string;
-  updatedAt: string;
-  userCid: number;
-  semester: number;
-  userProfileCid: number;
-  userId: string;
-  userPassword: string;
-  userName: string;
-  userNickname: string;
-  게시판리스트: BoardEntity[];
-  valified: string;
-  part: string;
-  roles: string;
-  isDeleted: number;
-}
-
-interface PostImage {
-  createdAt: string;
-  updatedAt: string;
-  postImageCid: number;
-  postImageFileName: string;
-  postImageFilePath: string;
-}
-
 interface Semester {
   semesterCid: number;
   semesterDetailName: string;
   isFull: string;
 }
-
 interface UserProfile {
   userProfileCid: number;
   userProfileFileName: string;
   userProfileFilePath: string;
 }
 
+const PART_FE = "PART_FE";
+const PART_BE = "PART_BE";
+const PART_FULL = "PART_FULL";
+
 export default function Users() {
   const router = useRouter();
   const pathname = usePathname();
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  // const [userEntity, setUserEntity] = useState<UserEntity | null>(null);
+  const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
-  const [partOption, setPartOption] = useState<string[]>([]);
+
+  const partOptions = [
+    {
+      id: PART_FE,
+      label: "FE",
+    },
+    {
+      id: PART_BE,
+      label: "BE",
+    },
+    {
+      id: PART_FULL,
+      label: "FULL",
+    },
+  ];
 
   const handleProfileEditMode = () => {
     setProfileEditMode(true);
@@ -125,21 +97,18 @@ export default function Users() {
     getUserInfo();
   }, []);
 
-  // const getUserEntity = async () => {
-  //   const response = await privateApi.get("/user/info");
-
-  //   if (response.data.success) {
-  //     const userEntityData = response.data.userEntity;
-  //     setUserInfo(userEntityData);
-  //   }
-  //   getUserEntity();
-  // };
-
-  const handlePartSelect = async (partName: string) => {
-    const response = await privateApi.put(`/user/part/${partName}`);
-    if (response.data.success) {
-      const partData = response.data.part;
-      setPartOption(partData);
+  const handlePartSelect = async (selectedPart: String) => {
+    try {
+      const response = await privateApi.put(`/user/part/${selectedPart}`);
+      if (response.data.success) {
+        const partData = response.data.part;
+        setSelectedPart(partData);
+      } else {
+        alert("주특기 선택에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("서버 오류로 주특기 선택에 실패했습니다.");
     }
   };
 
@@ -249,16 +218,16 @@ export default function Users() {
                     <Dropdown>
                       <DropdownTrigger>
                         <Button size="sm" variant="ghost">
-                          {userInfo?.part || "주특기 선택"}
+                          {selectedPart || "주특기 선택"}
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu>
-                        {partOption.map((part) => (
+                        {partOptions.map((part) => (
                           <DropdownItem
-                            key={part}
-                            onClick={() => handlePartSelect(part)}
+                            key={part.id}
+                            onClick={() => handlePartSelect(part.label)}
                           >
-                            {part}
+                            {part.label}
                           </DropdownItem>
                         ))}
                       </DropdownMenu>
