@@ -4,6 +4,7 @@ import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Textarea } from "@nextui-org/react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -11,11 +12,7 @@ interface CommentInfo {
   description: string;
 }
 
-export default function CreateComment({
-  params,
-}: {
-  params: { postCid: number };
-}) {
+export default function CreateComment({ params }: { params: { postCid: number } }) {
   const router = useRouter();
   const [comment, setComment] = useState<CommentInfo>({ description: "" });
 
@@ -43,6 +40,9 @@ export default function CreateComment({
       }
     } catch (error) {
       console.error(error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.status);
+      }
       alert("서버 오류로 댓글 작성에 실패했습니다.");
     }
   };
@@ -64,16 +64,10 @@ export default function CreateComment({
               placeholder="내용"
               name="description"
               value={comment.description}
-              onChange={(e) =>
-                setComment({ ...comment, description: e.target.value })
-              }
+              onChange={(e) => setComment({ ...comment, description: e.target.value })}
             />
             <div className="flex justify-end mt-2">
-              <Button
-                size="sm"
-                className="bg-sub_purple font-semibold text-white"
-                onClick={createComment}
-              >
+              <Button size="sm" className="bg-sub_purple font-semibold text-white" onClick={createComment}>
                 등록
               </Button>
             </div>
