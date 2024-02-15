@@ -1,11 +1,10 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
-import { Button, Divider, Input, Textarea } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import axios from "axios";
-import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -15,24 +14,22 @@ interface CommentInfo {
   createdAt: string; // timeStamp
 }
 
-interface CommentInfo1 {
-  description: string;
+interface CommentAdd {
+  content: string;
 }
 
 export default function Comment({ postCid }: { postCid: number }) {
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const [commentData, setCommentData] = useState<CommentInfo[]>([]);
-  const [comment, setComment] = useState<CommentInfo1>({ description: "" });
-
-  const goBack = () => {
-    router.back();
-  };
+  const [comment, setComment] = useState<CommentAdd>();
 
   useEffect(() => {
     const getComment = async (page: number) => {
       try {
-        const response = await privateApi.get(`/comment/getComment/${postCid}/${page}`);
+        const response = await privateApi.get(
+          `/comment/getComment/${postCid}/${page}`
+        );
 
         const commentData = response.data.commentList;
         console.log("댓글", commentData);
@@ -51,14 +48,14 @@ export default function Comment({ postCid }: { postCid: number }) {
 
   const createComment = async () => {
     try {
-      if (!comment.description) {
+      if (!comment?.content) {
         alert("내용은 필수 입력 사항입니다.");
         return;
       }
 
       const response = await privateApi.post("/comment/create", {
         postCid: postCid,
-        description: comment.description,
+        content: comment?.content,
       });
 
       if (response.data.success) {
@@ -73,29 +70,52 @@ export default function Comment({ postCid }: { postCid: number }) {
     }
   };
 
+  const formatTimestamp = (timestamp: string) => {
+    const commentDate = new Date(timestamp);
+    const currentDate = new Date();
+
+    const timeDifferenceInSeconds = Math.floor(
+      (currentDate.getTime() - commentDate.getTime()) / 1000
+    );
+
+    if (timeDifferenceInSeconds < 60) {
+      return `${timeDifferenceInSeconds}초 전`;
+    } else if (timeDifferenceInSeconds < 3600) {
+      const minutes = Math.floor(timeDifferenceInSeconds / 60);
+      return `${minutes}분 전`;
+    } else if (timeDifferenceInSeconds < 86400) {
+      const hours = Math.floor(timeDifferenceInSeconds / 3600);
+      return `${hours}시간 전`;
+    } else {
+      return formatDistanceToNow(commentDate, { addSuffix: true, locale: ko });
+    }
+  };
+
   return (
     <div className="flex flex-col justify-between border-t-1 border-gray-500 p-2 m-1 gap-2 mt-5">
       {commentData?.map((comment, index) => (
-        <div key={index} className="flex gap-2">
-          <div className="flex gap-2">
-            <p>{comment.author}</p>
-            <p>{comment.createdAt}</p>
+        <div key={index} className="flex flex-col itesm-center gap-1 p-2">
+          <div className="flex justify-between items-center">
+            <p className="text-sm">{comment.author}</p>
+            <p className="text-xs">{formatTimestamp(comment.createdAt)}</p>
           </div>
           <p>{comment.content}</p>
         </div>
       ))}
-      <div className="flex justify-between">
-        <input
-          placeholder="내용"
+      <div className="flex justify-between items-center gap-2 p-2">
+        <Input
+          placeholder="댓글"
           name="description"
-          value={comment.description}
-          onChange={(e) => setComment({ ...comment, description: e.target.value })}
+          value={comment?.content}
+          onChange={(e) => setComment({ ...comment, content: e.target.value })}
         />
-        <div className="flex justify-end mt-2">
-          <Button size="sm" className="bg-sub_purple font-semibold text-white" onClick={createComment}>
-            등록
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          className="bg-sub_purple font-semibold text-white"
+          onClick={createComment}
+        >
+          등록
+        </Button>
       </div>
     </div>
   );

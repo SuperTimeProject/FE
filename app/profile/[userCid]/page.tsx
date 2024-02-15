@@ -21,6 +21,7 @@ import {
 } from "@nextui-org/react";
 
 import { usePathname, useRouter } from "next/navigation";
+import { deleteCookie } from "@/components/utils/setCookie";
 
 interface UserInfo {
   userCid: number;
@@ -129,7 +130,7 @@ export default function Users() {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("TOKEN"); // 로컬스토리지에 토큰값 삭제
+      deleteCookie(); // 로컬스토리지에 토큰값 삭제
       alert("로그아웃이 성공적으로 완료되었습니다.");
       router.push("/auth/login");
     } catch (error) {
