@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 // 불러오는 게시물 정보
 interface PostInfoRes {
@@ -18,10 +19,10 @@ interface PostInfoRes {
 
 // 수정 요청 게시물 정보
 interface PostInfoReq {
-  postTitle: string | null;
-  postContent: string | null;
-  deleteImageList: (number | null)[];
-  imageList: (IPostImage | File | null)[];
+  postTitle: string;
+  postContent: string;
+  deleteImageList: number[];
+  imageList: File[];
 }
 
 interface IPostImage {
@@ -137,6 +138,7 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
 
   const editPostInfo = async () => {
     try {
+      console.log(editPost);
       const editData = {
         postTitle: editPost.postTitle,
         postContent: editPost.postContent,
@@ -148,11 +150,13 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
       });
 
       const formData = new FormData();
-      formData.append("editImageList", editPostBlob);
-      for (let i = 0; i < editPost.imageList.length; i++) {
-        const image = editPost.imageList[i];
-        formData.append("newImage", image as File);
-        console.log(image);
+      formData.append("editPostInfo", editPostBlob);
+      if (editPost.imageList !== null) {
+        for (let i = 0; i < editPost.imageList.length; i++) {
+          // const image = editPost.imageList[i];
+          formData.append("postImage", editPost.imageList[i]);
+          // console.log(image);
+        }
       }
 
       console.log(editData);
@@ -169,7 +173,9 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
         alert("게시글 수정에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response);
+      }
       alert("서버 오류로 수정에 실패했습니다.");
     }
   };
@@ -259,7 +265,7 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
                 {editPost?.imageList?.map((file, index) => (
                   <img
                     key={index}
-                    // src={URL.createObjectURL(file)}
+                    src={URL.createObjectURL(file)}
                     alt={`미리보기 ${index + 1}`}
                     className="m-1 w-8 h-8 object-cover"
                   />
