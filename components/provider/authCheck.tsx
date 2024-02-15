@@ -3,6 +3,7 @@
 import { setToken } from "@/api/axiosConfig";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { getCookie } from "../utils/setCookie";
 
 export default function AuthCheck() {
   //url 정보 뽑기
@@ -17,7 +18,7 @@ export default function AuthCheck() {
   // 유즈이펙트 사용해서 언제언제 사용되게 할지 생각,,
 
   useEffect(() => {
-    const token = localStorage.getItem("TOKEN");
+    const token = getCookie();
     const exceptions = ["/auth/login", "/auth/signup"];
     const isException = exceptions.includes(pathname);
 
