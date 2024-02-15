@@ -7,7 +7,7 @@ import { Button } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Board {
   boardCid: number;
@@ -35,6 +35,7 @@ export default function DetailPage({
   params: { postCid: number };
 }) {
   const route = useRouter();
+  const pathName = usePathname();
   const [postInfo, setPostInfo] = useState<postInfo>();
   useEffect(() => {
     const getPostInfo = async () => {
@@ -53,6 +54,10 @@ export default function DetailPage({
 
   const handleBack = () => {
     route.back();
+  };
+
+  const goComment = () => {
+    route.push(`${pathName}/comment`);
   };
 
   return (
@@ -96,14 +101,22 @@ export default function DetailPage({
                   </div>
                 ))}
             </div>
-            <Button
-              isIconOnly
-              aria-label="post"
-              className="bg-sub_purple float-right w-20 mt-3"
-              onClick={handleBack}
-            >
-              <span className="text-white text-medium">글 목록</span>
-            </Button>
+            <div className="flex justify-between">
+              <Button
+                isIconOnly
+                className="bg-sub_purple float-right w-20 mt-3"
+                onClick={handleBack}
+              >
+                <span className="text-white text-medium">글 목록</span>
+              </Button>
+              <Button
+                isIconOnly
+                className="bg-sub_purple float-right w-20 mt-3"
+                onClick={goComment}
+              >
+                <span className="text-white text-medium">댓글</span>
+              </Button>
+            </div>
           </div>
         </div>
         <Footer />
