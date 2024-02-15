@@ -8,7 +8,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Comment from "@/components/post/comment";
-import CreateComment from "../../comment/create/page";
 
 interface Board {
   boardCid: number;

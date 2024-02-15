@@ -60,7 +60,7 @@ export default function Comment({ postCid }: { postCid: number }) {
 
       if (response.data.success) {
         alert("댓글이 작성되었습니다.");
-        router.back();
+        router.refresh();
       } else {
         alert("댓글 작성에 실패했습니다.");
       }
@@ -99,11 +99,12 @@ export default function Comment({ postCid }: { postCid: number }) {
             <p className="text-sm">{comment.author}</p>
             <p className="text-xs">{formatTimestamp(comment.createdAt)}</p>
           </div>
-          <p>{comment.content}</p>
+          <p className="text-base">{comment.content}</p>
         </div>
       ))}
       <div className="flex justify-between items-center gap-2 p-2">
         <Input
+          size="sm"
           placeholder="댓글"
           name="description"
           value={comment?.content}
