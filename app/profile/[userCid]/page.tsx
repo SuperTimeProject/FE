@@ -79,32 +79,10 @@ export default function Users() {
     getUserInfo();
   }, []);
 
-  useEffect(() => {
-    const getUserPart = async () => {
-      try {
-        const response = await privateApi.get("/user/part");
-
-        if (response.data.success) {
-          const partData = response.data.getUserInfo.part;
-          setPartOptions(partData);
-        } else {
-          alert("유저 파트를 불러오는데 실패했습니다.");
-        }
-      } catch (error) {
-        console.error(error);
-        alert("서버 오류로 유저 파트를 불러오는데 실패했습니다.");
-      }
-    };
-
-    getUserPart();
-  }, []);
-
-  const partSelect = async () => {
-
+  const handlePartSelect = async (selectedPart: String) => {
     try {
       const response = await privateApi.put(`/user/part/${selectedPart}`);
       if (response.data.success) {
-        // setUserInfo(response.data.getUserInfo.part);
         alert("주특기가 선택되었습니다.");
       } else {
         alert("주특기 선택에 실패했습니다.");
@@ -226,7 +204,10 @@ export default function Users() {
                       </DropdownTrigger>
                       <DropdownMenu>
                         {partOptions.map((part) => (
-                          <DropdownItem key={part} onClick={() => partSelect()}>
+                          <DropdownItem
+                            key={part}
+                            onClick={() => handlePartSelect(part)}
+                          >
                             {part}
                           </DropdownItem>
                         ))}
