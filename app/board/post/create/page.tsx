@@ -1,29 +1,53 @@
 "use client";
 
-import { publicApi } from "@/api/axiosConfig";
+import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { Button, Divider, Input, Textarea } from "@nextui-org/react";
+import {
+  Button,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Textarea,
+} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-interface postInfo {
+interface PostInfo {
   userCid: number;
   postTitle: string;
   postContent: string;
   postImage: File[];
 }
+interface BoardInfo {
+  boardName: string;
+  boardCid: number;
+}
 
 export default function CreatePost() {
   const router = useRouter();
-  // const { boardCid } = router.query;
-
-  const [postInfo, setPostInfo] = useState<postInfo>({
+  const [boardInfo, setBoardInfo] = useState<BoardInfo[]>([]);
+  const [selectedBoard, setSelectedBoard] = useState<BoardInfo | null>(null);
+  const [postInfo, setPostInfo] = useState<PostInfo>({
     userCid: 0,
     postTitle: "",
     postContent: "",
     postImage: [],
   });
+
+  useEffect(() => {
+    const getBoard = async () => {
+      const res = await privateApi.get("/auth/getUserInfo");
+      if (res.data.success) {
+        const userBoardData = res.data.getUserInfo.boardList;
+        setBoardInfo(userBoardData);
+      }
+    };
+    getBoard();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -50,38 +74,51 @@ export default function CreatePost() {
     }
   };
 
+  const boardSelect = (selectedBoard: BoardInfo) => {
+    setSelectedBoard(selectedBoard);
+  };
+
   const handlePostSubmit = async () => {
     try {
+      if (!selectedBoard) {
+        alert("카테고리를 선택하세요.");
+        return;
+      }
+
       if (!postInfo.postTitle || !postInfo.postContent) {
         alert("제목과 내용은 필수 입력 사항입니다.");
         return;
       }
 
-      const formData = new FormData();
-      formData.append("userCid", String(postInfo.userCid));
-      formData.append("postTitle", postInfo.postTitle);
-      formData.append("postContent", postInfo.postContent);
-
-      postInfo.postImage.forEach((image, index) => {
-        formData.append(`postImage[${index}]`, image);
+      const postInfoData = {
+        postTitle: postInfo.postTitle,
+        postContent: postInfo.postContent,
+      };
+      const postInfoJson = JSON.stringify(postInfoData);
+      const postInfoBlob = new Blob([postInfoJson], {
+        type: "application/json",
       });
 
-      // const response = await publicApi.post(
-      //   `/Board/create/${boardCid}`,
-      //   formData,
-      //   {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //   }
-      // );
+      const formData = new FormData();
+      formData.append("postInfo", postInfoBlob);
+      for (let i = 0; i < postInfo.postImage.length; i++) {
+        formData.append("postImage", postInfo.postImage[i]);
+      }
 
-      // if (response.data.success) {
-      //   alert("게시글 작성되었습니다.");
-      //   // router.push(/board/{boardCid}) ?
-      // } else {
-      //   alert("게시글 작성에 실패했습니다.");
-      // }
+      const response = await privateApi.post(
+        `/board/create/${selectedBoard.boardCid}`,
+        formData
+      );
+      if (response.data.success) {
+        alert("게시글이 작성되었습니다.");
+        if (selectedBoard.boardCid === 1) {
+          router.push("/board/main");
+        } else {
+          router.push("/board/community");
+        }
+      } else {
+        alert("게시글 작성에 실패했습니다.");
+      }
     } catch (error) {
       console.error(error);
       alert("서버 오류로 작성에 실패했습니다.");
@@ -93,8 +130,25 @@ export default function CreatePost() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <main className="flex flex-col gap-4">
+          <main className="flex flex-col gap-2">
             <p className="flex justify-center">게시글 작성</p>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button size="sm" variant="ghost">
+                  {selectedBoard?.boardName || "카테고리"}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {boardInfo.map((board) => (
+                  <DropdownItem
+                    key={board.boardCid}
+                    onClick={() => boardSelect(board)}
+                  >
+                    {board.boardName}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
             <form className="flex flex-col gap-4">
               <Input
                 type="text"
@@ -121,12 +175,12 @@ export default function CreatePost() {
                 <input
                   type="file"
                   accept="image/*"
-                  multiple // 이미지 multiple 선택
                   onChange={handleImageUpload}
                   className="opacity-0 absolute"
                 />
               </Button>
             </div>
+
             <section className="h-[120px] flex justify-start items-center">
               {postInfo.postImage.map((file, index) => (
                 <img
