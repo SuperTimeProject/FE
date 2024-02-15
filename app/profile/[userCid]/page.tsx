@@ -42,35 +42,17 @@ interface UserProfile {
   userProfileFilePath: string;
 }
 
-const PART_FE = "PART_FE";
-const PART_BE = "PART_BE";
-const PART_FULL = "PART_FULL";
-
 export default function Users() {
   const router = useRouter();
   const pathname = usePathname();
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
 
-  const partOptions = [
-    {
-      id: PART_FE,
-      label: "FE",
-    },
-    {
-      id: PART_BE,
-      label: "BE",
-    },
-    {
-      id: PART_FULL,
-      label: "FULL",
-    },
-  ];
+  const partOptions = ["PART_FE", "PART_BE", "PART_FULL"];
 
   const handleProfileEditMode = () => {
     setProfileEditMode(true);
@@ -101,8 +83,8 @@ export default function Users() {
     try {
       const response = await privateApi.put(`/user/part/${selectedPart}`);
       if (response.data.success) {
-        const partData = response.data.part;
-        setSelectedPart(partData);
+        // setUserInfo(response.data.getUserInfo.part);
+        alert("주특기가 선택되었습니다.");
       } else {
         alert("주특기 선택에 실패했습니다.");
       }
@@ -218,23 +200,23 @@ export default function Users() {
                     <Dropdown>
                       <DropdownTrigger>
                         <Button size="sm" variant="ghost">
-                          {selectedPart || "주특기 선택"}
+                          {userInfo?.part || "주특기 선택"}
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu>
                         {partOptions.map((part) => (
                           <DropdownItem
-                            key={part.id}
-                            onClick={() => handlePartSelect(part.label)}
+                            key={part}
+                            onClick={() => handlePartSelect(part)}
                           >
-                            {part.label}
+                            {part}
                           </DropdownItem>
                         ))}
                       </DropdownMenu>
                     </Dropdown>
                   </div>
                   <p className="text-xs text-red-500">
-                    *2일 동안 선택 가능합니다.
+                    *주특기를 선택해주세요.
                   </p>
                 </div>
               </li>
@@ -273,7 +255,7 @@ export default function Users() {
                 {isProfileEditMode ? (
                   <>
                     <p className="text-xs text-red-500 pr-4">
-                      *닉네임만 변경 가능합니다.
+                      *프로필 사진과 닉네임만 변경 가능합니다.
                     </p>
                     <Button
                       size="sm"
