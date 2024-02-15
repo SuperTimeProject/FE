@@ -31,14 +31,12 @@ interface IPostImage {
   postImageFilePath: string;
 }
 
-interface BoardInfo {
-  boardName: string;
-  boardCid: number;
-}
-
-export default function EditPost({ params }: { params: { postCid: number } }) {
+export default function EditPost({
+  params,
+}: {
+  params: { postCid: number; boardCid: number; boardName: string };
+}) {
   const router = useRouter();
-  const [boardInfo, setBoardInfo] = useState<BoardInfo | null>(null);
 
   // 기존 게시물 정보
   const [postInfo, setPostInfo] = useState<PostInfoRes>();
@@ -51,14 +49,6 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
   });
 
   useEffect(() => {
-    // const getBoardData = async () => {
-    //   const res = await privateApi.get("/auth/getUserInfo");
-    //   if (res.data.success) {
-    //     const boardData = res.data.getUserInfo.boardList;
-    //     setBoardInfo(boardData);
-    //   }
-    // };
-
     const getPostData = async () => {
       try {
         const response = await privateApi.get(
@@ -83,7 +73,6 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
         alert("서버 오류로 게시글을 불러올 수 없습니다.");
       }
     };
-    // getBoardData();
     getPostData();
   }, []);
 
@@ -142,7 +131,7 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
       const editData = {
         postTitle: editPost.postTitle,
         postContent: editPost.postContent,
-        deleteImage: editPost.deleteImageList,
+        deleteImageList: editPost.deleteImageList,
       };
       const editPostJson = JSON.stringify(editData);
       const editPostBlob = new Blob([editPostJson], {
@@ -153,9 +142,7 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
       formData.append("editPostInfo", editPostBlob);
       if (editPost.imageList !== null) {
         for (let i = 0; i < editPost.imageList.length; i++) {
-          // const image = editPost.imageList[i];
           formData.append("postImage", editPost.imageList[i]);
-          // console.log(image);
         }
       }
 
@@ -168,7 +155,7 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
 
       if (response.data.success) {
         alert("게시글이 수정되었습니다.");
-        router.push("../myboard");
+        router.back();
       } else {
         alert("게시글 수정에 실패했습니다.");
       }
@@ -187,13 +174,8 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="flex flex-col gap-2">
             <p className="flex justify-center">게시글 수정</p>
-            <Button
-              size="sm"
-              variant="ghost"
-              key={boardInfo?.boardCid}
-              isDisabled
-            >
-              {boardInfo?.boardName}
+            <Button size="sm" variant="ghost" isDisabled>
+              {decodeURIComponent(params.boardName)}
             </Button>
             <form className="flex flex-col gap-4">
               <Input
@@ -201,7 +183,6 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
                 label="제목"
                 name="postTitle"
                 value={editPost.postTitle || ""}
-                // defaultValue={postInfo?.postTitle ? postInfo.postTitle : ""}
                 onChange={handleInputChange}
               />
               <Divider className="my-2" />
@@ -209,7 +190,6 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
                 placeholder="내용"
                 name="postContent"
                 value={editPost.postContent || ""}
-                // defaultValue={postInfo?.postContent ? postInfo.postContent : ""}
                 onChange={handleInputChange}
                 className="h-[178px]"
               />
@@ -259,9 +239,6 @@ export default function EditPost({ params }: { params: { postCid: number } }) {
               <p className="text-xs">새로운 이미지</p>
               <div className="flex">
                 {/* 새로운 이미지 배열 */}
-                {/* 
-                새로운 이미지 map함수 postInfoReq.imageList에 file타입으로 추가가
-                */}
                 {editPost?.imageList?.map((file, index) => (
                   <img
                     key={index}

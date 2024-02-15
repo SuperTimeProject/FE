@@ -22,9 +22,9 @@ interface UserBoard {
 export default function MyBoard() {
   const pathname = usePathname();
   const [userPost, setUserPost] = useState<UserPost[] | null>([]);
-  const [boardCid, setBoardCid] = useState<number | null>(null);
   const [userBoard, setUserBoard] = useState<UserBoard[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [currentBoard, setCurrentBoard] = useState<String>("전체 게시판");
 
   useEffect(() => {
     const getUser = async () => {
@@ -136,7 +136,12 @@ export default function MyBoard() {
           <div className="flex flex-col gap-4 p-2">
             <div className="flex justify-between">
               {userBoard?.map((board) => (
-                <div onClick={() => getBoardPost(board.boardCid, 1)}>
+                <div
+                  onClick={() => {
+                    getBoardPost(board.boardCid, 1);
+                    setCurrentBoard(board.boardName);
+                  }}
+                >
                   {board.boardName}
                 </div>
               ))}
@@ -145,12 +150,14 @@ export default function MyBoard() {
               {userPost?.map((post) => (
                 <div
                   key={post.postCid}
-                  className="flex flex-col justify-between"
+                  className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
                 >
                   <p className="text-sm">{post.postTitle}</p>
                   <div className="flex justify-end items-center">
                     <p className="text-xs mr-2">{post.createdAt}</p>
-                    <Link href={`${pathname}/edit/${post.postCid}`}>
+                    <Link
+                      href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
+                    >
                       <Button size="sm" variant="light">
                         수정
                       </Button>
