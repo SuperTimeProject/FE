@@ -7,7 +7,7 @@ export default function List() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <main>채팅 리스트</main>
+          <main>채팅 페이지 준비 중입니다.</main>
         </div>
         <Footer />
       </div>

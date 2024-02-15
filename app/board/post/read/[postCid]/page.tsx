@@ -89,8 +89,9 @@ export default function DetailPage({
                     <img
                       src={image.postImageFilePath}
                       alt=""
-                      width={250}
-                      //height={300}
+                      //width={}
+                      max-width={500}
+                      min-width={300}
                     />
                     {/* <div>{image.postImageFileName}</div> */}
                   </div>
