@@ -79,32 +79,10 @@ export default function Users() {
     getUserInfo();
   }, []);
 
-  useEffect(() => {
-    const getUserPart = async () => {
-      try {
-        const response = await privateApi.get("/user/part");
-
-        if (response.data.success) {
-          const partData = response.data.getUserInfo.part;
-          setPartOptions(partData);
-        } else {
-          alert("유저 파트를 불러오는데 실패했습니다.");
-        }
-      } catch (error) {
-        console.error(error);
-        alert("서버 오류로 유저 파트를 불러오는데 실패했습니다.");
-      }
-    };
-
-    getUserPart();
-  }, []);
-
-  const partSelect = async () => {
-
+  const handlePartSelect = async (selectedPart: String) => {
     try {
       const response = await privateApi.put(`/user/part/${selectedPart}`);
       if (response.data.success) {
-        // setUserInfo(response.data.getUserInfo.part);
         alert("주특기가 선택되었습니다.");
       } else {
         alert("주특기 선택에 실패했습니다.");
@@ -183,41 +161,24 @@ export default function Users() {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>
-            <p className="flex justify-center text-xl font-mono font-semibold m-4">
-              마이페이지
-            </p>
+            <p className="flex justify-center text-xl font-mono font-semibold m-4">마이페이지</p>
             <ul className="flex flex-col gap-4">
               <li className="flex justify-evenly items-center p-2">
                 <div className="relative">
                   <Avatar
                     className="w-16 h-16 bg-white"
-                    src={
-                      uploadFile
-                        ? URL.createObjectURL(uploadFile)
-                        : userInfo?.userProfile?.userProfileFilePath
-                    }
+                    src={uploadFile ? URL.createObjectURL(uploadFile) : userInfo?.userProfile?.userProfileFilePath}
                   />
                   {isProfileEditMode && (
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      className="absolute bottom-0 right-0 bg-white"
-                    >
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="opacity-0 absolute"
-                      />
+                    <Button isIconOnly size="sm" className="absolute bottom-0 right-0 bg-white">
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="opacity-0 absolute" />
                       <img src="/icons/photo.png" className="w-6 h-6" />
                     </Button>
                   )}
                 </div>
                 <div className="flex flex-col justify-center items-center gap-2">
                   <div className="flex justify-center items-center gap-2">
-                    <p className="font-mono">
-                      {userInfo?.semester.semesterDetailName}
-                    </p>
+                    <p className="font-mono">{userInfo?.semester.semesterDetailName}</p>
                     <Dropdown>
                       <DropdownTrigger>
                         <Button size="sm" variant="ghost">
@@ -226,16 +187,14 @@ export default function Users() {
                       </DropdownTrigger>
                       <DropdownMenu>
                         {partOptions.map((part) => (
-                          <DropdownItem key={part} onClick={() => partSelect()}>
+                          <DropdownItem key={part} onClick={() => handlePartSelect(part)}>
                             {part}
                           </DropdownItem>
                         ))}
                       </DropdownMenu>
                     </Dropdown>
                   </div>
-                  <p className="text-xs text-red-500">
-                    *주특기를 선택해주세요.
-                  </p>
+                  <p className="text-xs text-red-500">*주특기를 선택해주세요.</p>
                 </div>
               </li>
               <li>
@@ -272,23 +231,13 @@ export default function Users() {
               <div className="flex justify-end items-center mb-4">
                 {isProfileEditMode ? (
                   <>
-                    <p className="text-xs text-red-500 pr-4">
-                      *프로필 사진과 닉네임만 변경 가능합니다.
-                    </p>
-                    <Button
-                      size="sm"
-                      onClick={handleInfoEdit}
-                      className="bg-sub_purple text-white"
-                    >
+                    <p className="text-xs text-red-500 pr-4">*프로필 사진과 닉네임만 변경 가능합니다.</p>
+                    <Button size="sm" onClick={handleInfoEdit} className="bg-sub_purple text-white">
                       저장
                     </Button>
                   </>
                 ) : (
-                  <Button
-                    size="sm"
-                    onClick={handleProfileEditMode}
-                    className="bg-sub_purple text-white"
-                  >
+                  <Button size="sm" onClick={handleProfileEditMode} className="bg-sub_purple text-white">
                     프로필 수정
                   </Button>
                 )}
@@ -320,9 +269,7 @@ export default function Users() {
                   <ModalContent>
                     {(onClose) => (
                       <>
-                        <ModalHeader className="flex flex-col gap-1">
-                          회원탈퇴
-                        </ModalHeader>
+                        <ModalHeader className="flex flex-col gap-1">회원탈퇴</ModalHeader>
                         <ModalBody>
                           <p>회원탈퇴하시겠습니까?</p>
                           <p>탈퇴시, 계정은 삭제되며 복구되지 않습니다.</p>
@@ -331,11 +278,7 @@ export default function Users() {
                           <Button variant="light" onPress={onClose}>
                             취소
                           </Button>
-                          <Button
-                            color="danger"
-                            onPress={onClose}
-                            onClick={() => handleDeleteAccount()}
-                          >
+                          <Button color="danger" onPress={onClose} onClick={() => handleDeleteAccount()}>
                             탈퇴
                           </Button>
                         </ModalFooter>
