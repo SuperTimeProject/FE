@@ -1,86 +1,92 @@
 "use client";
 
+import { privateApi } from "@/api/axiosConfig";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
-  const [activeLink, setActiveLink] = useState<string | null>(null);
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [userCid, setUserCid] = useState<number>();
 
-  const handleLinkClick = (link: string) => {
-    setActiveLink(link);
+  useEffect(() => {
+    const getUser = async () => {
+      const res = await privateApi.get("/auth/getUserInfo");
+      if (res.data) {
+        setUserCid(res.data.getUserInfo.userCid);
+      }
+    };
+    getUser();
+  }, []);
+
+  const handleIconHover = (icon: string | null) => {
+    setHoveredIcon(icon);
   };
-
-  const isActive = (link: string) => link === activeLink;
 
   return (
     <footer>
       <nav className="flex justify-center items-center">
         <ul className="flex space-x-16 p-4">
           <li>
-            <Link
-              href="/board/main"
-              onClick={() => handleLinkClick("/board/main")}
-            >
+            <Link href="/board/main">
               <img
                 src={
-                  isActive("/board/main")
+                  hoveredIcon === "coding"
                     ? "/icons/coding_color.png"
                     : "/icons/coding.png"
                 }
                 width="40"
                 height="40"
                 alt="전체 게시판"
+                onMouseEnter={() => handleIconHover("coding")}
+                onMouseLeave={() => handleIconHover(null)}
               />
             </Link>
           </li>
           <li>
-            <Link
-              href="/board/community"
-              onClick={() => handleLinkClick("/board/community")}
-            >
+            <Link href="/board/community">
               <img
                 src={
-                  isActive("/board/community")
+                  hoveredIcon === "list"
                     ? "/icons/list_color.png"
                     : "/icons/list.png"
                 }
                 width="40"
                 height="40"
                 alt="커뮤니티 게시판"
+                onMouseEnter={() => handleIconHover("list")}
+                onMouseLeave={() => handleIconHover(null)}
               />
             </Link>
           </li>
           <li>
-            <Link
-              href="/chat/list"
-              onClick={() => handleLinkClick("/chat/list")}
-            >
+            <Link href="/chat">
               <img
                 src={
-                  isActive("/chat/list")
+                  hoveredIcon === "chat"
                     ? "/icons/chat_color.png"
                     : "/icons/chat.png"
                 }
                 width="40"
                 height="40"
                 alt="채팅"
+                onMouseEnter={() => handleIconHover("chat")}
+                onMouseLeave={() => handleIconHover(null)}
               />
             </Link>
           </li>
           <li>
-            <Link
-              href="/profile/users"
-              onClick={() => handleLinkClick("/profile/users")}
-            >
+            <Link href={`/profile/${userCid}`}>
               <img
                 src={
-                  isActive("/profile/users")
-                    ? "/icons/_color.png"
+                  hoveredIcon === "user"
+                    ? "/icons/user_color.png"
                     : "/icons/user.png"
                 }
                 width="40"
                 height="40"
                 alt="프로필"
+                onMouseEnter={() => handleIconHover("user")}
+                onMouseLeave={() => handleIconHover(null)}
               />
             </Link>
           </li>

@@ -64,7 +64,7 @@ export default function Main() {
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="pb-2 flex justify-between text-xl tracking-widest items-center border-b-2 border-gray-700 pl-1 pr-1">
             전체 게시판
-            <Link href="/board/post/write">
+            <Link href="/board/post/create">
               <Button
                 isIconOnly
                 aria-label="post"
