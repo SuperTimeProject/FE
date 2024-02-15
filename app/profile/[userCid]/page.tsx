@@ -27,41 +27,32 @@ interface UserInfo {
   userId: string;
   userName: string;
   userNickname: string;
-  part: string | null;
-  role: string | null;
-  boardList: number[];
+  part: string;
   semester: Semester;
   userProfile: UserProfile;
 }
-
 interface Semester {
   semesterCid: number;
   semesterDetailName: string;
   isFull: string;
 }
-
 interface UserProfile {
   userProfileCid: number;
   userProfileFileName: string;
   userProfileFilePath: string;
 }
 
-// interface ProfileProps {
-//   params: {
-//     userCid: number;
-//   };
-// }
-
-export default function Users(/*{ params }: ProfileProps*/) {
-  // console.log({ params });
+export default function Users() {
   const router = useRouter();
   const pathname = usePathname();
-  // const { userCid } = pathname.query;
+
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [partOptions, setPartOptions] = useState<string[]>([]);
+
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
+
+  const partOptions = ["PART_FE", "PART_BE", "PART_FULL"];
 
   const handleProfileEditMode = () => {
     setProfileEditMode(true);
@@ -77,11 +68,11 @@ export default function Users(/*{ params }: ProfileProps*/) {
           setUserInfo(userInfoData);
           // console.log(userInfoData);
         } else {
-          alert("유저 정보를 불러오는데 실패했습니다.");
+          alert("로그인한 유저 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
         console.error(error);
-        alert("서버 오류로 유저 정보를 불러오는데 실패했습니다.");
+        alert("서버 오류로 로그인한 유저 정보를 불러오는데 실패했습니다.");
       }
     };
 
@@ -109,13 +100,12 @@ export default function Users(/*{ params }: ProfileProps*/) {
   }, []);
 
   const partSelect = async () => {
-    try {
-      const response = await privateApi.put("/user/part/");
 
+    try {
+      const response = await privateApi.put(`/user/part/${selectedPart}`);
       if (response.data.success) {
-        const updatedpartData = response.data.getUserInfo.part;
-        setUserInfo(updatedpartData);
-        alert("주특기 선택이 완료되었습니다.");
+        // setUserInfo(response.data.getUserInfo.part);
+        alert("주특기가 선택되었습니다.");
       } else {
         alert("주특기 선택에 실패했습니다.");
       }
@@ -129,9 +119,9 @@ export default function Users(/*{ params }: ProfileProps*/) {
     try {
       const formData = new FormData();
 
-      if (uploadFile) {
-        formData.append("userImage", uploadFile);
-      }
+      // if (uploadFile) {
+      //   formData.append("userImage", uploadFile);
+      // }
       formData.append("userNickname", userInfo?.userNickname || "");
 
       const response = await privateApi.put("/user/info/edit", formData);
@@ -244,7 +234,7 @@ export default function Users(/*{ params }: ProfileProps*/) {
                     </Dropdown>
                   </div>
                   <p className="text-xs text-red-500">
-                    *2일 동안 선택 가능합니다.
+                    *주특기를 선택해주세요.
                   </p>
                 </div>
               </li>
@@ -269,7 +259,6 @@ export default function Users(/*{ params }: ProfileProps*/) {
                     value={userInfo?.userName}
                   />
                   <Input
-                    // isDisabled={isProfileEditMode} // 닉네임만 수정 가능
                     isReadOnly={!isProfileEditMode}
                     size="sm"
                     type="text"
