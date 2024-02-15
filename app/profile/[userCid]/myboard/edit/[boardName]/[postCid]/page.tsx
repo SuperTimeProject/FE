@@ -48,6 +48,10 @@ export default function EditPost({
     imageList: [],
   });
 
+  const handleBack = () => {
+    router.back();
+  };
+
   useEffect(() => {
     const getPostData = async () => {
       try {
@@ -173,90 +177,103 @@ export default function EditPost({
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="flex flex-col gap-2">
-            <p className="flex justify-center">게시글 수정</p>
+            <div className="flex items-center">
+              <Button
+                size="sm"
+                variant="light"
+                onClick={handleBack}
+                className="text-xl"
+              >
+                {"<"}
+              </Button>
+              <p className="flex justify-center">게시글 수정</p>
+            </div>
+
             <Button size="sm" variant="ghost" isDisabled>
               {decodeURIComponent(params.boardName)}
             </Button>
-            <form className="flex flex-col gap-4">
-              <Input
-                type="text"
-                label="제목"
-                name="postTitle"
-                value={editPost.postTitle || ""}
-                onChange={handleInputChange}
-              />
-              <Divider className="my-2" />
-              <Textarea
-                placeholder="내용"
-                name="postContent"
-                value={editPost.postContent || ""}
-                onChange={handleInputChange}
-                className="h-[178px]"
-              />
-            </form>
-            <div className="flex justify-end">
-              <Button
-                size="sm"
-                className="bg-sub_purple font-semibold text-white"
-              >
-                이미지 선택
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={editNewImage}
-                  className="opacity-0 absolute"
+            <div className="h-[600px] overflow-auto scrollbar-none">
+              <form className="flex flex-col gap-4">
+                <Input
+                  type="text"
+                  label="제목"
+                  name="postTitle"
+                  value={editPost.postTitle || ""}
+                  onChange={handleInputChange}
                 />
-              </Button>
-            </div>
-            <section className="h-[120px] flex flex-col justify-center items-center gap-2">
-              <p className="text-xs">
-                기존 이미지 (삭제할 이미지를 선택해주세요.)
-              </p>
-              <div className="flex">
-                {/* 기존 이미지 배열 */}
-                {postInfo?.imageList !== null &&
-                  postInfo?.imageList?.map((file, index) => (
-                    <div
-                      key={index}
-                      className={"relative m-1 w-8 h-8 cursor-pointer"}
-                      onClick={() => {
-                        deleteImage(file?.postImageCid || 0);
-                      }}
-                    >
-                      <img
-                        src={file?.postImageFilePath}
-                        alt={`미리보기 ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      {editPost.deleteImageList.includes(
-                        file?.postImageCid || 0
-                      ) && (
-                        <div className="absolute inset-0 border-2 rounded-lg border-red-500"></div>
-                      )}
-                    </div>
-                  ))}
-              </div>
-              <p className="text-xs">새로운 이미지</p>
-              <div className="flex">
-                {/* 새로운 이미지 배열 */}
-                {editPost?.imageList?.map((file, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(file)}
-                    alt={`미리보기 ${index + 1}`}
-                    className="m-1 w-8 h-8 object-cover"
+                <Divider className="my-2" />
+                <Textarea
+                  placeholder="내용"
+                  name="postContent"
+                  value={editPost.postContent || ""}
+                  onChange={handleInputChange}
+                  className="h-[178px]"
+                />
+              </form>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  className="bg-sub_purple font-semibold text-white"
+                >
+                  이미지 선택
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={editNewImage}
+                    className="opacity-0 absolute"
                   />
-                ))}
+                </Button>
               </div>
-            </section>
-            <div className="flex justify-end">
-              <Button
-                size="sm"
-                className="bg-sub_purple font-semibold text-white"
-                onClick={editPostInfo}
-              >
-                수정
-              </Button>
+              <section className="h-[120px] flex flex-col justify-center items-center gap-2">
+                <p className="text-xs">
+                  기존 이미지 (삭제할 이미지를 선택해주세요.)
+                </p>
+                <div className="flex">
+                  {/* 기존 이미지 배열 */}
+                  {postInfo?.imageList !== null &&
+                    postInfo?.imageList?.map((file, index) => (
+                      <div
+                        key={index}
+                        className={"relative m-1 w-8 h-8 cursor-pointer"}
+                        onClick={() => {
+                          deleteImage(file?.postImageCid || 0);
+                        }}
+                      >
+                        <img
+                          src={file?.postImageFilePath}
+                          alt={`미리보기 ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {editPost.deleteImageList.includes(
+                          file?.postImageCid || 0
+                        ) && (
+                          <div className="absolute inset-0 border-2 rounded-lg border-red-500"></div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+                <p className="text-xs">새로운 이미지</p>
+                <div className="flex">
+                  {/* 새로운 이미지 배열 */}
+                  {editPost?.imageList?.map((file, index) => (
+                    <img
+                      key={index}
+                      src={URL.createObjectURL(file)}
+                      alt={`미리보기 ${index + 1}`}
+                      className="m-1 w-8 h-8 object-cover"
+                    />
+                  ))}
+                </div>
+              </section>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  className="bg-sub_purple font-semibold text-white"
+                  onClick={editPostInfo}
+                >
+                  수정
+                </Button>
+              </div>
             </div>
           </main>
         </div>

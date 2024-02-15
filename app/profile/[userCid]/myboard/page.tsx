@@ -5,7 +5,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Tab, Tabs } from "@nextui-org/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface UserPost {
@@ -20,6 +20,7 @@ interface UserBoard {
 }
 
 export default function MyBoard() {
+  const router = useRouter();
   const pathname = usePathname();
   const [userPost, setUserPost] = useState<UserPost[] | null>([]);
   const [userBoard, setUserBoard] = useState<UserBoard[]>([]);
@@ -57,6 +58,10 @@ export default function MyBoard() {
     getUser();
     getUserPost();
   }, []);
+
+  const handleBack = () => {
+    router.back();
+  };
 
   // useEffect(() => {
   //   const getUserPost = async () => {
@@ -118,6 +123,16 @@ export default function MyBoard() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+          <div>
+            <Button
+              size="sm"
+              variant="light"
+              onClick={handleBack}
+              className="text-xl"
+            >
+              {"<"}
+            </Button>
+          </div>
           {/* <Tabs
             variant="underlined"
             selectedKey={boardCid}
@@ -146,7 +161,7 @@ export default function MyBoard() {
                 </div>
               ))}
             </div>
-            <div>
+            <div className="h-[500px] overflow-auto scrollbar-none">
               {userPost?.map((post) => (
                 <div
                   key={post.postCid}
