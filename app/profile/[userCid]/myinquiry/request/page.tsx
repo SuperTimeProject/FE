@@ -155,13 +155,13 @@ export default function InquiryRequest() {
               </Button>
             </div>
 
-            <section className="h-[120px] flex justify-start items-center">
+            <section className="min-h-[120px] flex flex-col justify-start items-center">
               {inquiryInfo.inquiryImage.map((file, index) => (
                 <img
                   key={index}
                   src={URL.createObjectURL(file)}
                   alt={`미리보기 ${index + 1}`}
-                  className="m-1 w-16 h-16 object-cover"
+                  className="m-1 object-cover"
                 />
               ))}
             </section> */}

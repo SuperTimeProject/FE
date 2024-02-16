@@ -144,7 +144,7 @@ export default function MyBoard() {
                     setCurrentBoardCid(currentBoardCid);
                   }}
                 >
-                  <div className="min-h-[430px] overflow-auto scrollbar-none">
+                  <div className="h-[430px] overflow-auto scrollbar-none">
                     {userPost.map((post) => (
                       <div
                         key={post.postCid}

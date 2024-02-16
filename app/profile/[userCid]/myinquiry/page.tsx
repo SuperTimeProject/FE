@@ -102,7 +102,7 @@ export default function MyInquiry() {
           <Divider className="my-2" />
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">
-              <div className="min-h-[430px] overflow-auto scrollbar-none">
+              <div className="h-[430px] overflow-auto scrollbar-none">
                 {inquiryData?.map((inquiry, index) => (
                   <div key={index} className="flex flex-col">
                     <button
