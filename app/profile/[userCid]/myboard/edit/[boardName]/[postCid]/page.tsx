@@ -173,7 +173,17 @@ export default function EditPost({
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="flex flex-col gap-2">
-            <p className="flex justify-center">게시글 수정</p>
+            <div className="flex items-center">
+              <Button
+                size="sm"
+                variant="light"
+                onClick={() => router.back()}
+                className="text-xl"
+              >
+                {"<"}
+              </Button>
+              <p className="text-l">게시글 수정</p>
+            </div>
             <Button size="sm" variant="ghost" isDisabled>
               {decodeURIComponent(params.boardName)}
             </Button>

@@ -3,7 +3,7 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { Button, Divider, Tab, Tabs } from "@nextui-org/react";
+import { Button, Divider, Pagination, Tab, Tabs } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,39 +23,45 @@ interface UserBoard {
 export default function MyBoard() {
   const router = useRouter();
   const pathname = usePathname();
-  const [userPost, setUserPost] = useState<UserPost[] | null>([]);
+  const [userPost, setUserPost] = useState<UserPost[]>([]);
   const [userBoard, setUserBoard] = useState<UserBoard[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [infoMessage, setInfoMessage] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [currentBoardCid, setCurrentBoardCid] = useState<number>(1);
   const [currentBoard, setCurrentBoard] = useState<string>("전체 게시판");
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await privateApi.get("/auth/getUserInfo");
-      if (res.data.success) {
-        const userBoardData = res.data.getUserInfo.boardList;
-        console.log("유저 게시판", userBoardData);
-        setUserBoard(userBoardData);
-      }
-    };
-
-    const getUserPost = async () => {
-      if (userBoard) {
-        try {
-          const response = await privateApi.get(`/board/getUserPost/1/1`);
-
-          if (response.data.success) {
-            const userPostData = response.data.userPostList;
-            console.log("유저 포스트", userPostData);
-            setUserPost(userPostData);
-          }
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            setInfoMessage(error.response?.data.message);
-          }
+      try {
+        const response = await privateApi.get("/auth/getUserInfo");
+        if (response.data.success) {
+          setUserBoard(response.data.getUserInfo.boardList);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data.message);
         }
       }
     };
+
+    // 초기 게시판
+    const getUserPost = async () => {
+      try {
+        const response = await privateApi.get(
+          `/board/getUserPost/${currentBoardCid}/1`
+        );
+
+        if (response.data.success) {
+          setUserPost(response.data.userPostList);
+          setUserBoard(response.data.boardInfo);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data.message);
+        }
+      }
+    };
+
     getUser();
     getUserPost();
   }, []);
@@ -64,27 +70,19 @@ export default function MyBoard() {
     router.back();
   };
 
-  // useEffect(() => {
-  //   const getUserPost = async () => {
-  //     try {
-  //       const response = await privateApi.get(
-  //         `/board/getUserPost/${boardCid}/${page}`
-  //       );
-
-  //       if (response.data.success) {
-  //         const userPostData = response.data.userPostList;
-  //         console.log("유저 포스트", userPostData);
-  //         setUserPost(userPostData);
-  //       } else {
-  //         alert("게시글을 불러오는데 실패했습니다.");
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //       alert("서버 오류로 게시글을 불러오는데 실패했습니다.");
-  //     }
-  //   };
-  //   getUserPost();
-  // }, []);
+  const postPage = async (page: number) => {
+    try {
+      const response = await privateApi.get(
+        `board/getUserPost/${currentBoardCid}/${page}`
+      );
+      setUserPost(response.data.userPostList);
+      setUserBoard(response.data.boardInfo);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
+  };
 
   const getBoardPost = async (boardCid: number, page: number) => {
     try {
@@ -93,13 +91,12 @@ export default function MyBoard() {
       );
 
       if (response.data.success) {
-        const userPostData = response.data.userPostList;
-        console.log("유저 포스트", userPostData);
-        setUserPost(userPostData);
+        setUserPost(response.data.userPostList);
+        setUserBoard(response.data.boardInfo);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setInfoMessage(error.response?.data.message);
+        console.log(error.response?.data.message);
       }
     }
   };
@@ -112,7 +109,8 @@ export default function MyBoard() {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setInfoMessage(error.response?.data.message);
+        alert(error.response?.data.message);
+        window.location.reload();
       }
     }
   };
@@ -122,7 +120,7 @@ export default function MyBoard() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <div>
+          <div className="flex items-center">
             <Button
               size="sm"
               variant="light"
@@ -131,95 +129,61 @@ export default function MyBoard() {
             >
               {"<"}
             </Button>
+            <p className="text-l">내 게시글</p>
           </div>
 
           <Tabs variant="underlined">
-            {userBoard?.map((board) => (
-              <Tab
-                key={board.boardCid}
-                title={board.boardName}
-                onClick={() => {
-                  getBoardPost(board.boardCid, 1);
-                  setCurrentBoard(board.boardName);
-                }}
-              >
-                {/* {userPost
-                  ?.filter((post) => post.boardCid === board.boardCid) */}
-                {userPost?.map((post) => (
-                  <div
-                    key={post.postCid}
-                    className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
-                  >
-                    <p className="text-sm">{post.postTitle}</p>
-                    <div className="flex justify-end items-center">
-                      <p className="text-xs mr-2">{post.createdAt}</p>
-                      <Link
-                        href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
-                      >
-                        <Button size="sm" variant="light">
-                          수정
-                        </Button>
-                      </Link>
-                      <Divider orientation="vertical" />
-                      <Button
-                        size="sm"
-                        variant="light"
-                        className="text-red-500"
-                        onClick={() => handleDelete(post.postCid)}
-                      >
-                        삭제
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </Tab>
-            ))}
-          </Tabs>
-
-          {/* <div className="flex flex-col gap-4 p-2">
-            <div className="flex justify-between">
-              {userBoard?.map((board) => (
-                <div
+            {Array.isArray(userBoard) &&
+              userBoard.map((board) => (
+                <Tab
+                  key={board.boardCid}
+                  title={board.boardName}
                   onClick={() => {
                     getBoardPost(board.boardCid, 1);
                     setCurrentBoard(board.boardName);
+                    setCurrentBoardCid(currentBoardCid);
                   }}
                 >
-                  {board.boardName}
-                </div>
-              ))}
-            </div>
-            <div className="h-[500px] overflow-auto scrollbar-none">
-              {infoMessage && <p>{"작성된 게시글이 없습니다."}</p>}
-              {userPost?.map((post) => (
-                <div
-                  key={post.postCid}
-                  className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
-                >
-                  <p className="text-sm">{post.postTitle}</p>
-                  <div className="flex justify-end items-center">
-                    <p className="text-xs mr-2">{post.createdAt}</p>
-                    <Link
-                      href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
-                    >
-                      <Button size="sm" variant="light">
-                        수정
-                      </Button>
-                    </Link>
-                    <Divider orientation="vertical" />
-                    <Button
-                      size="sm"
-                      variant="light"
-                      className="text-red-500"
-                      onClick={() => handleDelete(post.postCid)}
-                    >
-                      삭제
-                    </Button>
+                  <div className="min-h-[430px] overflow-auto scrollbar-none">
+                    {userPost.map((post) => (
+                      <div
+                        key={post.postCid}
+                        className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
+                      >
+                        <p className="text-sm">{post.postTitle}</p>
+                        <div className="flex justify-end items-center">
+                          <p className="text-xs mr-2">{post.createdAt}</p>
+                          <Link
+                            href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
+                          >
+                            <Button size="sm" variant="light">
+                              수정
+                            </Button>
+                          </Link>
+                          <Divider orientation="vertical" />
+                          <Button
+                            size="sm"
+                            variant="light"
+                            className="text-red-500"
+                            onClick={() => handleDelete(post.postCid)}
+                          >
+                            삭제
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                  <Pagination
+                    showControls
+                    total={totalPage}
+                    initialPage={page}
+                    className="mt-3 flex justify-center"
+                    color="secondary"
+                    onChange={(page: number) => postPage(page)}
+                  />
+                </Tab>
               ))}
-            </div>
-          </div> */}
+          </Tabs>
         </div>
         <Footer />
       </div>
