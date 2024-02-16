@@ -1,58 +1,107 @@
 "use client";
 
-import { publicApi } from "@/api/axiosConfig";
+import { privateApi, publicApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface InquiryInfo {
-  userCid: number;
-  postTitle: string;
-  postContent: string;
-  postImage: File[];
+  inquiryTitle: string;
+  inquiryContent: string;
+  // inquiryImage: File[];
 }
 
+// interface UserInfo {
+//   userCid: number;
+//   userId: string;
+//   userName: string;
+//   userNickname: string;
+// }
+
 export default function InquiryRequest() {
+  // { userId }: { userId: string }
   const router = useRouter();
-  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo | null>(null);
+  // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>({
+    inquiryTitle: "",
+    inquiryContent: "",
+    // inquiryImage: [],
+  });
+
+  // useEffect(() => {
+  //   const getUserInfo = async () => {
+  //     const response = await privateApi.get("/auth/getUserInfo");
+
+  //     if (response.data.success) {
+  //       const userInfoData = response.data.getUserInfo;
+  //       setUserInfo(userInfoData);
+  //     }
+  //   };
+
+  //   getUserInfo();
+  // }, []);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setInquiryInfo((prevInfo) => ({
+      ...prevInfo,
+      [name]: value,
+    }));
+  };
+
+  // const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (files) {
+  //     const newFiles = Array.from(files).slice(0, 5);
+  //     if (newFiles.length + inquiryInfo.inquiryImage.length > 5) {
+  //       alert("이미지는 최대 5개까지 선택 가능합니다.");
+  //     } else {
+  //       setInquiryInfo((prevInfo) => ({
+  //         ...prevInfo,
+  //         inquiryImage: [...prevInfo.inquiryImage, ...newFiles],
+  //       }));
+  //     }
+  //   }
+  // };
 
   const handleInquirySubmit = async () => {
     try {
-      // if (!postInfo.postTitle || !postInfo.postContent) {
-      //   alert("제목과 내용은 필수 입력 사항입니다.");
-      //   return;
+      if (!inquiryInfo.inquiryTitle || !inquiryInfo.inquiryContent) {
+        alert("제목과 내용은 필수 입력 사항입니다.");
+        return;
+      }
+
+      const inquiryInfoData = {
+        inquiryTitle: inquiryInfo.inquiryTitle,
+        inquiryContent: inquiryInfo.inquiryContent,
+      };
+
+      const inquiryInfoJson = JSON.stringify(inquiryInfoData);
+      const inquiryInfoBlob = new Blob([inquiryInfoJson], {
+        type: "application/json",
+      });
+
+      const formData = new FormData();
+      formData.append("inquiryInfo", inquiryInfoBlob);
+      // for (let i = 0; i < inquiryInfo.inquiryImage.length; i++) {
+      //   formData.append("inquiryImage", inquiryInfo.inquiryImage[i]);
       // }
 
-      // const formData = new FormData();
-      // formData.append("userCid", String(postInfo.userCid));
-      // formData.append("postTitle", postInfo.postTitle);
-      // formData.append("postContent", postInfo.postContent);
+      const response = await privateApi.post("/user/inquiry", formData);
 
-      // postInfo.postImage.forEach((image, index) => {
-      //   formData.append(`postImage[${index}]`, image);
-      // });
-
-      // const response = await publicApi.post(
-      //   `/Board/create/${boardCid}`,
-      //   formData,
-      //   {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //   }
-      // );
-
-      // if (response.data.success) {
-      alert("문의가 제출되었습니다.");
-      router.push("../myinquiry");
-      // } else {
-      //   alert("문의에 실패했습니다.");
-      // }
+      if (response.data.success) {
+        alert("문의가 제출되었습니다.");
+        router.back();
+      }
     } catch (error) {
-      console.error(error);
-      alert("서버 오류로 문의에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        console.log(error.response);
+      }
     }
   };
 
@@ -62,24 +111,35 @@ export default function InquiryRequest() {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="flex flex-col gap-4">
-            <p className="flex justify-center">문의하기</p>
+            <div className="flex items-center">
+              <Button
+                size="sm"
+                variant="light"
+                onClick={() => router.back()}
+                className="text-xl"
+              >
+                {"<"}
+              </Button>
+              <p className="text-l">문의하기</p>
+            </div>
             <form className="flex flex-col gap-4">
               <Input
                 type="text"
                 label="제목"
-                // name="postTitle"
-                // value={postInfo.postTitle}
-                // onChange={handleInputChange}
+                name="inquiryTitle"
+                value={inquiryInfo.inquiryTitle}
+                onChange={handleInputChange}
               />
               <Divider className="my-2" />
               <Textarea
                 placeholder="내용"
-                // name="postContent"
-                // value={postInfo.postContent}
-                // onChange={handleInputChange}
+                name="inquiryContent"
+                value={inquiryInfo.inquiryContent}
+                onChange={handleInputChange}
                 className="h-[178px]"
               />
             </form>
+
             {/* <div className="flex justify-end">
               <Button
                 size="sm"
@@ -89,14 +149,14 @@ export default function InquiryRequest() {
                 <input
                   type="file"
                   accept="image/*"
-                  multiple // 이미지 multiple 선택
                   onChange={handleImageUpload}
                   className="opacity-0 absolute"
                 />
               </Button>
             </div>
+
             <section className="h-[120px] flex justify-start items-center">
-              {postInfo.postImage.map((file, index) => (
+              {inquiryInfo.inquiryImage.map((file, index) => (
                 <img
                   key={index}
                   src={URL.createObjectURL(file)}
@@ -105,6 +165,7 @@ export default function InquiryRequest() {
                 />
               ))}
             </section> */}
+
             <div className="flex justify-end">
               <Button
                 size="sm"
