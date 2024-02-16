@@ -22,6 +22,7 @@ interface InquiryInfo {
 // }
 
 export default function InquiryRequest() {
+  // { userId }: { userId: string }
   const router = useRouter();
   // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>({
@@ -79,21 +80,20 @@ export default function InquiryRequest() {
         inquiryTitle: inquiryInfo.inquiryTitle,
         inquiryContent: inquiryInfo.inquiryContent,
       };
-      const inquiryInfoJson = JSON.stringify(inquiryInfoData);
-      // const inquiryInfoBlob = new Blob([inquiryInfoJson], {
-      //   type: "application/json",
-      // });
 
-      // const formData = new FormData();
-      // formData.append("inquiryInfo", inquiryInfoBlob);
+      const inquiryInfoJson = JSON.stringify(inquiryInfoData);
+      const inquiryInfoBlob = new Blob([inquiryInfoJson], {
+        type: "application/json",
+      });
+
+      const formData = new FormData();
+      formData.append("inquiryInfo", inquiryInfoBlob);
       // for (let i = 0; i < inquiryInfo.inquiryImage.length; i++) {
       //   formData.append("inquiryImage", inquiryInfo.inquiryImage[i]);
       // }
 
-      const response = await privateApi.post(
-        "/user/inquiry/request",
-        inquiryInfoJson
-      );
+      const response = await privateApi.post("/user/inquiry", formData);
+
       if (response.data.success) {
         alert("문의가 제출되었습니다.");
         router.back();

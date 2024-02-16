@@ -13,6 +13,7 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
+import axios from "axios";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,18 +38,34 @@ export default function MyInquiry() {
   const router = useRouter();
   const pathname = usePathname();
   const [inquiryData, setInquiryData] = useState<InquiryList[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [inquiryState, setInquiryState] = useState<String>("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     const getInquiry = async () => {
-      const res = await privateApi.get("/user/inquiry/get");
-      if (res.data.success) {
-        const userInquiryData = res.data.inquiryList;
-        console.log("유저 문의", userInquiryData);
-        setInquiryData(userInquiryData);
+      try {
+        const res = await privateApi.get("/user/inquiry/get", {
+          params: { inquiryClosed: inquiryState, page: page },
+        });
+
+        if (res.data.success) {
+          const userInquiryData = res.data.inquiryList;
+          console.log("유저 문의", userInquiryData);
+          setInquiryData(userInquiryData);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response);
+        }
       }
     };
     getInquiry();
+    // if (inquiryState === "OPEN") {
+    //   getInquiry("문의중", page);
+    // } else if (inquiryState === "CLOSED") {
+    //   getInquiry("문의완료", page);
+    // }
   }, []);
 
   return (
@@ -76,52 +93,56 @@ export default function MyInquiry() {
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">
               {inquiryData?.map((inquiry, index) => (
-                <Button
-                  variant="light"
-                  className="border-1.5 border-gray-500"
-                  onPress={onOpen}
-                >
-                  <div
-                    key={index}
-                    className="flex justify-between items-center space-x-10"
+                <div key={index} className="flex flex-col">
+                  <button
+                    className="border-1.5 rounded-md border-gray-300 p-2"
+                    onClick={onOpen}
                   >
-                    <p className="text-sm">{inquiry.inquiryTitle}</p>
-                    <p className="text-xs">
-                      {inquiry.answer !== null ? "답변완료" : "답변대기"}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm">{inquiry.inquiryTitle}</p>
+                      <p
+                        className={`grid flex-end text-xs ${
+                          inquiry.answer !== null
+                            ? "text-main_blue"
+                            : "text-sub_purple"
+                        }`}
+                      >
+                        {inquiry.answer !== null ? "답변완료" : "답변대기"}
+                      </p>
+                    </div>
+                  </button>
 
-                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                      <ModalContent>
-                        {(onClose) => (
-                          <>
-                            <ModalHeader className="flex flex-col gap-1">
-                              문의 내용
-                            </ModalHeader>
-                            <ModalBody>
-                              <p>{inquiry.inquiryContent}</p>
-                              {/* {inquiry?.imageList.map((image) => (
-                                <div className="flex justify-center pt-2 pb-2">
-                                  <img
-                                    src={image.postImageFilePath}
-                                    alt=""
-                                    width={250}
-                                  />
-                                </div>
-                              ))} */}
-                              <Divider className="my-2" />
-                              <p>{inquiry.answer}</p>
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button variant="light" onPress={onClose}>
-                                닫기
-                              </Button>
-                            </ModalFooter>
-                          </>
-                        )}
-                      </ModalContent>
-                    </Modal>
-                  </div>
-                </Button>
+                  <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                    <ModalContent>
+                      {(onClose) => (
+                        <>
+                          <ModalHeader className="flex flex-col gap-1">
+                            문의 내용
+                          </ModalHeader>
+                          <ModalBody>
+                            <p>{inquiry.inquiryContent}</p>
+                            {/* {inquiry?.imageList.map((image) => (
+                              <div className="flex justify-center pt-2 pb-2">
+                                <img
+                                  src={image.postImageFilePath}
+                                  alt=""
+                                  width={250}
+                                />
+                              </div>
+                            ))} */}
+                            <Divider className="my-2" />
+                            <p>{inquiry.answer}</p>
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button variant="light" onPress={onClose}>
+                              닫기
+                            </Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                </div>
               ))}
             </div>
           </div>
