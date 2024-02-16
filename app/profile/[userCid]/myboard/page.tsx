@@ -4,8 +4,9 @@ import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Tab, Tabs } from "@nextui-org/react";
+import axios from "axios";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface UserPost {
@@ -20,11 +21,13 @@ interface UserBoard {
 }
 
 export default function MyBoard() {
+  const router = useRouter();
   const pathname = usePathname();
   const [userPost, setUserPost] = useState<UserPost[] | null>([]);
   const [userBoard, setUserBoard] = useState<UserBoard[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [currentBoard, setCurrentBoard] = useState<String>("전체 게시판");
+  const [infoMessage, setInfoMessage] = useState("");
+  const [currentBoard, setCurrentBoard] = useState<string>("전체 게시판");
 
   useEffect(() => {
     const getUser = async () => {
@@ -45,18 +48,21 @@ export default function MyBoard() {
             const userPostData = response.data.userPostList;
             console.log("유저 포스트", userPostData);
             setUserPost(userPostData);
-          } else {
-            alert("게시글을 불러오는데 실패했습니다.");
           }
         } catch (error) {
-          console.error(error);
-          alert("서버 오류로 게시글을 불러오는데 실패했습니다.");
+          if (axios.isAxiosError(error)) {
+            setInfoMessage(error.response?.data.message);
+          }
         }
       }
     };
     getUser();
     getUserPost();
   }, []);
+
+  const handleBack = () => {
+    router.back();
+  };
 
   // useEffect(() => {
   //   const getUserPost = async () => {
@@ -90,12 +96,11 @@ export default function MyBoard() {
         const userPostData = response.data.userPostList;
         console.log("유저 포스트", userPostData);
         setUserPost(userPostData);
-      } else {
-        alert("게시글을 불러오는데 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      alert("서버 오류로 게시글을 불러오는데 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        setInfoMessage(error.response?.data.message);
+      }
     }
   };
 
@@ -104,12 +109,11 @@ export default function MyBoard() {
       const response = await privateApi.delete(`/board/delete/${postCid}`);
       if (response.data.success) {
         alert("게시글이 삭제되었습니다.");
-      } else {
-        alert("게시글을 삭제할 수 없습니다.");
       }
     } catch (error) {
-      console.error(error);
-      alert("서버 오류로 게시글을 삭제할 수 없습니다.");
+      if (axios.isAxiosError(error)) {
+        setInfoMessage(error.response?.data.message);
+      }
     }
   };
 
@@ -118,22 +122,61 @@ export default function MyBoard() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          {/* <Tabs
-            variant="underlined"
-            selectedKey={boardCid}
-            onSelect={(key) => setBoardCid(Number(key))}
-          >
+          <div>
+            <Button
+              size="sm"
+              variant="light"
+              onClick={handleBack}
+              className="text-xl"
+            >
+              {"<"}
+            </Button>
+          </div>
+
+          <Tabs variant="underlined">
             {userBoard?.map((board) => (
               <Tab
                 key={board.boardCid}
                 title={board.boardName}
-                onClick={() => getBoardPost(board.boardCid, 1)}
+                onClick={() => {
+                  getBoardPost(board.boardCid, 1);
+                  setCurrentBoard(board.boardName);
+                }}
               >
-                <div></div>
+                {/* {userPost
+                  ?.filter((post) => post.boardCid === board.boardCid) */}
+                {userPost?.map((post) => (
+                  <div
+                    key={post.postCid}
+                    className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
+                  >
+                    <p className="text-sm">{post.postTitle}</p>
+                    <div className="flex justify-end items-center">
+                      <p className="text-xs mr-2">{post.createdAt}</p>
+                      <Link
+                        href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
+                      >
+                        <Button size="sm" variant="light">
+                          수정
+                        </Button>
+                      </Link>
+                      <Divider orientation="vertical" />
+                      <Button
+                        size="sm"
+                        variant="light"
+                        className="text-red-500"
+                        onClick={() => handleDelete(post.postCid)}
+                      >
+                        삭제
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </Tab>
             ))}
-          </Tabs> */}
-          <div className="flex flex-col gap-4 p-2">
+          </Tabs>
+
+          {/* <div className="flex flex-col gap-4 p-2">
             <div className="flex justify-between">
               {userBoard?.map((board) => (
                 <div
@@ -146,7 +189,8 @@ export default function MyBoard() {
                 </div>
               ))}
             </div>
-            <div>
+            <div className="h-[500px] overflow-auto scrollbar-none">
+              {infoMessage && <p>{"작성된 게시글이 없습니다."}</p>}
               {userPost?.map((post) => (
                 <div
                   key={post.postCid}
@@ -175,7 +219,7 @@ export default function MyBoard() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
         <Footer />
       </div>
