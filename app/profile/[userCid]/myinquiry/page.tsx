@@ -32,7 +32,7 @@ interface InquiryList {
   //   }
   // ];
   answer: string;
-  isClosed: number;
+  isClosed: string;
 }
 
 export default function MyInquiry() {
@@ -41,14 +41,14 @@ export default function MyInquiry() {
   const [inquiryData, setInquiryData] = useState<InquiryList[]>([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState<number>(1);
-  const [inquiryState, setInquiryState] = useState<String>("");
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     const getInquiry = async () => {
       try {
         const res = await privateApi.get("/user/inquiry/get", {
-          params: { inquiryClosed: inquiryState, page: page },
+          params: { page: page },
         });
 
         if (res.data.success) {
@@ -63,11 +63,6 @@ export default function MyInquiry() {
       }
     };
     getInquiry();
-    // if (inquiryState === "OPEN") {
-    //   getInquiry("문의중", page);
-    // } else if (inquiryState === "CLOSED") {
-    //   getInquiry("문의완료", page);
-    // }
   }, []);
 
   return (
@@ -118,7 +113,7 @@ export default function MyInquiry() {
                               : "text-sub_purple"
                           }`}
                         >
-                          {inquiry.answer !== null ? "답변완료" : "답변대기"}
+                          {inquiry.isClosed}
                         </p>
                       </div>
                     </button>
