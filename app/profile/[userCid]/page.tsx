@@ -84,6 +84,7 @@ export default function Users() {
       const response = await privateApi.put(`/user/part/${selectedPart}`);
       if (response.data.success) {
         alert("주특기가 선택되었습니다.");
+        window.location.reload();
       } else {
         alert("주특기 선택에 실패했습니다.");
       }
@@ -110,6 +111,7 @@ export default function Users() {
         setUserInfo(updatedUserInfo);
         alert("프로필 수정이 완료되었습니다.");
         setProfileEditMode(false);
+        window.location.reload();
       } else {
         alert("프로필 수정에 실패했습니다.");
       }

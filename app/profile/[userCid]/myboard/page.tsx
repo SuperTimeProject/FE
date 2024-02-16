@@ -92,10 +92,13 @@ export default function MyBoard() {
 
       if (response.data.success) {
         setUserPost(response.data.userPostList);
-        setUserBoard(response.data.boardInfo);
+        // setUserBoard(response.data.boardInfo);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          setUserPost([]);
+        }
         console.log(error.response?.data.message);
       }
     }
@@ -132,18 +135,17 @@ export default function MyBoard() {
             <p className="text-l">내 게시글</p>
           </div>
 
-          <Tabs variant="underlined">
+          <Tabs
+            variant="underlined"
+            onSelectionChange={(key: React.Key) => {
+              getBoardPost(key as number, 1);
+              setCurrentBoardCid(currentBoardCid);
+              setCurrentBoard(userBoard[(key as number) - 1].boardName);
+            }}
+          >
             {Array.isArray(userBoard) &&
               userBoard.map((board) => (
-                <Tab
-                  key={board.boardCid}
-                  title={board.boardName}
-                  onClick={() => {
-                    getBoardPost(board.boardCid, 1);
-                    setCurrentBoard(board.boardName);
-                    setCurrentBoardCid(currentBoardCid);
-                  }}
-                >
+                <Tab key={board.boardCid} title={board.boardName}>
                   <div className="h-[430px] overflow-auto scrollbar-none">
                     {userPost.map((post) => (
                       <div

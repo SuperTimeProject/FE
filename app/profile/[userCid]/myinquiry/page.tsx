@@ -53,7 +53,7 @@ export default function MyInquiry() {
 
         if (res.data.success) {
           const userInquiryData = res.data.inquiryList;
-          console.log("유저 문의", userInquiryData);
+          // console.log("유저 문의", userInquiryData);
           setInquiryData(userInquiryData);
         }
       } catch (error) {
@@ -101,7 +101,7 @@ export default function MyInquiry() {
                 {inquiryData?.map((inquiry, index) => (
                   <div key={index} className="flex flex-col">
                     <button
-                      className="border-1.5 rounded-md border-gray-300 p-2"
+                      className="border-1.5 rounded-md border-gray-300 p-2 m-1"
                       onClick={onOpen}
                     >
                       <div className="flex justify-between items-center">
