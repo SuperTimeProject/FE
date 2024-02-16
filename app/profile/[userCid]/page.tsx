@@ -21,6 +21,7 @@ import {
 } from "@nextui-org/react";
 
 import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
 
 interface UserInfo {
   userCid: number;
@@ -47,7 +48,6 @@ export default function Users() {
   const pathname = usePathname();
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-
   const [isProfileEditMode, setProfileEditMode] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
@@ -66,13 +66,13 @@ export default function Users() {
         if (response.data.success) {
           const userInfoData = response.data.getUserInfo;
           setUserInfo(userInfoData);
-          // console.log(userInfoData);
         } else {
           alert("로그인한 유저 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
-        console.error(error);
-        alert("서버 오류로 로그인한 유저 정보를 불러오는데 실패했습니다.");
+        if (axios.isAxiosError(error)) {
+          alert(error.response?.data.message);
+        }
       }
     };
 
@@ -83,14 +83,14 @@ export default function Users() {
     try {
       const response = await privateApi.put(`/user/part/${selectedPart}`);
       if (response.data.success) {
-        // setUserInfo(response.data.getUserInfo.part);
         alert("주특기가 선택되었습니다.");
       } else {
         alert("주특기 선택에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      alert("서버 오류로 주특기 선택에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
     }
   };
 
@@ -114,8 +114,9 @@ export default function Users() {
         alert("프로필 수정에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      alert("서버 오류로 프로필 수정에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
     }
   };
 
@@ -151,8 +152,9 @@ export default function Users() {
         alert("회원 탈퇴에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      alert("서버 오류로 회원 탈퇴에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
     }
   };
 
