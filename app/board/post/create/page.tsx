@@ -94,6 +94,7 @@ export default function CreatePost() {
         postTitle: postInfo.postTitle,
         postContent: postInfo.postContent,
       };
+
       const postInfoJson = JSON.stringify(postInfoData);
       const postInfoBlob = new Blob([postInfoJson], {
         type: "application/json",

@@ -3,7 +3,7 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { useEffect, useState } from "react";
-import { privateApi, setToken } from "@/api/axiosConfig";
+import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
 import {
   Avatar,
   Button,
@@ -43,20 +43,26 @@ interface UserProfile {
   userProfileFilePath: string;
 }
 
+interface EditInfo {
+  userNickname: string;
+  userProfileImage: File | null;
+}
+
 export default function Users() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo>();
   const [isProfileEditMode, setProfileEditMode] = useState(false);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [editInfo, setEditInfo] = useState<EditInfo>({
+    userNickname: "",
+    userProfileImage: null,
+  });
+
+  const [userImage, setUserImage] = useState<UserProfile>();
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
 
   const partOptions = ["PART_FE", "PART_BE", "PART_FULL"];
-
-  const handleProfileEditMode = () => {
-    setProfileEditMode(true);
-  };
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -64,8 +70,14 @@ export default function Users() {
         const response = await privateApi.get("/auth/getUserInfo");
 
         if (response.data.success) {
-          const userInfoData = response.data.getUserInfo;
-          setUserInfo(userInfoData);
+          setUserInfo(response.data.getUserInfo);
+          setUserImage(response.data.userProfile);
+
+          // setEditInfo({
+          //   userNickname: response.data.getUserInfo.userNickname || "",
+          //   userProfileImage:
+          //     response.data.userProfile.userProfileFilePath || null,
+          // });
         } else {
           alert("로그인한 유저 정보를 불러오는데 실패했습니다.");
         }
@@ -95,23 +107,58 @@ export default function Users() {
     }
   };
 
-  const handleInfoEdit = async () => {
+  const editSubmit = async () => {
     try {
-      const formData = new FormData();
+      console.log(editInfo);
 
-      // if (uploadFile) {
-      //   formData.append("userImage", uploadFile);
-      // }
-      formData.append("userNickname", userInfo?.userNickname || "");
+      if (editInfo.userNickname.length < 2) {
+        alert("닉네임은 2자 이상이어야 합니다.");
+        return;
+      }
+      const nicknameCheck = await publicApi.get(
+        "/auth/duplicateTest/nickname",
+        {
+          params: {
+            nickname: editInfo.userNickname,
+          },
+        }
+      );
+
+      if (nicknameCheck.data.duplicate) {
+        alert("이미 사용 중인 닉네임입니다.");
+        return;
+      }
+
+      const editData = { userNickname: editInfo.userNickname || "" };
+      const editInfoJson = JSON.stringify(editData);
+      const editInfoBlob = new Blob([editInfoJson], {
+        type: "application/json",
+      });
+
+      const formData = new FormData();
+      formData.append("editInfo", editInfoBlob);
+      if (editInfo.userProfileImage !== null) {
+        formData.append("profileImage", editInfo.userProfileImage);
+      }
 
       const response = await privateApi.put("/user/info/edit", formData);
 
       if (response.data.success) {
-        const updatedUserInfo = response.data.getUserInfo;
-        setUserInfo(updatedUserInfo);
+        // setUserInfo((prevUserInfo) => ({
+        //   ...prevUserInfo,
+        //   userNickname: editInfo.userNickname || prevUserInfo?.userNickname,
+        // }));
+
+        // setUserImage((prevUserProfile) => ({
+        //   ...prevUserProfile,
+        //   userProfileFilePath: editInfo.userProfileImage
+        //     ? URL.createObjectURL(editInfo.userProfileImage)
+        //     : prevUserProfile?.userProfileFilePath,
+        // }));
+
         alert("프로필 수정이 완료되었습니다.");
         setProfileEditMode(false);
-        window.location.reload();
+        // window.location.reload();
       } else {
         alert("프로필 수정에 실패했습니다.");
       }
@@ -122,12 +169,43 @@ export default function Users() {
     }
   };
 
+  const handleProfileEdit = () => {
+    setProfileEditMode(true);
+
+    setEditInfo({
+      userNickname: userInfo?.userNickname || "",
+      userProfileImage: null,
+    });
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files !== null) {
-      const file = e.target.files[0];
-      setUploadFile(file);
+    const files = e.target.files;
+    if (files === null || files.length === 0) {
+      setEditInfo((prevEditInfo) => ({
+        ...prevEditInfo,
+        userProfileImage: null,
+      }));
     } else {
-      setUploadFile(null);
+      setEditInfo((prevEditInfo) => ({
+        ...prevEditInfo,
+        userProfileImage: files[0],
+      }));
+    }
+  };
+
+  const handleImageDelete = async () => {
+    try {
+      const response = await privateApi.delete(
+        "/user/info/profileImage/delete"
+      );
+      if (response.data.success) {
+        alert("프로필 사진이 삭제되었습니다.");
+        window.location.reload();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
     }
   };
 
@@ -175,11 +253,14 @@ export default function Users() {
                   <Avatar
                     className="w-16 h-16 bg-white"
                     src={
-                      uploadFile
-                        ? URL.createObjectURL(uploadFile)
+                      isProfileEditMode
+                        ? editInfo.userProfileImage
+                          ? URL.createObjectURL(editInfo.userProfileImage)
+                          : undefined
                         : userInfo?.userProfile?.userProfileFilePath
                     }
                   />
+
                   {isProfileEditMode && (
                     <Button
                       isIconOnly
@@ -250,7 +331,17 @@ export default function Users() {
                     type="text"
                     label="닉네임"
                     variant="underlined"
-                    value={userInfo?.userNickname}
+                    value={
+                      isProfileEditMode
+                        ? editInfo.userNickname
+                        : userInfo?.userNickname
+                    }
+                    onChange={(e) =>
+                      setEditInfo((prevEditInfo) => ({
+                        ...prevEditInfo,
+                        userNickname: e.target.value,
+                      }))
+                    }
                   />
                 </div>
               </li>
@@ -263,16 +354,16 @@ export default function Users() {
                     </p>
                     <Button
                       size="sm"
-                      onClick={handleInfoEdit}
+                      onClick={editSubmit}
                       className="bg-sub_purple text-white"
                     >
-                      저장
+                      변경
                     </Button>
                   </>
                 ) : (
                   <Button
                     size="sm"
-                    onClick={handleProfileEditMode}
+                    onClick={handleProfileEdit}
                     className="bg-sub_purple text-white"
                   >
                     프로필 수정
