@@ -24,15 +24,21 @@ interface InquiryList {
   userId: string;
   inquiryTitle: string;
   inquiryContent: string;
-  // imageList: [
-  //   {
-  //     postImageCid: number;
-  //     postImageFileName: string;
-  //     postImageFilePath: string;
-  //   }
-  // ];
+  imageList: InquiryImage[];
   answer: string;
   isClosed: string;
+}
+
+interface InquiryImage {
+  postImageCid: number;
+  postImageFileName: string;
+  postImageFilePath: string;
+}
+
+interface PageInfo {
+  page: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 export default function MyInquiry() {
@@ -41,8 +47,6 @@ export default function MyInquiry() {
   const [inquiryData, setInquiryData] = useState<InquiryList[]>([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState<number>(1);
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     const getInquiry = async () => {
@@ -98,11 +102,14 @@ export default function MyInquiry() {
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">
               <div className="h-[430px] overflow-auto scrollbar-none">
-                {inquiryData?.map((inquiry, index) => (
-                  <div key={index} className="flex flex-col">
+                {inquiryData?.map((inquiry) => (
+                  <div className="flex flex-col">
                     <button
+                      key={inquiry.inquiryCid}
                       className="border-1.5 rounded-md border-gray-300 p-2 m-1"
-                      onClick={onOpen}
+                      onClick={() =>
+                        router.push(`${pathname}/detail/${inquiry.inquiryCid}`)
+                      }
                     >
                       <div className="flex justify-between items-center">
                         <p className="text-sm">{inquiry.inquiryTitle}</p>
@@ -113,41 +120,11 @@ export default function MyInquiry() {
                               : "text-sub_purple"
                           }`}
                         >
-                          {inquiry.isClosed}
+                          {/* {inquiry.isClosed} */}
+                          {inquiry.answer == null ? "답변대기" : "답변완료"}
                         </p>
                       </div>
                     </button>
-
-                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                      <ModalContent>
-                        {(onClose) => (
-                          <>
-                            <ModalHeader className="flex flex-col gap-1">
-                              문의 내용
-                            </ModalHeader>
-                            <ModalBody>
-                              <p>{inquiry.inquiryContent}</p>
-                              {/* {inquiry?.imageList.map((image) => (
-                              <div className="flex justify-center pt-2 pb-2">
-                                <img
-                                  src={image.postImageFilePath}
-                                  alt=""
-                                  width={250}
-                                />
-                              </div>
-                            ))} */}
-                              <Divider className="my-2" />
-                              <p>{inquiry.answer}</p>
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button variant="light" onPress={onClose}>
-                                닫기
-                              </Button>
-                            </ModalFooter>
-                          </>
-                        )}
-                      </ModalContent>
-                    </Modal>
                   </div>
                 ))}
               </div>

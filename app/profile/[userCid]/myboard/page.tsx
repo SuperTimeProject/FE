@@ -20,13 +20,18 @@ interface UserBoard {
   boardCid: number;
 }
 
+interface PageInfo {
+  page: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export default function MyBoard() {
   const router = useRouter();
   const pathname = usePathname();
   const [userPost, setUserPost] = useState<UserPost[]>([]);
   const [userBoard, setUserBoard] = useState<UserBoard[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState<number>(1);
+  const [pageInfo, setPageInfo] = useState<PageInfo>();
   const [currentBoardCid, setCurrentBoardCid] = useState<number>(1);
   const [currentBoard, setCurrentBoard] = useState<string>("전체 게시판");
 
@@ -57,6 +62,14 @@ export default function MyBoard() {
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
+            setUserPost([]);
+            setPageInfo({
+              page: 1,
+              totalElements: 0,
+              totalPages: 0,
+            });
+          }
           console.log(error.response?.data.message);
         }
       }
@@ -177,8 +190,8 @@ export default function MyBoard() {
                   </div>
                   <Pagination
                     showControls
-                    total={totalPage}
-                    initialPage={page}
+                    total={pageInfo?.totalPages || 1}
+                    initialPage={1}
                     className="mt-3 flex justify-center"
                     color="secondary"
                     onChange={(page: number) => postPage(page)}

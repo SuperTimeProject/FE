@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 interface InquiryInfo {
   inquiryTitle: string;
   inquiryContent: string;
-  // inquiryImage: File[];
+  inquiryImage: File[];
 }
 
 // interface UserInfo {
@@ -28,7 +28,7 @@ export default function InquiryRequest() {
   const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>({
     inquiryTitle: "",
     inquiryContent: "",
-    // inquiryImage: [],
+    inquiryImage: [],
   });
 
   // useEffect(() => {
@@ -54,20 +54,20 @@ export default function InquiryRequest() {
     }));
   };
 
-  // const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = e.target.files;
-  //   if (files) {
-  //     const newFiles = Array.from(files).slice(0, 5);
-  //     if (newFiles.length + inquiryInfo.inquiryImage.length > 5) {
-  //       alert("이미지는 최대 5개까지 선택 가능합니다.");
-  //     } else {
-  //       setInquiryInfo((prevInfo) => ({
-  //         ...prevInfo,
-  //         inquiryImage: [...prevInfo.inquiryImage, ...newFiles],
-  //       }));
-  //     }
-  //   }
-  // };
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 5);
+      if (newFiles.length + inquiryInfo.inquiryImage.length > 5) {
+        alert("이미지는 최대 5개까지 선택 가능합니다.");
+      } else {
+        setInquiryInfo((prevInfo) => ({
+          ...prevInfo,
+          inquiryImage: [...prevInfo.inquiryImage, ...newFiles],
+        }));
+      }
+    }
+  };
 
   const handleInquirySubmit = async () => {
     try {
@@ -88,9 +88,9 @@ export default function InquiryRequest() {
 
       const formData = new FormData();
       formData.append("inquiryInfo", inquiryInfoBlob);
-      // for (let i = 0; i < inquiryInfo.inquiryImage.length; i++) {
-      //   formData.append("inquiryImage", inquiryInfo.inquiryImage[i]);
-      // }
+      for (let i = 0; i < inquiryInfo.inquiryImage.length; i++) {
+        formData.append("inquiryImage", inquiryInfo.inquiryImage[i]);
+      }
 
       const response = await privateApi.post("/user/inquiry", formData);
 
@@ -122,58 +122,60 @@ export default function InquiryRequest() {
               </Button>
               <p className="text-l">문의하기</p>
             </div>
-            <form className="flex flex-col gap-4">
-              <Input
-                type="text"
-                label="제목"
-                name="inquiryTitle"
-                value={inquiryInfo.inquiryTitle}
-                onChange={handleInputChange}
-              />
-              <Divider className="my-2" />
-              <Textarea
-                placeholder="내용"
-                name="inquiryContent"
-                value={inquiryInfo.inquiryContent}
-                onChange={handleInputChange}
-                className="h-[178px]"
-              />
-            </form>
-
-            {/* <div className="flex justify-end">
-              <Button
-                size="sm"
-                className="bg-sub_purple font-semibold text-white"
-              >
-                이미지 선택
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="opacity-0 absolute"
+            <div className="h-[520px] overflow-y-auto scrollbar-none">
+              <form className="flex flex-col gap-4">
+                <Input
+                  type="text"
+                  label="제목"
+                  name="inquiryTitle"
+                  value={inquiryInfo.inquiryTitle}
+                  onChange={handleInputChange}
                 />
-              </Button>
-            </div>
-
-            <section className="min-h-[120px] flex flex-col justify-start items-center">
-              {inquiryInfo.inquiryImage.map((file, index) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(file)}
-                  alt={`미리보기 ${index + 1}`}
-                  className="m-1 object-cover"
+                <Divider className="my-2" />
+                <Textarea
+                  placeholder="내용"
+                  name="inquiryContent"
+                  value={inquiryInfo.inquiryContent}
+                  onChange={handleInputChange}
+                  className="h-[178px]"
                 />
-              ))}
-            </section> */}
+              </form>
 
-            <div className="flex justify-end">
-              <Button
-                size="sm"
-                className="bg-sub_purple font-semibold text-white"
-                onClick={handleInquirySubmit}
-              >
-                제출
-              </Button>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  className="bg-sub_purple font-semibold text-white"
+                >
+                  이미지 선택
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="opacity-0 absolute"
+                  />
+                </Button>
+              </div>
+
+              <section className="min-h-[120px] flex flex-col justify-start items-center">
+                {inquiryInfo.inquiryImage.map((file, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(file)}
+                    alt={`미리보기 ${index + 1}`}
+                    className="m-1 object-cover"
+                  />
+                ))}
+              </section>
+
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  className="bg-sub_purple font-semibold text-white"
+                  onClick={handleInquirySubmit}
+                >
+                  제출
+                </Button>
+              </div>
             </div>
           </main>
         </div>
