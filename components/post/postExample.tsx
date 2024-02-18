@@ -46,10 +46,9 @@ export default function PostExample({
                 <div>
                   <span className="flex text-medium">{board.boardName}</span>
                 </div>
+                {/* 링크에 다이나믹 라우팅 적용하기 */}
                 <Link href={`/board/second-board/`} /* key={post.postCid} */>
-                  <div className="flex gap-2 text-sm text-gray-500">
-                    + 더보기
-                  </div>
+                  <div className="flex gap-2 text-sm text-gray-500">+ 더보기</div>
                 </Link>
               </div>
             ))}
