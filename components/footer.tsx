@@ -7,12 +7,14 @@ import { useEffect, useState } from "react";
 export default function Footer() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [userCid, setUserCid] = useState<number>();
+  const [role, setRole] = useState<string>();
 
   useEffect(() => {
     const getUser = async () => {
       const res = await privateApi.get("/auth/getUserInfo");
       if (res.data) {
         setUserCid(res.data.getUserInfo.userCid);
+        setRole(res.data.getUserInfo.role);
       }
     };
     getUser();
@@ -75,20 +77,37 @@ export default function Footer() {
             </Link>
           </li>
           <li>
-            <Link href={`/profile/${userCid}`}>
-              <img
-                src={
-                  hoveredIcon === "user"
-                    ? "/icons/user_color.png"
-                    : "/icons/user.png"
-                }
-                width="40"
-                height="40"
-                alt="프로필"
-                onMouseEnter={() => handleIconHover("user")}
-                onMouseLeave={() => handleIconHover(null)}
-              />
-            </Link>
+            {role === "ROLE_ADMIN" ? (
+              <Link href="/admin">
+                <img
+                  src={
+                    hoveredIcon === "user"
+                      ? "/icons/user_color.png"
+                      : "/icons/user.png"
+                  }
+                  width="40"
+                  height="40"
+                  alt="프로필"
+                  onMouseEnter={() => handleIconHover("user")}
+                  onMouseLeave={() => handleIconHover(null)}
+                />
+              </Link>
+            ) : (
+              <Link href={`/profile/${userCid}`}>
+                <img
+                  src={
+                    hoveredIcon === "user"
+                      ? "/icons/user_color.png"
+                      : "/icons/user.png"
+                  }
+                  width="40"
+                  height="40"
+                  alt="프로필"
+                  onMouseEnter={() => handleIconHover("user")}
+                  onMouseLeave={() => handleIconHover(null)}
+                />
+              </Link>
+            )}
           </li>
         </ul>
       </nav>
