@@ -22,7 +22,7 @@ import {
 
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
-// import { deleteCookie } from "@/components/utils/setCookie";
+import { deleteCookie } from "@/components/utils/setCookie";
 
 interface UserInfo {
   userCid: number;
@@ -199,7 +199,7 @@ export default function Users() {
 
   const handleLogout = async () => {
     try {
-      // deleteCookie(); // 로컬스토리지에 토큰값 삭제
+      deleteCookie(); // 로컬스토리지에 토큰값 삭제
       alert("로그아웃이 성공적으로 완료되었습니다.");
       router.push("/auth/login");
     } catch (error) {
