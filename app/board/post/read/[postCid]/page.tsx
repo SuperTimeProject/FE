@@ -5,7 +5,6 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button } from "@nextui-org/react";
 import axios from "axios";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Comment from "@/components/post/comment";
@@ -30,7 +29,11 @@ interface postInfo {
   postView: number;
 }
 
-export default function DetailPage({ params }: { params: { postCid: number } }) {
+export default function DetailPage({
+  params,
+}: {
+  params: { postCid: number };
+}) {
   const route = useRouter();
   const pathName = usePathname();
   const [postInfo, setPostInfo] = useState<postInfo>();
@@ -72,16 +75,27 @@ export default function DetailPage({ params }: { params: { postCid: number } }) 
               />
             </div> */}
             <div className="flex justify-between">
-              <Button isIconOnly className="bg-sub_purple float-right w-20 mt-3" onClick={handleBack}>
-                <span className="text-white text-medium">글 목록</span>
-              </Button>
+              <div>
+                <Button
+                  size="sm"
+                  variant="light"
+                  onClick={handleBack}
+                  className="text-xl"
+                >
+                  {"<"}
+                </Button>
+              </div>
             </div>
-            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">{postInfo?.postTitle}</div>
+            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
+              {postInfo?.postTitle}
+            </div>
           </main>
           <div className="">
             <div className="flex gap-2 justify-end border-b-2 pb-2 pr-2">
               <div className="text-gray-500 text-sm">{postInfo?.author} |</div>
-              <div className="text-gray-500 text-sm">{postInfo?.createdAt} |</div>
+              <div className="text-gray-500 text-sm">
+                {postInfo?.createdAt} |
+              </div>
               <div className="text-gray-500 text-sm">{postInfo?.postView}</div>
             </div>
             <div className=" overflow-y-auto  scrollbar-none">

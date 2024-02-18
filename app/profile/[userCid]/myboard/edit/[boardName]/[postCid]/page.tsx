@@ -48,6 +48,10 @@ export default function EditPost({
     imageList: [],
   });
 
+  const handleBack = () => {
+    router.back();
+  };
+
   useEffect(() => {
     const getPostData = async () => {
       try {
