@@ -31,6 +31,7 @@ interface IboardInfo {
 
 export default function Community() {
   const [boardData, setBoardData] = useState<IPostInfo[] | null>([]);
+  //const [boardData, setBoardData] = useState<Board[] | null>([]);
   const [postData, setPostData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
