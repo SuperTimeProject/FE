@@ -181,18 +181,17 @@ export default function EditPost({
               <Button
                 size="sm"
                 variant="light"
-                onClick={handleBack}
+                onClick={() => router.back()}
                 className="text-xl"
               >
                 {"<"}
               </Button>
-              <p className="flex justify-center">게시글 수정</p>
+              <p className="text-l">게시글 수정</p>
             </div>
-
             <Button size="sm" variant="ghost" isDisabled>
               {decodeURIComponent(params.boardName)}
             </Button>
-            <div className="h-[600px] overflow-auto scrollbar-none">
+            <div className="h-[480px] overflow-y-auto  scrollbar-none">
               <form className="flex flex-col gap-4">
                 <Input
                   type="text"
@@ -224,17 +223,17 @@ export default function EditPost({
                   />
                 </Button>
               </div>
-              <section className="h-[120px] flex flex-col justify-center items-center gap-2">
+              <section className="min-h-[120px] flex flex-col justify-center items-center gap-2">
                 <p className="text-xs">
                   기존 이미지 (삭제할 이미지를 선택해주세요.)
                 </p>
-                <div className="flex">
+                <div className="flex flex-col">
                   {/* 기존 이미지 배열 */}
                   {postInfo?.imageList !== null &&
                     postInfo?.imageList?.map((file, index) => (
                       <div
                         key={index}
-                        className={"relative m-1 w-8 h-8 cursor-pointer"}
+                        className={"relative m-1 cursor-pointer"}
                         onClick={() => {
                           deleteImage(file?.postImageCid || 0);
                         }}
@@ -252,15 +251,16 @@ export default function EditPost({
                       </div>
                     ))}
                 </div>
+                <Divider className="my-2" />
                 <p className="text-xs">새로운 이미지</p>
-                <div className="flex">
+                <div className="flex flex-col justify-start items-center">
                   {/* 새로운 이미지 배열 */}
                   {editPost?.imageList?.map((file, index) => (
                     <img
                       key={index}
                       src={URL.createObjectURL(file)}
                       alt={`미리보기 ${index + 1}`}
-                      className="m-1 w-8 h-8 object-cover"
+                      className="m-1 object-cover"
                     />
                   ))}
                 </div>
