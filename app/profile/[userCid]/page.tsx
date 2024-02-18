@@ -22,6 +22,7 @@ import {
 
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
+import { deleteCookie } from "@/components/utils/setCookie";
 
 interface UserInfo {
   userCid: number;
