@@ -5,9 +5,9 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button } from "@nextui-org/react";
 import axios from "axios";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Comment from "@/components/post/comment";
 
 interface Board {
   boardCid: number;
@@ -35,6 +35,7 @@ export default function DetailPage({
   params: { postCid: number };
 }) {
   const route = useRouter();
+  const pathName = usePathname();
   const [postInfo, setPostInfo] = useState<postInfo>();
   useEffect(() => {
     const getPostInfo = async () => {
@@ -55,12 +56,16 @@ export default function DetailPage({
     route.back();
   };
 
+  const goComment = () => {
+    route.push(`${pathName}/comment`);
+  };
+
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white overflow-y-auto">
-          <main className=" pb-2 flex items-center pl-1 pr-1">
+        <div className="w-96 h-[600px] border-1 border-[#d1d5db] bg-white overflow-y-auto">
+          <main className=" flex items-center pl-1 pr-1">
             {/* <div className="flex-none cursor-pointer" onClick={handleBack}>
               <img
                 src="/icons/back.png"
@@ -69,41 +74,48 @@ export default function DetailPage({
                 className="flex-none"
               />
             </div> */}
+            <div className="flex justify-between">
+              <div>
+                <Button
+                  size="sm"
+                  variant="light"
+                  onClick={handleBack}
+                  className="text-xl"
+                >
+                  {"<"}
+                </Button>
+              </div>
+            </div>
             <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
               {postInfo?.postTitle}
             </div>
           </main>
-          <div>
-            <div className="flex gap-2 justify-end border-b-2 pb-2 mb-3 pr-2">
+          <div className="">
+            <div className="flex gap-2 justify-end border-b-2 pb-2 pr-2">
               <div className="text-gray-500 text-sm">{postInfo?.author} |</div>
               <div className="text-gray-500 text-sm">
                 {postInfo?.createdAt} |
               </div>
               <div className="text-gray-500 text-sm">{postInfo?.postView}</div>
             </div>
-            <div className="h-[440px] overflow-y-auto  scrollbar-none">
-              <div> {postInfo?.postContent}</div>
-              {postInfo?.imageList.length !== 0 &&
-                postInfo?.imageList.map((image) => (
-                  <div className="flex justify-center pt-2 pb-2">
-                    <img
-                      src={image.postImageFilePath}
-                      alt=""
-                      width={250}
-                      //height={300}
-                    />
-                    {/* <div>{image.postImageFileName}</div> */}
-                  </div>
-                ))}
+            <div className=" overflow-y-auto  scrollbar-none">
+              <div className="min-h-[200px] pt-2 px-2">
+                <div> {postInfo?.postContent}</div>
+                {postInfo?.imageList.length !== 0 &&
+                  postInfo?.imageList.map((image) => (
+                    <div className="flex justify-center pt-2 pb-2">
+                      <img
+                        src={image.postImageFilePath}
+                        alt=""
+                        width={250}
+                        //height={300}
+                      />
+                      {/* <div>{image.postImageFileName}</div> */}
+                    </div>
+                  ))}
+              </div>
+              <Comment postCid={params.postCid} />
             </div>
-            <Button
-              isIconOnly
-              aria-label="post"
-              className="bg-sub_purple float-right w-20 mt-3"
-              onClick={handleBack}
-            >
-              <span className="text-white text-medium">글 목록</span>
-            </Button>
           </div>
         </div>
         <Footer />
