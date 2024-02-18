@@ -109,12 +109,11 @@ export default function Users() {
 
   const editSubmit = async () => {
     try {
-      console.log(editInfo);
-
       if (editInfo.userNickname.length < 2) {
         alert("닉네임은 2자 이상이어야 합니다.");
         return;
       }
+
       const nicknameCheck = await publicApi.get(
         "/auth/duplicateTest/nickname",
         {
@@ -137,6 +136,7 @@ export default function Users() {
 
       const formData = new FormData();
       formData.append("editInfo", editInfoBlob);
+
       if (editInfo.userProfileImage !== null) {
         formData.append("profileImage", editInfo.userProfileImage);
       }
@@ -144,21 +144,17 @@ export default function Users() {
       const response = await privateApi.put("/user/info/edit", formData);
 
       if (response.data.success) {
-        // setUserInfo((prevUserInfo) => ({
-        //   ...prevUserInfo,
-        //   userNickname: editInfo.userNickname || prevUserInfo?.userNickname,
-        // }));
+        const updatedUserRes = await privateApi.get("/auth/getUserInfo");
 
-        // setUserImage((prevUserProfile) => ({
-        //   ...prevUserProfile,
-        //   userProfileFilePath: editInfo.userProfileImage
-        //     ? URL.createObjectURL(editInfo.userProfileImage)
-        //     : prevUserProfile?.userProfileFilePath,
-        // }));
+        if (updatedUserRes.data.success) {
+          const updatedUserInfo = updatedUserRes.data;
 
-        alert("프로필 수정이 완료되었습니다.");
-        setProfileEditMode(false);
-        // window.location.reload();
+          setUserInfo(updatedUserInfo.getUserInfo);
+          setUserImage(updatedUserInfo.userProfile);
+          alert("프로필 수정이 완료되었습니다.");
+          setProfileEditMode(false);
+          // window.location.reload();
+        }
       } else {
         alert("프로필 수정에 실패했습니다.");
       }
@@ -180,17 +176,10 @@ export default function Users() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files === null || files.length === 0) {
-      setEditInfo((prevEditInfo) => ({
-        ...prevEditInfo,
-        userProfileImage: null,
-      }));
-    } else {
-      setEditInfo((prevEditInfo) => ({
-        ...prevEditInfo,
-        userProfileImage: files[0],
-      }));
-    }
+    setEditInfo({
+      ...editInfo,
+      userProfileImage: files?.[0] || null,
+    });
   };
 
   const handleImageDelete = async () => {
