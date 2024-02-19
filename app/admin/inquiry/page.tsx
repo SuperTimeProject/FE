@@ -5,7 +5,8 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button, Divider, Pagination } from "@nextui-org/react";
 import axios from "axios";
-
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,7 @@ interface InquiryList {
   author: string;
   inquiryTitle: string;
   inquiryContent: string;
+  answer: string;
   createdAt: string;
 }
 
@@ -23,11 +25,7 @@ interface PageInfo {
   totalPages: number;
 }
 
-export default function AdminInquiry({
-  params,
-}: {
-  params: { inquiryCid: number };
-}) {
+export default function AdminInquiry() {
   const router = useRouter();
   const pathname = usePathname();
   const [inquiryData, setInquiryData] = useState<InquiryList[]>([]);
@@ -37,7 +35,7 @@ export default function AdminInquiry({
   useEffect(() => {
     const getInquiry = async () => {
       try {
-        const res = await privateApi.get("/admin/inquiry/get");
+        const res = await privateApi.get(`/admin/inquiry/get/${page}`);
 
         if (res.data.success) {
           setInquiryData(res.data.inquiryList);
@@ -51,12 +49,40 @@ export default function AdminInquiry({
     getInquiry();
   }, []);
 
-  const deleteInquiry = async () => {
-    const res = await privateApi.delete(
-      `/admin/inquiry/delete/${params.inquiryCid}`
+  const deleteInquiry = async (inquiryCid: number) => {
+    try {
+      const res = await privateApi.delete(
+        `/admin/inquiry/delete/${inquiryCid}`
+      );
+      if (res.data.success) {
+        alert("삭제되었습니다.");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+        window.location.reload();
+      }
+    }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const commentDate = new Date(timestamp);
+    const currentDate = new Date();
+
+    const timeDifferenceInSeconds = Math.floor(
+      (currentDate.getTime() - commentDate.getTime()) / 1000
     );
-    if (res.data.success) {
-      alert("삭제되었습니다.");
+
+    if (timeDifferenceInSeconds < 60) {
+      return `${timeDifferenceInSeconds}초 전`;
+    } else if (timeDifferenceInSeconds < 3600) {
+      const minutes = Math.floor(timeDifferenceInSeconds / 60);
+      return `${minutes}분 전`;
+    } else if (timeDifferenceInSeconds < 86400) {
+      const hours = Math.floor(timeDifferenceInSeconds / 3600);
+      return `${hours}시간 전`;
+    } else {
+      return formatDistanceToNow(commentDate, { addSuffix: true, locale: ko });
     }
   };
 
@@ -83,26 +109,44 @@ export default function AdminInquiry({
             <div className="flex flex-col p-2 m-1 gap-2">
               <div className="h-[430px] overflow-auto scrollbar-none">
                 {inquiryData?.map((inquiry) => (
-                  <div className="flex flex-col">
+                  <div
+                    key={inquiry.inquiryCid}
+                    className="flex flex-col border-1.5 rounded-md border-gray-300 p-2 m-1 relative"
+                  >
                     <button
-                      key={inquiry.inquiryCid}
-                      className="border-1.5 rounded-md border-gray-300 p-2 m-1"
                       onClick={() =>
                         router.push(`${pathname}/answer/${inquiry.inquiryCid}`)
                       }
                     >
-                      <div className="flex justify-between items-center">
-                        <div className="flex flex-col gap-2">
-                          <p className="text-sm">{inquiry.author}</p>
-                          <p className="text-sm">{inquiry.inquiryTitle}</p>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex justify-between items-center">
+                          <p>{inquiry.inquiryTitle}</p>
                         </div>
-                        <p
-                          className={`grid flex-end text-xs ${inquiry.createdAt}`}
-                        ></p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-xs">{inquiry.author}</p>
+                          <p className="text-xs text-gray-500">
+                            {formatTimestamp(inquiry.createdAt)}
+                          </p>
+                          <p
+                            className={`grid flex-end text-xs ${
+                              inquiry.answer !== null
+                                ? "text-main_blue"
+                                : "text-sub_purple"
+                            }`}
+                          >
+                            {inquiry.answer == null ? "답변대기" : "답변완료"}
+                          </p>
+                        </div>
                       </div>
-                      <button className="text-red-500" onClick={deleteInquiry}>
-                        삭제
-                      </button>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="absolute top-0 right-0 text-lg text-red-500"
+                        onClick={() => deleteInquiry(inquiry.inquiryCid)}
+                      >
+                        x
+                      </Button>
                     </button>
                   </div>
                 ))}

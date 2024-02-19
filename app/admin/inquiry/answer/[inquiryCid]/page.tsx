@@ -43,22 +43,20 @@ export default function AdminAnswer({
 }) {
   const router = useRouter();
   const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>();
-  const [inquiryClosed, setInquiryClosed] = useState<string>("OPEN");
   const [inquiryAnswer, setInquiryAnswer] = useState<string>("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const getInquiry = async () => {
       try {
-        const res = await privateApi.get("/admin/inquiry/get", {
-          params: { inquiryClosed },
-        });
+        const res = await privateApi.get(`/admin/inquiry/get/${page}`);
 
         if (res.data.success) {
           setInquiryInfo(res.data.inquiryList);
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.log(error.response);
+          console.log(error.response?.data.message);
         }
       }
     };
@@ -116,7 +114,7 @@ export default function AdminAnswer({
                   placeholder="답변을 입력하세요."
                   value={inquiryAnswer}
                   onChange={(event) => setInquiryAnswer(event.target.value)}
-                  className="h-[178px]"
+                  className="h-[178px] mb-2"
                 />
                 <div className="flex justify-end">
                   <Button
