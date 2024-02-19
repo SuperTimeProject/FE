@@ -1,10 +1,12 @@
 "use client";
 
+import { privateApi } from "@/api/axiosConfig";
 import { Button } from "@nextui-org/react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Denied() {
+  const router = useRouter();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,6 +15,18 @@ export default function Denied() {
       setUploadFile(file);
     } else {
       setUploadFile(null);
+    }
+  };
+
+  const verifyReq = async () => {
+    const formData = new FormData();
+    if (uploadFile !== null) {
+      formData.append("userProfileImage", uploadFile);
+    }
+    const response = await privateApi.post("/verification/apply", formData);
+    if (response.data.success) {
+      alert("인증을 요청하였습니다.");
+      router.push("/auth/verify/pending");
     }
   };
 
@@ -49,14 +63,13 @@ export default function Denied() {
             />
           </Button>
         </section>
-        <Link href="/auth/verify/pending">
-          <Button
-            size="sm"
-            className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
-          >
-            인증 다시하기
-          </Button>
-        </Link>
+        <Button
+          size="sm"
+          className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+          onClick={verifyReq}
+        >
+          인증 다시하기
+        </Button>
       </main>
     </div>
   );

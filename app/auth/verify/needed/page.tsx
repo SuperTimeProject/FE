@@ -1,10 +1,12 @@
 "use client";
 
+import { privateApi } from "@/api/axiosConfig";
 import { Button } from "@nextui-org/react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Needed() {
+  const router = useRouter();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,6 +18,18 @@ export default function Needed() {
     }
   };
 
+  const verifyReq = async () => {
+    const formData = new FormData();
+    if (uploadFile !== null) {
+      formData.append("userProfileImage", uploadFile);
+    }
+    const response = await privateApi.post("/verification/apply", formData);
+    if (response.data.success) {
+      alert("인증을 요청하였습니다.");
+      router.push("/auth/verify/pending");
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col justify-center items-center">
@@ -23,7 +37,7 @@ export default function Needed() {
           <p className="text-4xl font-mono">SUPER</p>
           <p className="text-4xl font-mono">TIME</p>
         </div>
-        <p className="font-medium text-xl m-4">기수 인증</p>
+        <p className="font-medium text-xl m-4">슈퍼타임 인증</p>
       </header>
       <main className="flex flex-col items-center gap-4">
         <section className="flex flex-col items-center gap-4">
@@ -31,7 +45,7 @@ export default function Needed() {
             <img
               src={URL.createObjectURL(uploadFile)}
               alt="Uploaded Preview"
-              className="m-2"
+              className="min-h-16 m-2"
             />
           )}
           <Button
@@ -48,14 +62,13 @@ export default function Needed() {
           </Button>
         </section>
 
-        <Link href="/auth/verify/pending">
-          <Button
-            size="sm"
-            className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
-          >
-            인증하기
-          </Button>
-        </Link>
+        <Button
+          size="sm"
+          className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+          onClick={verifyReq}
+        >
+          인증하기
+        </Button>
       </main>
     </div>
   );
