@@ -32,17 +32,19 @@ export default function Admin() {
             <ul className="flex flex-col gap-4">
               <li className="flex flex-col">
                 <Button
-                  onClick={() => router.push(`${pathname}/`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                  variant="bordered"
+                  onClick={() => router.push(`${pathname}/verify`)}
+                  className="flex justify-between font-semibold "
                 >
-                  <p>인증 관리</p>
+                  <p>유저 관리</p>
                   <p> {">"}</p>
                 </Button>
               </li>
               <li className="flex flex-col">
                 <Button
+                  variant="bordered"
                   // onClick={() => router.push(`${pathname}/`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                  className="flex justify-between font-semibold "
                 >
                   <p>게시판 관리</p>
                   <p> {">"}</p>
@@ -50,23 +52,15 @@ export default function Admin() {
               </li>
               <li className="flex flex-col">
                 <Button
+                  variant="bordered"
                   onClick={() => router.push(`${pathname}/inquiry`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                  className="flex justify-between font-semibold "
                 >
                   <p>문의 관리</p>
                   <p> {">"}</p>
                 </Button>
               </li>
 
-              <li className="flex flex-col">
-                <Button
-                  // onClick={() => router.push(`${pathname}/`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
-                >
-                  <p>학생 / 기수 관리</p>
-                  <p> {">"}</p>
-                </Button>
-              </li>
               <li className="flex justify-end">
                 <Button variant="light" onClick={() => handleLogout()}>
                   로그아웃
