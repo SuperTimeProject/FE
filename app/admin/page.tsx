@@ -29,22 +29,45 @@ export default function Admin() {
             <p className="flex justify-center text-xl font-mono font-semibold m-4">
               관리자페이지
             </p>
-            <ul>
-              <li>
-                <p>인증관리</p>
-              </li>
-              <li>
-                <p>게시판관리</p>
-              </li>
-              <li>
-                <Button onClick={() => router.push(`${pathname}/inquiry`)}>
-                  문의 관리
+            <ul className="flex flex-col gap-4">
+              <li className="flex flex-col">
+                <Button
+                  onClick={() => router.push(`${pathname}/`)}
+                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                >
+                  <p>인증 관리</p>
+                  <p> {">"}</p>
                 </Button>
               </li>
-              <li>
-                <p>학생 / 기수관리</p>
+              <li className="flex flex-col">
+                <Button
+                  // onClick={() => router.push(`${pathname}/`)}
+                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                >
+                  <p>게시판 관리</p>
+                  <p> {">"}</p>
+                </Button>
               </li>
-              <li>
+              <li className="flex flex-col">
+                <Button
+                  onClick={() => router.push(`${pathname}/inquiry`)}
+                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                >
+                  <p>문의 관리</p>
+                  <p> {">"}</p>
+                </Button>
+              </li>
+
+              <li className="flex flex-col">
+                <Button
+                  // onClick={() => router.push(`${pathname}/`)}
+                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                >
+                  <p>학생 / 기수 관리</p>
+                  <p> {">"}</p>
+                </Button>
+              </li>
+              <li className="flex justify-end">
                 <Button variant="light" onClick={() => handleLogout()}>
                   로그아웃
                 </Button>

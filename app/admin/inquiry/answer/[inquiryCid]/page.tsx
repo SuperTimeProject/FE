@@ -42,21 +42,21 @@ export default function AdminAnswer({
   params: { inquiryCid: number };
 }) {
   const router = useRouter();
-  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>();
-  const [inquiryAnswer, setInquiryAnswer] = useState<string>("");
-  const [page, setPage] = useState(1);
+  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>(); // 기존 문의 내용
 
   useEffect(() => {
+    console.log(inquiryInfo);
     const getInquiry = async () => {
       try {
-        const res = await privateApi.get(`/admin/inquiry/get/${page}`);
-
+        const res = await privateApi.get(
+          `/user/inquiry/get/${params.inquiryCid}`
+        );
         if (res.data.success) {
-          setInquiryInfo(res.data.inquiryList);
+          setInquiryInfo(res.data.inquiryInfo);
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.log(error.response?.data.message);
+          console.log(error.response?.data);
         }
       }
     };
@@ -64,10 +64,16 @@ export default function AdminAnswer({
   }, []);
 
   const answerSubmit = async () => {
+    if (inquiryInfo === undefined) return;
     try {
-      const res = await privateApi.get(
+      const res = await privateApi.put(
         `/admin/inquiry/answer/${params.inquiryCid}`,
-        { params: { inquiryAnswer } }
+        null,
+        {
+          params: {
+            inquiryContent: inquiryInfo.answer,
+          },
+        }
       );
       if (res.data.success) {
         alert("답변이 완료되었습니다.");
@@ -79,6 +85,8 @@ export default function AdminAnswer({
       }
     }
   };
+
+  if (inquiryInfo === undefined) return <div>로딩중...</div>;
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -112,11 +120,16 @@ export default function AdminAnswer({
                 <Divider className="my-2" />
                 <Textarea
                   placeholder="답변을 입력하세요."
-                  value={inquiryAnswer}
-                  onChange={(event) => setInquiryAnswer(event.target.value)}
+                  value={inquiryInfo?.answer || ""}
+                  onChange={(e) =>
+                    setInquiryInfo({ ...inquiryInfo, answer: e.target.value })
+                  }
                   className="h-[178px] mb-2"
                 />
-                <div className="flex justify-end">
+                <div className="flex justify-end items-center">
+                  <p className="text-xs text-red-500 pr-4">
+                    *답변은 한 번만 제출할 수 있습니다.
+                  </p>
                   <Button
                     size="sm"
                     className="bg-sub_purple font-semibold text-white"

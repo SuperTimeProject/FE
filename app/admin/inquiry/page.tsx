@@ -56,11 +56,11 @@ export default function AdminInquiry() {
       );
       if (res.data.success) {
         alert("삭제되었습니다.");
+        window.location.reload();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data.message);
-        window.location.reload();
       }
     }
   };
