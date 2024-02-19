@@ -152,7 +152,7 @@ export default function SignUp() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-96 p-8">
         <header className="flex justify-center text-3xl font-mono m-8">
           회원가입
         </header>
