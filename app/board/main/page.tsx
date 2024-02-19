@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import BoardComponent from "@/components/test/boardComponent";
+import BoardComponent from "@/components/post/boardComponent";
 
 export default function Main() {
   return (
