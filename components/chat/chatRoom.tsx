@@ -4,19 +4,6 @@ import { ChatMessage } from "@/app/chat/page";
 import { useEffect, useState } from "react";
 
 export default function ChatRoom({ messages }: { messages: ChatMessage[] | [] }) {
-  const [currentHour, setCurrentHour] = useState<number>(new Date().getHours());
-  const [currentMinute, setCurrentMinute] = useState<number>(new Date().getMinutes());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      setCurrentHour(now.getHours());
-      setCurrentMinute(now.getMinutes());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const displayTime = (timestamp: string) => {
     const date = new Date(timestamp);
     let hours = date.getHours();
@@ -31,8 +18,8 @@ export default function ChatRoom({ messages }: { messages: ChatMessage[] | [] })
   return (
     <div>
       {messages.map((messages, index) => (
-        <div className="">
-          <div className="flex flex-col justify-between items-center my-2 w-[100%] pr-2" key={index}>
+        <div className="" key={index}>
+          <div className="flex flex-col justify-between items-center my-2 w-[100%] pr-2">
             {/* 작성자 */}
             <div className="w-[100%] pl-2 text-gray-700 mb-1 flex items-center">
               {messages.sender}
