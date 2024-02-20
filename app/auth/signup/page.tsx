@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface SignUpData {
   userId: string;
@@ -145,14 +146,15 @@ export default function SignUp() {
         setErrorMessage("회원가입에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      setErrorMessage("서버 오류로 회원가입에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.response?.data.message);
+      }
     }
   };
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-96 p-8">
         <header className="flex justify-center text-3xl font-mono m-8">
           회원가입
         </header>
