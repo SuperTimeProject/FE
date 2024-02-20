@@ -115,7 +115,7 @@ export default function AdminInquiry() {
                   >
                     <button
                       onClick={() =>
-                        router.push(`${pathname}/answer/${inquiry.inquiryCid}`)
+                        router.push(`${pathname}/${inquiry.inquiryCid}`)
                       }
                     >
                       <div className="flex flex-col gap-2">

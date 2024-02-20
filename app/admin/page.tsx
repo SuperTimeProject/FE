@@ -27,7 +27,7 @@ export default function Admin() {
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main>
             <p className="flex justify-center text-xl font-mono font-semibold m-4">
-              관리자페이지
+              관리자
             </p>
             <ul className="flex flex-col gap-4">
               <li className="flex flex-col">
@@ -40,7 +40,7 @@ export default function Admin() {
                   <p> {">"}</p>
                 </Button>
               </li>
-              <li className="flex flex-col">
+              {/* <li className="flex flex-col">
                 <Button
                   variant="bordered"
                   // onClick={() => router.push(`${pathname}/`)}
@@ -49,7 +49,7 @@ export default function Admin() {
                   <p>게시판 관리</p>
                   <p> {">"}</p>
                 </Button>
-              </li>
+              </li> */}
               <li className="flex flex-col">
                 <Button
                   variant="bordered"
