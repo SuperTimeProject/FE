@@ -24,9 +24,9 @@ export default function Denied() {
     if (uploadFile !== null) {
       formData.append("userProfileImage", uploadFile);
     }
-    const response = await privateApi.post("/verification/apply", formData);
+    const response = await privateApi.put("/verification/reapply", formData);
     if (response.data.success) {
-      alert("인증을 요청하였습니다.");
+      alert("인증을 재요청하였습니다.");
       router.push("/auth/verify/pending");
     }
   };

@@ -42,7 +42,9 @@ export default function Community() {
       const res = await privateApi.get("/auth/getUserInfo");
       if (res.data.success) {
         const userBoardData: UserBoard[] = res.data.getUserInfo.boardList;
-        const filteredUserBoardData = userBoardData.filter((board) => board.boardCid !== 1);
+        const filteredUserBoardData = userBoardData.filter(
+          (board) => board.boardCid !== 1
+        );
         setUserBoard(filteredUserBoardData);
         setPart(res.data.getUserInfo.part);
         setIsFull(res.data.getUserInfo.semester.isFull);
@@ -83,11 +85,14 @@ export default function Community() {
     <div className="flex h-screen justify-center items-center ">
       <div className=" max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
-        <div className=" h-[600px] border-y-1 border-[#d1d5db] flex flex-col items-center">
+        <div className="w-96 h-[600px] m-2 p-2 border-1 border-[#d1d5db] flex flex-col items-center">
           {/* 게시판 리스트 -> UserBoard - 전체 게시판 제외 */}
           <div className="h-[300px]">
             {userBoard.map((board) => (
-              <div className="w-96 flex m-2 p-2 pr-4 pl-4 justify-between items-center border-b-2" key={board.boardCid}>
+              <div
+                className="w-96 flex m-2 p-2 pr-4 pl-4 justify-between items-center border-b-2"
+                key={board.boardCid}
+              >
                 <div>{board.boardName}</div>
                 <Link href={`/board/community/${board.boardName}`}>
                   <div>+ 더보기</div>
@@ -103,7 +108,9 @@ export default function Community() {
           <div className=" h-[0.2px] border-t-1 border-[#d1d5db] w-full my-1"></div>
           <div
             className=" h-[250px] w-[380px] bg-cover bg-center"
-            style={{ backgroundImage: `url(${scheduleImages?.scheduleImageFilePath})` }}
+            style={{
+              backgroundImage: `url(${scheduleImages?.scheduleImageFilePath})`,
+            }}
           />
         </div>
         <Footer />

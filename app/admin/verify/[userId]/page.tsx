@@ -96,7 +96,7 @@ export default function AdminVerifyDetail({
               />
             </div>
             <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
-              <p className="text-xl">인증 관리</p>
+              <p className="text-xl">{userDetail.userName}</p>
             </div>
           </div>
 
