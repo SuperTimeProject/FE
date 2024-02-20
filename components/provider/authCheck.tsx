@@ -60,7 +60,7 @@ export default function AuthCheck() {
       setToken(token);
       chechValified();
     } else if (!isException) {
-      router.push("/auth/login");
+      router.push("/");
     }
   }, [router, pathname]);
 
