@@ -65,29 +65,32 @@ export default function DetailPage({
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] border-1 border-[#d1d5db] bg-white overflow-y-auto">
-          <main className=" flex items-center pl-1 pr-1">
-            {/* <div className="flex-none cursor-pointer" onClick={handleBack}>
+          <main className="flex items-center pl-1 pr-1 mt-3 mb-2">
+            <div className="flex-none cursor-pointer" onClick={handleBack}>
               <img
                 src="/icons/back.png"
-                width="35"
-                height="35"
+                width="30"
+                height="30"
                 className="flex-none"
               />
-            </div> */}
-            <div className="flex justify-between">
-              <div>
+            </div>
+            {/* <div>
+              <div className="flex-none">
                 <Button
                   size="sm"
                   variant="light"
                   onClick={handleBack}
                   className="text-xl"
                 >
-                  {"<"}
+                  <img src="/icons/back.png" width="25" />
                 </Button>
               </div>
-            </div>
+            </div> */}
             <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
               {postInfo?.postTitle}
+            </div>
+            <div>
+              <img src="/icons/transparent_box.png" width="30" height="30" />
             </div>
           </main>
           <div className="">
@@ -96,7 +99,9 @@ export default function DetailPage({
               <div className="text-gray-500 text-sm">
                 {postInfo?.createdAt} |
               </div>
-              <div className="text-gray-500 text-sm">{postInfo?.postView}</div>
+              <div className="text-gray-500 text-sm">
+                조회수 {postInfo?.postView}
+              </div>
             </div>
             <div className=" overflow-y-auto  scrollbar-none">
               <div className="min-h-[200px] pt-2 px-2">

@@ -31,7 +31,7 @@ export default function AuthCheck() {
       router.push("/auth/login");
     } else if (token && isException) {
       // 로그인상태에서 강제로 유저가 url입력해서 로그인창이나 회원가입 창으로갔을때 main페이지로 리다이렉트 시키는 코드
-      router.push("/");
+      router.push("/board/main");
     }
   }, [pathname, router]);
 

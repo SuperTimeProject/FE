@@ -43,10 +43,8 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
     getUser();
   }, []);
 
-  if (userBoard === null) return <div>로딩중..</div>;
-
   useEffect(() => {
-    if (userBoard === null || !userBoard.boardCid) return;
+    if (userBoard === null) return;
     const fetchBoardData = async () => {
       try {
         const response = await privateApi.get(
@@ -65,14 +63,20 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
       }
     };
     fetchBoardData(); // 게시판 데이터 불러오기
-  }, [page]);
+  }, [page, userBoard]);
 
-  if (userBoard === null) return <div>로딩중..</div>;
+  if (userBoard === null)
+    return (
+      <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        로딩중..
+      </div>
+    );
 
   return (
     <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
       <main className="pb-2 flex justify-between text-xl tracking-widest items-center border-b-2 border-gray-700 pl-1 pr-1">
-        {userBoard.boardName}
+        {/* {userBoard.boardName} */}
+        {boardName}
         <Link href="/board/post/create">
           <Button
             isIconOnly
@@ -104,7 +108,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
                 <div className="flex gap-2 text-sm text-gray-500">
                   <span>{post.author} |</span>
                   <span>{post.createdAt} |</span>
-                  <span>{post.postView}</span>
+                  <span>조회수 {post.postView}</span>
                 </div>
               </div>
             </Link>
