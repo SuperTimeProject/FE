@@ -3,15 +3,9 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import {
-  Button,
-  Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@nextui-org/react";
+import { Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import axios from "axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -29,11 +23,7 @@ interface UserDetail {
   valified: string;
 }
 
-export default function AdminVerifyDetail({
-  params,
-}: {
-  params: { userId: string };
-}) {
+export default function AdminVerifyDetail({ params }: { params: { userId: string } }) {
   const router = useRouter();
   const [userDetail, setUserDetail] = useState<UserDetail>();
   const status = ["PENDING", "DENIED", "COMPLETED", "NEEDED"];
@@ -41,15 +31,9 @@ export default function AdminVerifyDetail({
   useEffect(() => {
     const getUserDetail = async () => {
       try {
-        const response = await privateApi.get(
-          `/admin/pendingUser/detail/${params.userId}`
-        );
+        const response = await privateApi.get(`/admin/pendingUser/detail/${params.userId}`);
         console.log(response.data);
-        if (response.data.success) {
-          setUserDetail(response.data);
-        } else {
-          alert("유저 세부 정보를 불러오는데 실패했습니다.");
-        }
+        setUserDetail(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           alert(error.response?.data.message);
@@ -60,12 +44,14 @@ export default function AdminVerifyDetail({
     getUserDetail();
   }, []);
 
-  const handleStatus = async (userId: string, valified: string) => {
+  const handleStatus = async (valified: string) => {
+    const userid = decodeURIComponent(params.userId);
+    console.log(userid);
     try {
       const response = await privateApi.put("/admin/verification", null, {
         params: {
-          userId: userId,
-          verificationState: valified,
+          userId: userid,
+          valified: valified,
         },
       });
       if (response.data.success) {
@@ -79,6 +65,8 @@ export default function AdminVerifyDetail({
     }
   };
 
+  if (userDetail === undefined) return <div>로딩중...</div>;
+
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
@@ -86,12 +74,7 @@ export default function AdminVerifyDetail({
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <Button
-                size="sm"
-                variant="light"
-                onClick={() => router.back()}
-                className="text-xl"
-              >
+              <Button size="sm" variant="light" onClick={() => router.back()} className="text-xl">
                 {"<"}
               </Button>
               <div>
@@ -105,7 +88,7 @@ export default function AdminVerifyDetail({
             <div className="h-[430px] overflow-auto scrollbar-none">
               {userDetail && (
                 <>
-                  <p>{userDetail?.image?.authImageFilePath}</p>
+                  <img className=" w-[200px] h-[150px]" src={userDetail?.image?.authImageFilePath} alt="" />
 
                   <Dropdown>
                     <DropdownTrigger>
@@ -115,10 +98,7 @@ export default function AdminVerifyDetail({
                     </DropdownTrigger>
                     <DropdownMenu>
                       {status.map((valified) => (
-                        <DropdownItem
-                          key={valified}
-                          onClick={() => handleStatus(params.userId, valified)}
-                        >
+                        <DropdownItem key={valified} onClick={() => handleStatus(valified)}>
                           {valified}
                         </DropdownItem>
                       ))}
