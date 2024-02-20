@@ -40,7 +40,7 @@ export default function Admin() {
                   <p> {">"}</p>
                 </Button>
               </li>
-              <li className="flex flex-col">
+              {/* <li className="flex flex-col">
                 <Button
                   variant="bordered"
                   // onClick={() => router.push(`${pathname}/`)}
@@ -49,7 +49,7 @@ export default function Admin() {
                   <p>게시판 관리</p>
                   <p> {">"}</p>
                 </Button>
-              </li>
+              </li> */}
               <li className="flex flex-col">
                 <Button
                   variant="bordered"
