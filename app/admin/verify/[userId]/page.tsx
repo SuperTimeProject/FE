@@ -3,9 +3,15 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import {
+  Button,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 import axios from "axios";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -23,7 +29,11 @@ interface UserDetail {
   valified: string;
 }
 
-export default function AdminVerifyDetail({ params }: { params: { userId: string } }) {
+export default function AdminVerifyDetail({
+  params,
+}: {
+  params: { userId: string };
+}) {
   const router = useRouter();
   const [userDetail, setUserDetail] = useState<UserDetail>();
   const status = ["PENDING", "DENIED", "COMPLETED", "NEEDED"];
@@ -31,7 +41,9 @@ export default function AdminVerifyDetail({ params }: { params: { userId: string
   useEffect(() => {
     const getUserDetail = async () => {
       try {
-        const response = await privateApi.get(`/admin/pendingUser/detail/${params.userId}`);
+        const response = await privateApi.get(
+          `/admin/pendingUser/detail/${params.userId}`
+        );
         console.log(response.data);
         setUserDetail(response.data);
       } catch (error) {
@@ -56,7 +68,7 @@ export default function AdminVerifyDetail({ params }: { params: { userId: string
       });
       if (response.data.success) {
         alert("인증상태가 변경되었습니다.");
-        window.location.reload();
+        router.back();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -74,21 +86,27 @@ export default function AdminVerifyDetail({ params }: { params: { userId: string
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <Button size="sm" variant="light" onClick={() => router.back()} className="text-xl">
+              <Button
+                size="sm"
+                variant="light"
+                onClick={() => router.back()}
+                className="text-xl"
+              >
                 {"<"}
               </Button>
-              <div>
-                <p>{userDetail?.userName}</p>
-                <p>{userDetail?.semester}</p>
-              </div>
+              <p>{userDetail?.userName}</p>
             </div>
           </div>
           <Divider className="my-2" />
           <div className="flex flex-col p-2 m-1 gap-2">
-            <div className="h-[430px] overflow-auto scrollbar-none">
+            <div className="h-[430px] overflow-auto scrollbar-none flex flex-col items-center justify-center">
               {userDetail && (
                 <>
-                  <img className=" w-[200px] h-[150px]" src={userDetail?.image?.authImageFilePath} alt="" />
+                  <img
+                    src={userDetail?.image?.authImageFilePath}
+                    alt=""
+                    className="mb-4"
+                  />
 
                   <Dropdown>
                     <DropdownTrigger>
@@ -98,7 +116,10 @@ export default function AdminVerifyDetail({ params }: { params: { userId: string
                     </DropdownTrigger>
                     <DropdownMenu>
                       {status.map((valified) => (
-                        <DropdownItem key={valified} onClick={() => handleStatus(valified)}>
+                        <DropdownItem
+                          key={valified}
+                          onClick={() => handleStatus(valified)}
+                        >
                           {valified}
                         </DropdownItem>
                       ))}
