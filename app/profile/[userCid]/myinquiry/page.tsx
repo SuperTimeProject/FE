@@ -109,7 +109,7 @@ export default function MyInquiry() {
                         }
                       >
                         <div className="flex justify-between items-center">
-                          <p className="text-sm">{inquiry.inquiryTitle}</p>
+                          <p className="text-md">{inquiry.inquiryTitle}</p>
                           <p
                             className={`grid flex-end text-xs ${
                               inquiry.answer !== null

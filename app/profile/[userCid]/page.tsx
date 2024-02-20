@@ -111,7 +111,7 @@ export default function Users() {
   const editSubmit = async () => {
     try {
       if (editInfo.userNickname.length < 2) {
-        alert("닉네임은 2자 이상이어야 합니다.");
+        alert("닉네임은 2글자 이상이어야 합니다.");
         return;
       }
 
