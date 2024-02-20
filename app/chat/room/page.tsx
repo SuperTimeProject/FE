@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-/* import SockJS from "sockjs-client";
-import Stomp from "stompjs"; */
 import Link from "next/link";
 import { Textarea, Button } from "@nextui-org/react";
 

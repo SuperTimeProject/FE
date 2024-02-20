@@ -59,7 +59,7 @@ export default function Footer() {
             </Link>
           </li>
           <li>
-            <Link href="/chat/list">
+            <Link href="/chat">
               <img
                 src={
                   hoveredIcon === "chat"
