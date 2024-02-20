@@ -173,6 +173,13 @@ export default function Users() {
     });
   };
 
+  const confirmPart = async () => {
+    const response = await privateApi.put("/user/part/confirmed");
+    if (response.data.success) {
+      alert("주특기가 확정되었습니다.");
+    }
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     setEditInfo({
@@ -287,6 +294,15 @@ export default function Users() {
                         ))}
                       </DropdownMenu>
                     </Dropdown>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      color="success"
+                      variant="bordered"
+                      onClick={confirmPart}
+                    >
+                      확정
+                    </Button>
                   </div>
                   <p className="text-xs text-red-500">
                     *주특기를 선택해주세요.
