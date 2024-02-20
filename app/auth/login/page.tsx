@@ -6,6 +6,7 @@ import Link from "next/link";
 import { privateApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/components/utils/setCookie";
+import axios from "axios";
 
 interface LoginData {
   userId: string;
@@ -50,8 +51,9 @@ export default function Login() {
         setErrorMessage("로그인에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      setErrorMessage("서버 오류로 로그인에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.response?.data.message);
+      }
     }
   };
 

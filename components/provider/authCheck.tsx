@@ -4,6 +4,8 @@ import { setToken } from "@/api/axiosConfig";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getCookie } from "../utils/setCookie";
+import axios from "axios";
+import GetUserInfo from "@/hook/getUserInfo";
 
 export default function AuthCheck() {
   //url 정보 뽑기
@@ -22,18 +24,39 @@ export default function AuthCheck() {
     const exceptions = ["/auth/login", "/auth/signup"];
     const isException = exceptions.includes(pathname);
 
+    const chechValified = async () => {
+      const userInfo = await GetUserInfo();
+      console.log(userInfo.valified);
+
+      if (userInfo.role === "ROLE_USER") {
+        switch (userInfo.valified) {
+          case "NEEDED":
+            const neededUrl = "/auth/verify/needed";
+            !pathname.includes(neededUrl) && router.push(neededUrl);
+            break;
+          case "PENDING":
+            const pendingUrl = "/auth/verify/pending";
+            !pathname.includes(pendingUrl) && router.push(pendingUrl);
+            break;
+          case "COMPLETED":
+            const completedUrl = "/board/main";
+            isException && router.push(completedUrl);
+            break;
+          case "DENIED":
+            const edniedUrl = "/auth/verify/denied";
+            !pathname.includes(edniedUrl) && router.push(edniedUrl);
+            break;
+        }
+      }
+    };
+
     if (token && token !== "") {
       setToken(token);
-    }
-
-    if (!token && !isException) {
-      // 토큰이 없으면 로그인 페이지로 리다이렉트
+      chechValified();
+    } else if (!isException) {
       router.push("/auth/login");
-    } else if (token && isException) {
-      // 로그인상태에서 강제로 유저가 url입력해서 로그인창이나 회원가입 창으로갔을때 main페이지로 리다이렉트 시키는 코드
-      router.push("/");
     }
-  }, [pathname, router]);
+  }, [router, pathname]);
 
   return null;
 }

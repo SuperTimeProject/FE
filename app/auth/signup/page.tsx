@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface SignUpData {
   userId: string;
@@ -145,8 +146,9 @@ export default function SignUp() {
         setErrorMessage("회원가입에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error);
-      setErrorMessage("서버 오류로 회원가입에 실패했습니다.");
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.response?.data.message);
+      }
     }
   };
 
