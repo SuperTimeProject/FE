@@ -177,16 +177,21 @@ export default function EditPost({
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <main className="flex flex-col gap-2">
-            <div className="flex items-center">
-              <Button
-                size="sm"
-                variant="light"
+            <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
+              <div
+                className="flex-none cursor-pointer"
                 onClick={() => router.back()}
-                className="text-xl"
               >
-                {"<"}
-              </Button>
-              <p className="text-l">게시글 수정</p>
+                <img
+                  src="/icons/back.png"
+                  width="30"
+                  height="30"
+                  className="flex-none"
+                />
+              </div>
+              <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
+                게시글 수정
+              </div>
             </div>
             <Button size="sm" variant="ghost" isDisabled>
               {decodeURIComponent(params.boardName)}

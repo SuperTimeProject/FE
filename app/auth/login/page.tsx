@@ -52,14 +52,20 @@ export default function Login() {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setErrorMessage(error.response?.data.message);
+        if (error.response?.status === 401) {
+          setErrorMessage("이메일 또는 비밀번호를 확인해주세요.");
+        } else {
+          setErrorMessage(
+            error.response?.data.message || "로그인에 실패했습니다."
+          );
+        }
       }
     }
   };
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="w-96 p-8 border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-96 p-8">
         <header className="flex justify-center text-3xl font-mono m-8">
           로그인
         </header>

@@ -36,7 +36,7 @@ export default function Admin() {
                   onClick={() => router.push(`${pathname}/verify`)}
                   className="flex justify-between font-semibold "
                 >
-                  <p>유저 관리</p>
+                  <p>인증 관리</p>
                   <p> {">"}</p>
                 </Button>
               </li>

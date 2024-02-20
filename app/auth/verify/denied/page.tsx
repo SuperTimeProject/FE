@@ -1,6 +1,7 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
+import { deleteCookie } from "@/components/utils/setCookie";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -23,10 +24,20 @@ export default function Denied() {
     if (uploadFile !== null) {
       formData.append("userProfileImage", uploadFile);
     }
-    const response = await privateApi.post("/verification/apply", formData);
+    const response = await privateApi.put("/verification/reapply", formData);
     if (response.data.success) {
-      alert("인증을 요청하였습니다.");
+      alert("인증을 재요청하였습니다.");
       router.push("/auth/verify/pending");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      deleteCookie(); // 로컬스토리지에 토큰값 삭제
+      alert("로그아웃이 성공적으로 완료되었습니다.");
+      router.push("/auth/login");
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -69,6 +80,9 @@ export default function Denied() {
           onClick={verifyReq}
         >
           인증 다시하기
+        </Button>
+        <Button variant="light" onClick={() => handleLogout()}>
+          로그아웃
         </Button>
       </main>
     </div>

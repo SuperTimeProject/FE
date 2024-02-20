@@ -3,7 +3,7 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { Button, Divider, Pagination } from "@nextui-org/react";
+import { Button, Pagination } from "@nextui-org/react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -91,65 +91,74 @@ export default function AdminInquiry() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Button
-                size="sm"
-                variant="light"
-                onClick={() => router.back()}
-                className="text-xl"
-              >
-                {"<"}
-              </Button>
-              <p className="text-l">문의 관리</p>
+          <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
+            <div
+              className="flex-none cursor-pointer"
+              onClick={() => router.back()}
+            >
+              <img
+                src="/icons/back.png"
+                width="30"
+                height="30"
+                className="flex-none"
+              />
+            </div>
+            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
+              문의 관리
             </div>
           </div>
-          <Divider className="my-2" />
+
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">
               <div className="h-[430px] overflow-auto scrollbar-none">
-                {inquiryData?.map((inquiry) => (
-                  <div
-                    key={inquiry.inquiryCid}
-                    className="flex flex-col border-1.5 rounded-md border-gray-300 p-2 m-1 relative"
-                  >
-                    <button
-                      onClick={() =>
-                        router.push(`${pathname}/${inquiry.inquiryCid}`)
-                      }
+                {inquiryData.length === 0 ? (
+                  <p className="text-center text-gray-500">
+                    문의 내역이 없습니다.
+                  </p>
+                ) : (
+                  inquiryData.map((inquiry) => (
+                    <div
+                      key={inquiry.inquiryCid}
+                      className="flex flex-col border-1.5 rounded-md border-gray-300 p-2 m-1 relative"
                     >
-                      <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                          <p>{inquiry.inquiryTitle}</p>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <p className="text-xs">{inquiry.author}</p>
-                          <p className="text-xs text-gray-500">
-                            {formatTimestamp(inquiry.createdAt)}
-                          </p>
-                          <p
-                            className={`grid flex-end text-xs ${
-                              inquiry.answer !== null
-                                ? "text-main_blue"
-                                : "text-sub_purple"
-                            }`}
-                          >
-                            {inquiry.answer == null ? "답변대기" : "답변완료"}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        className="absolute top-0 right-0 text-lg text-red-500"
-                        onClick={() => deleteInquiry(inquiry.inquiryCid)}
+                      <button
+                        onClick={() =>
+                          router.push(`${pathname}/${inquiry.inquiryCid}`)
+                        }
                       >
-                        x
-                      </Button>
-                    </button>
-                  </div>
-                ))}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center">
+                            <p>{inquiry.inquiryTitle}</p>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <p className="text-xs">{inquiry.author}</p>
+                            <p className="text-xs text-gray-500">
+                              {formatTimestamp(inquiry.createdAt)}
+                            </p>
+                            <p
+                              className={`grid flex-end text-xs ${
+                                inquiry.answer !== null
+                                  ? "text-main_blue"
+                                  : "text-sub_purple"
+                              }`}
+                            >
+                              {inquiry.answer == null ? "답변대기" : "답변완료"}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          className="absolute top-0 right-0 text-lg text-red-500"
+                          onClick={() => deleteInquiry(inquiry.inquiryCid)}
+                        >
+                          x
+                        </Button>
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
               <Pagination
                 showControls

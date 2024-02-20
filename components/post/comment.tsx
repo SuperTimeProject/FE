@@ -60,6 +60,7 @@ export default function Comment({ postCid }: { postCid: number }) {
 
       if (response.data.success) {
         alert("댓글이 작성되었습니다.");
+        window.location.reload();
         router.refresh();
       } else {
         alert("댓글 작성에 실패했습니다.");

@@ -73,7 +73,7 @@ export default function SignUp() {
     try {
       // 유효성 검사
       if (!Object.values(signUpData).every(Boolean)) {
-        setErrorMessage("모든 필드를 입력해주세요.");
+        setErrorMessage("모든 빈칸을 입력해주세요.");
         return;
       }
 
@@ -81,6 +81,16 @@ export default function SignUp() {
       const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailFormat.test(signUpData.userId)) {
         setErrorMessage("올바른 이메일 주소를 입력해주세요.");
+        return;
+      }
+
+      if (signUpData.userName.length < 2) {
+        setErrorMessage("이름은 2글자 이상이어야 합니다.");
+        return;
+      }
+
+      if (signUpData.userNickname.length < 2) {
+        setErrorMessage("닉네임은 2글자 이상이어야 합니다.");
         return;
       }
 
