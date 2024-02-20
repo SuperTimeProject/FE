@@ -21,7 +21,13 @@ export default function AuthCheck() {
 
   useEffect(() => {
     const token = getCookie();
-    const exceptions = ["/auth/login", "/auth/signup"];
+    const exceptions = [
+      "/auth/login",
+      "/auth/signup",
+      "/auth/verify/needed",
+      "/auth/verify/pending",
+      "/auth/verify/denied",
+    ];
     const isException = exceptions.includes(pathname);
 
     const chechValified = async () => {

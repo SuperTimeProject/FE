@@ -43,7 +43,7 @@ export default function Login() {
       // 응답 처리
       if (response.data.success) {
         setCookie(response.headers.authorization);
-        alert("로그인이 성공적으로 완료되었습니다."); // 메세지 수정 에러메세지 말고 성공메세지를 따로 만들거나 삭제, alert 콘솔창 띄우기
+        // alert("로그인이 성공적으로 완료되었습니다."); // 메세지 수정 에러메세지 말고 성공메세지를 따로 만들거나 삭제, alert 콘솔창 띄우기
         // TODO - 로컬스토리지에 token값 저장
         router.push("/board/main"); // /board/main -> 인증페이지
         // router.push("/auth/verify/needed"); // 인증페이지
