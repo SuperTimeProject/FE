@@ -52,9 +52,7 @@ export default function MyBoard() {
     // 초기 게시판
     const getUserPost = async () => {
       try {
-        const response = await privateApi.get(
-          `/board/getUserPost/${currentBoardCid}/1`
-        );
+        const response = await privateApi.get(`/board/getUserPost/${currentBoardCid}/1`);
 
         if (response.data.success) {
           setUserPost(response.data.userPostList);
@@ -82,9 +80,7 @@ export default function MyBoard() {
 
   const postPage = async (page: number) => {
     try {
-      const response = await privateApi.get(
-        `board/getUserPost/${currentBoardCid}/${page}`
-      );
+      const response = await privateApi.get(`board/getUserPost/${currentBoardCid}/${page}`);
       setUserPost(response.data.userPostList);
       setUserBoard(response.data.boardInfo);
     } catch (error) {
@@ -96,9 +92,7 @@ export default function MyBoard() {
 
   const getBoardPost = async (boardCid: number, page: number) => {
     try {
-      const response = await privateApi.get(
-        `/board/getUserPost/${boardCid}/${page}`
-      );
+      const response = await privateApi.get(`/board/getUserPost/${boardCid}/${page}`);
 
       if (response.data.success) {
         setUserPost(response.data.userPostList);
@@ -134,27 +128,17 @@ export default function MyBoard() {
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
           <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
-            <div
-              className="flex-none cursor-pointer"
-              onClick={() => router.back()}
-            >
-              <img
-                src="/icons/back.png"
-                width="30"
-                height="30"
-                className="flex-none"
-              />
+            <div className="flex-none cursor-pointer" onClick={() => router.back()}>
+              <img src="/icons/back.png" width="30" height="30" className="flex-none" />
             </div>
-            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
-              내 게시글
-            </div>
+            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">내 게시글</div>
           </div>
           <Tabs
             variant="underlined"
             onSelectionChange={(key: React.Key) => {
               getBoardPost(key as number, 1);
               setCurrentBoardCid(currentBoardCid);
-              setCurrentBoard(userBoard[(key as number) - 1].boardName);
+              setCurrentBoard(userBoard[userBoard.findIndex((board) => Number(key) === board.boardCid)].boardName);
             }}
           >
             {Array.isArray(userBoard) &&
@@ -162,9 +146,7 @@ export default function MyBoard() {
                 <Tab key={board.boardCid} title={board.boardName}>
                   <div className="h-[400px] overflow-auto scrollbar-none">
                     {userPost.length === 0 ? (
-                      <p className="text-center text-gray-500">
-                        작성된 글이 없습니다.
-                      </p>
+                      <p className="text-center text-gray-500">작성된 글이 없습니다.</p>
                     ) : (
                       userPost.map((post) => (
                         <div
@@ -174,9 +156,7 @@ export default function MyBoard() {
                           <p className="text-sm">{post.postTitle}</p>
                           <div className="flex justify-end items-center">
                             <p className="text-xs mr-2">{post.createdAt}</p>
-                            <Link
-                              href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
-                            >
+                            <Link href={`${pathname}/edit/${currentBoard}/${post.postCid}`}>
                               <Button size="sm" variant="light">
                                 수정
                               </Button>
