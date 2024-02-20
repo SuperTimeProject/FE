@@ -127,7 +127,7 @@ export default function InquiryRequest() {
                 문의하기
               </div>
             </div>
-            <div className="h-[520px] overflow-y-auto scrollbar-none">
+            <div className="h-[500px] overflow-y-auto scrollbar-none">
               <form className="flex flex-col gap-4">
                 <Input
                   type="text"
