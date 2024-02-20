@@ -27,6 +27,7 @@ export default function AdminVerify() {
   const pathname = usePathname();
   const [usersInfo, setUsersInfo] = useState<UsersData[]>([]);
   const [page, setPage] = useState(1);
+
   console.log(usersInfo);
 
   useEffect(() => {
@@ -150,15 +151,13 @@ export default function AdminVerify() {
                 <div
                   key={user.userId}
                   className="flex flex-col border-1.5 rounded-md border-gray-300 p-2 m-1 relative"
-                  onClick={() =>
-                    router.push(`${pathname}/detail/${user.userId}`)
-                  }
+                  onClick={() => router.push(`${pathname}/${user.userId}`)}
                 >
                   <button>
                     <div className="flex flex-col gap-2">
                       <div className="flex justify-between items-center p-2">
-                        <p>{user.userId}</p>
-                        <p className="text-sm">{user.valified}</p>
+                        <p className="text-sm">{user.userId}</p>
+                        <p className="text-xs">{user.valified}</p>
                       </div>
                     </div>
                   </button>

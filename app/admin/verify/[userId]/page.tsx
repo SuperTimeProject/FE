@@ -29,40 +29,14 @@ interface UserDetail {
   valified: string;
 }
 
-export default function AdminVerify({
+export default function AdminVerifyDetail({
   params,
 }: {
   params: { userId: string };
 }) {
   const router = useRouter();
-  const [usersInfo, setUsersInfo] = useState<UserDetail>();
-  const [userData, setUserData] = useState<UserDetail>();
+  const [userDetail, setUserDetail] = useState<UserDetail>();
   const status = ["PENDING", "DENIED", "COMPLETED", "NEEDED"];
-  const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    const getUsersInfo = async () => {
-      try {
-        const response = await privateApi.get(`/admin/pendingUser/${page}`, {
-          params: {
-            valified: "NEEDED",
-          },
-        });
-
-        if (response.data.success) {
-          setUsersInfo(response.data.userList);
-        } else {
-          alert("유저 정보를 불러오는데 실패했습니다.");
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          alert(error.response?.data.message);
-        }
-      }
-    };
-
-    getUsersInfo();
-  }, []);
 
   useEffect(() => {
     const getUserDetail = async () => {
@@ -70,11 +44,11 @@ export default function AdminVerify({
         const response = await privateApi.get(
           `/admin/pendingUser/detail/${params.userId}`
         );
-
+        console.log(response.data);
         if (response.data.success) {
-          setUserData(response.data);
+          setUserDetail(response.data);
         } else {
-          alert("유저 정보를 불러오는데 실패했습니다.");
+          alert("유저 세부 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -121,22 +95,22 @@ export default function AdminVerify({
                 {"<"}
               </Button>
               <div>
-                <p>{userData?.userName}</p>
-                <p>{userData?.semester}</p>
+                <p>{userDetail?.userName}</p>
+                <p>{userDetail?.semester}</p>
               </div>
             </div>
           </div>
           <Divider className="my-2" />
           <div className="flex flex-col p-2 m-1 gap-2">
             <div className="h-[430px] overflow-auto scrollbar-none">
-              {userData && (
+              {userDetail && (
                 <>
-                  <p>{userData?.image?.authImageFilePath}</p>
+                  <p>{userDetail?.image?.authImageFilePath}</p>
 
                   <Dropdown>
                     <DropdownTrigger>
                       <Button size="sm" variant="ghost">
-                        {userData?.valified || "인증 상태"}
+                        {userDetail?.valified || "인증 상태"}
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu>
