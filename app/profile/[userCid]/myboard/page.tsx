@@ -69,8 +69,9 @@ export default function MyBoard() {
               totalElements: 0,
               totalPages: 0,
             });
+          } else {
+            console.log(error.response?.data.message);
           }
-          console.log(error.response?.data.message);
         }
       }
     };
@@ -78,10 +79,6 @@ export default function MyBoard() {
     getUser();
     getUserPost();
   }, []);
-
-  const handleBack = () => {
-    router.back();
-  };
 
   const postPage = async (page: number) => {
     try {
@@ -136,18 +133,22 @@ export default function MyBoard() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <div className="flex items-center">
-            <Button
-              size="sm"
-              variant="light"
-              onClick={handleBack}
-              className="text-xl"
+          <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
+            <div
+              className="flex-none cursor-pointer"
+              onClick={() => router.back()}
             >
-              {"<"}
-            </Button>
-            <p className="text-l">내 게시글</p>
+              <img
+                src="/icons/back.png"
+                width="30"
+                height="30"
+                className="flex-none"
+              />
+            </div>
+            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
+              내 게시글
+            </div>
           </div>
-
           <Tabs
             variant="underlined"
             onSelectionChange={(key: React.Key) => {
@@ -159,34 +160,40 @@ export default function MyBoard() {
             {Array.isArray(userBoard) &&
               userBoard.map((board) => (
                 <Tab key={board.boardCid} title={board.boardName}>
-                  <div className="h-[430px] overflow-auto scrollbar-none">
-                    {userPost.map((post) => (
-                      <div
-                        key={post.postCid}
-                        className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
-                      >
-                        <p className="text-sm">{post.postTitle}</p>
-                        <div className="flex justify-end items-center">
-                          <p className="text-xs mr-2">{post.createdAt}</p>
-                          <Link
-                            href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
-                          >
-                            <Button size="sm" variant="light">
-                              수정
+                  <div className="h-[400px] overflow-auto scrollbar-none">
+                    {userPost.length === 0 ? (
+                      <p className="text-center text-gray-500">
+                        작성된 글이 없습니다.
+                      </p>
+                    ) : (
+                      userPost.map((post) => (
+                        <div
+                          key={post.postCid}
+                          className="flex flex-col justify-between border-1 rounded-lg border-gray-500 p-2 m-1"
+                        >
+                          <p className="text-sm">{post.postTitle}</p>
+                          <div className="flex justify-end items-center">
+                            <p className="text-xs mr-2">{post.createdAt}</p>
+                            <Link
+                              href={`${pathname}/edit/${currentBoard}/${post.postCid}`}
+                            >
+                              <Button size="sm" variant="light">
+                                수정
+                              </Button>
+                            </Link>
+                            <Divider orientation="vertical" />
+                            <Button
+                              size="sm"
+                              variant="light"
+                              className="text-red-500"
+                              onClick={() => handleDelete(post.postCid)}
+                            >
+                              삭제
                             </Button>
-                          </Link>
-                          <Divider orientation="vertical" />
-                          <Button
-                            size="sm"
-                            variant="light"
-                            className="text-red-500"
-                            onClick={() => handleDelete(post.postCid)}
-                          >
-                            삭제
-                          </Button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                   <Pagination
                     showControls

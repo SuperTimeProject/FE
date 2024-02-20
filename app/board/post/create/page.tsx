@@ -3,52 +3,57 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { Button, Divider, Input, Textarea } from "@nextui-org/react";
-import axios from "axios";
+import {
+  Button,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Textarea,
+} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-interface InquiryInfo {
-  inquiryTitle: string;
-  inquiryContent: string;
-  inquiryImage: File[];
+interface PostInfo {
+  userCid: number;
+  postTitle: string;
+  postContent: string;
+  postImage: File[];
+}
+interface BoardInfo {
+  boardName: string;
+  boardCid: number;
 }
 
-// interface UserInfo {
-//   userCid: number;
-//   userId: string;
-//   userName: string;
-//   userNickname: string;
-// }
-
-export default function InquiryRequest() {
-  // { userId }: { userId: string }
+export default function CreatePost() {
   const router = useRouter();
-  // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>({
-    inquiryTitle: "",
-    inquiryContent: "",
-    inquiryImage: [],
+  const [boardInfo, setBoardInfo] = useState<BoardInfo[]>([]);
+  const [selectedBoard, setSelectedBoard] = useState<BoardInfo | null>(null);
+  const [postInfo, setPostInfo] = useState<PostInfo>({
+    userCid: 0,
+    postTitle: "",
+    postContent: "",
+    postImage: [],
   });
 
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     const response = await privateApi.get("/auth/getUserInfo");
-
-  //     if (response.data.success) {
-  //       const userInfoData = response.data.getUserInfo;
-  //       setUserInfo(userInfoData);
-  //     }
-  //   };
-
-  //   getUserInfo();
-  // }, []);
+  useEffect(() => {
+    const getBoard = async () => {
+      const res = await privateApi.get("/auth/getUserInfo");
+      if (res.data.success) {
+        const userBoardData = res.data.getUserInfo.boardList;
+        setBoardInfo(userBoardData);
+      }
+    };
+    getBoard();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setInquiryInfo((prevInfo) => ({
+    setPostInfo((prevInfo) => ({
       ...prevInfo,
       [name]: value,
     }));
@@ -58,50 +63,66 @@ export default function InquiryRequest() {
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files).slice(0, 5);
-      if (newFiles.length + inquiryInfo.inquiryImage.length > 5) {
+      if (newFiles.length + postInfo.postImage.length > 5) {
         alert("이미지는 최대 5개까지 선택 가능합니다.");
       } else {
-        setInquiryInfo((prevInfo) => ({
+        setPostInfo((prevInfo) => ({
           ...prevInfo,
-          inquiryImage: [...prevInfo.inquiryImage, ...newFiles],
+          postImage: [...prevInfo.postImage, ...newFiles],
         }));
       }
     }
   };
 
-  const handleInquirySubmit = async () => {
+  const boardSelect = (selectedBoard: BoardInfo) => {
+    setSelectedBoard(selectedBoard);
+  };
+
+  const handlePostSubmit = async () => {
     try {
-      if (!inquiryInfo.inquiryTitle || !inquiryInfo.inquiryContent) {
+      if (!selectedBoard) {
+        alert("카테고리를 선택하세요.");
+        return;
+      }
+
+      if (!postInfo.postTitle || !postInfo.postContent) {
         alert("제목과 내용은 필수 입력 사항입니다.");
         return;
       }
 
-      const inquiryInfoData = {
-        inquiryTitle: inquiryInfo.inquiryTitle,
-        inquiryContent: inquiryInfo.inquiryContent,
+      const postInfoData = {
+        postTitle: postInfo.postTitle,
+        postContent: postInfo.postContent,
       };
 
-      const inquiryInfoJson = JSON.stringify(inquiryInfoData);
-      const inquiryInfoBlob = new Blob([inquiryInfoJson], {
+      const postInfoJson = JSON.stringify(postInfoData);
+      const postInfoBlob = new Blob([postInfoJson], {
         type: "application/json",
       });
 
       const formData = new FormData();
-      formData.append("inquiryInfo", inquiryInfoBlob);
-      for (let i = 0; i < inquiryInfo.inquiryImage.length; i++) {
-        formData.append("inquiryImage", inquiryInfo.inquiryImage[i]);
+      formData.append("postInfo", postInfoBlob);
+      for (let i = 0; i < postInfo.postImage.length; i++) {
+        formData.append("postImage", postInfo.postImage[i]);
       }
 
-      const response = await privateApi.post("/user/inquiry", formData);
-
+      const response = await privateApi.post(
+        `/board/create/${selectedBoard.boardCid}`,
+        formData
+      );
       if (response.data.success) {
-        alert("문의가 제출되었습니다.");
-        router.back();
+        alert("게시글이 작성되었습니다.");
+        if (selectedBoard.boardCid === 1) {
+          router.push("/board/main");
+        } else {
+          router.push("/board/community");
+        }
+      } else {
+        alert("게시글 작성에 실패했습니다.");
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response);
-      }
+      console.error(error);
+      alert("서버 오류로 작성에 실패했습니다.");
     }
   };
 
@@ -110,7 +131,7 @@ export default function InquiryRequest() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <main className="flex flex-col gap-4">
+          <main className="flex flex-col gap-2">
             <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
               <div
                 className="flex-none cursor-pointer"
@@ -124,28 +145,45 @@ export default function InquiryRequest() {
                 />
               </div>
               <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
-                문의하기
+                게시글 작성
               </div>
             </div>
-            <div className="h-[520px] overflow-y-auto scrollbar-none">
+
+            <Dropdown>
+              <DropdownTrigger>
+                <Button size="sm" variant="ghost">
+                  {selectedBoard?.boardName || "카테고리"}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {boardInfo.map((board) => (
+                  <DropdownItem
+                    key={board.boardCid}
+                    onClick={() => boardSelect(board)}
+                  >
+                    {board.boardName}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <div className="h-[480px] overflow-y-auto  scrollbar-none">
               <form className="flex flex-col gap-4">
                 <Input
                   type="text"
                   label="제목"
-                  name="inquiryTitle"
-                  value={inquiryInfo.inquiryTitle}
+                  name="postTitle"
+                  value={postInfo.postTitle}
                   onChange={handleInputChange}
                 />
                 <Divider className="my-2" />
                 <Textarea
                   placeholder="내용"
-                  name="inquiryContent"
-                  value={inquiryInfo.inquiryContent}
+                  name="postContent"
+                  value={postInfo.postContent}
                   onChange={handleInputChange}
                   className="h-[178px]"
                 />
               </form>
-
               <div className="flex justify-end">
                 <Button
                   size="sm"
@@ -162,7 +200,7 @@ export default function InquiryRequest() {
               </div>
 
               <section className="min-h-[120px] flex flex-col justify-start items-center">
-                {inquiryInfo.inquiryImage.map((file, index) => (
+                {postInfo.postImage.map((file, index) => (
                   <img
                     key={index}
                     src={URL.createObjectURL(file)}
@@ -171,14 +209,13 @@ export default function InquiryRequest() {
                   />
                 ))}
               </section>
-
               <div className="flex justify-end">
                 <Button
                   size="sm"
                   className="bg-sub_purple font-semibold text-white"
-                  onClick={handleInquirySubmit}
+                  onClick={handlePostSubmit}
                 >
-                  제출
+                  게시
                 </Button>
               </div>
             </div>

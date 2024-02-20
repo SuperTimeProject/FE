@@ -3,17 +3,7 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import {
-  Button,
-  Divider,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Pagination,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Button, Pagination } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -74,19 +64,21 @@ export default function MyInquiry() {
       <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
         <Header />
         <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Button
-                size="sm"
-                variant="light"
-                onClick={() => router.back()}
-                className="text-xl"
-              >
-                {"<"}
-              </Button>
-              <p className="text-l">문의 내역</p>
+          <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
+            <div
+              className="flex-none cursor-pointer"
+              onClick={() => router.back()}
+            >
+              <img
+                src="/icons/back.png"
+                width="30"
+                height="30"
+                className="flex-none"
+              />
             </div>
-
+            <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
+              문의 내역
+            </div>
             <Link href={`${pathname}/request`}>
               <Button isIconOnly className="bg-sub_purple">
                 <img
@@ -98,35 +90,40 @@ export default function MyInquiry() {
               </Button>
             </Link>
           </div>
-          <Divider className="my-2" />
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">
               <div className="h-[430px] overflow-auto scrollbar-none">
-                {inquiryData?.map((inquiry) => (
-                  <div className="flex flex-col">
-                    <button
-                      key={inquiry.inquiryCid}
-                      className="border-1.5 rounded-md border-gray-300 p-2 m-1"
-                      onClick={() =>
-                        router.push(`${pathname}/detail/${inquiry.inquiryCid}`)
-                      }
-                    >
-                      <div className="flex justify-between items-center">
-                        <p className="text-sm">{inquiry.inquiryTitle}</p>
-                        <p
-                          className={`grid flex-end text-xs ${
-                            inquiry.answer !== null
-                              ? "text-main_blue"
-                              : "text-sub_purple"
-                          }`}
-                        >
-                          {/* {inquiry.isClosed} */}
-                          {inquiry.answer == null ? "답변대기" : "답변완료"}
-                        </p>
-                      </div>
-                    </button>
-                  </div>
-                ))}
+                {inquiryData.length === 0 ? (
+                  <p className="text-center text-gray-500">
+                    문의 내역이 없습니다.
+                  </p>
+                ) : (
+                  inquiryData.map((inquiry) => (
+                    <div className="flex flex-col" key={inquiry.inquiryCid}>
+                      <button
+                        className="border-1.5 rounded-md border-gray-300 p-2 m-1"
+                        onClick={() =>
+                          router.push(
+                            `${pathname}/detail/${inquiry.inquiryCid}`
+                          )
+                        }
+                      >
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm">{inquiry.inquiryTitle}</p>
+                          <p
+                            className={`grid flex-end text-xs ${
+                              inquiry.answer !== null
+                                ? "text-main_blue"
+                                : "text-sub_purple"
+                            }`}
+                          >
+                            {inquiry.answer == null ? "답변대기" : "답변완료"}
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
               <Pagination
                 showControls

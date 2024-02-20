@@ -340,13 +340,22 @@ export default function Users() {
                     <p className="text-xs text-red-500 pr-4">
                       *프로필 사진과 닉네임만 변경 가능합니다.
                     </p>
-                    <Button
-                      size="sm"
-                      onClick={editSubmit}
-                      className="bg-sub_purple text-white"
-                    >
-                      변경
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="light"
+                        onClick={() => setProfileEditMode(false)}
+                      >
+                        취소
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={editSubmit}
+                        className="bg-sub_purple text-white"
+                      >
+                        변경
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <Button
