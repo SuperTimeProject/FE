@@ -40,7 +40,7 @@ export default function CreatePost() {
 
   useEffect(() => {
     const getBoard = async () => {
-      const res = await privateApi.get("/auth/getUserInfo");
+      const res = await privateApi.get("/auth/user-info");
       if (res.data.success) {
         const userBoardData = res.data.getUserInfo.boardList;
         setBoardInfo(userBoardData);
@@ -107,7 +107,7 @@ export default function CreatePost() {
       }
 
       const response = await privateApi.post(
-        `/board/create/${selectedBoard.boardCid}`,
+        `/board/${selectedBoard.boardCid}`,
         formData
       );
       if (response.data.success) {
@@ -128,9 +128,9 @@ export default function CreatePost() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <main className="flex flex-col gap-2">
             <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
               <div

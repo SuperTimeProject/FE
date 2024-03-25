@@ -1,6 +1,6 @@
 "use client";
 
-import LogoTitle from "@/components/shared/logoTitle";
+import Header from "@/components/shared/header";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,7 @@ export default function Home() {
     <div className="w-full min-h-screen flex flex-col justify-center items-center px-4">
       <header className="flex flex-col items-center gap-8">
         <img src="/favicon.ico" width="128" height="128" />
-        <LogoTitle />
+        <Header />
       </header>
       <section className="flex flex-col items-center gap-8 mt-8">
         <Button

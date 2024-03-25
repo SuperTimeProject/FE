@@ -1,5 +1,6 @@
 "use client";
 
+import Header from "@/components/shared/header";
 import LogoutButton from "@/components/shared/logoutButton";
 import { useRouter } from "next/navigation";
 
@@ -9,10 +10,7 @@ export default function Pending() {
   return (
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col items-center">
-        <div className="flex justify-center items-center m-4 gap-2">
-          <p className="text-4xl font-mono">SUPER</p>
-          <p className="text-4xl font-mono">TIME</p>
-        </div>
+        <Header />
         <img src="/icons/info.png" width="64" height="64" />
         <p className="font-medium text-xl m-4">인증 처리가 진행 중입니다.</p>
       </header>

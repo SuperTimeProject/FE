@@ -6,7 +6,7 @@ import { privateApi } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/components/utils/setCookie";
 import axios from "axios";
-import LogoTitle from "@/components/shared/logoTitle";
+import Header from "@/components/shared/header";
 
 interface LoginData {
   userId: string;
@@ -62,8 +62,8 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen justify-center items-center">
-      <div className="w-full max-w-md p-8">
-        <LogoTitle />
+      <div className="w-full min-w-md p-8">
+        <Header />
         {/* <header className="flex justify-center text-3xl font-mono m-8">
           로그인
         </header> */}
