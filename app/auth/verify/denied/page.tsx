@@ -1,7 +1,7 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
-import { deleteCookie } from "@/components/utils/setCookie";
+import LogoutButton from "@/components/shared/logoutButton";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,16 +31,6 @@ export default function Denied() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      deleteCookie(); // 로컬스토리지에 토큰값 삭제
-      alert("로그아웃이 성공적으로 완료되었습니다.");
-      router.push("/auth/login");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col items-center">
@@ -61,6 +51,7 @@ export default function Denied() {
               className="m-2"
             />
           )}
+
           <Button
             size="sm"
             className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
@@ -74,6 +65,7 @@ export default function Denied() {
             />
           </Button>
         </section>
+
         <Button
           size="sm"
           className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
@@ -81,9 +73,8 @@ export default function Denied() {
         >
           인증 다시하기
         </Button>
-        <Button variant="light" onClick={() => handleLogout()}>
-          로그아웃
-        </Button>
+
+        <LogoutButton />
       </main>
     </div>
   );
