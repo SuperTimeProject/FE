@@ -1,8 +1,8 @@
 "use client";
 
 import { privateApi, publicApi } from "@/api/axiosConfig";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

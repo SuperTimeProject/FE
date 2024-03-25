@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
-// const BASE_URL = "http://3.37.61.223:8080/";
-const BASE_URL = "https://supertime.site/";
+const BASE_URL = "http://52.78.207.227:8080/";
+// const BASE_URL = "https://supertime.site/";
 
 export const publicApi: AxiosInstance = axios.create({
   baseURL: BASE_URL,

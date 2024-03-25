@@ -1,8 +1,8 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { Button, Divider, Pagination, Tab, Tabs } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";

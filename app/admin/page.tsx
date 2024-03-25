@@ -1,7 +1,7 @@
 "use client";
 
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { Button } from "@nextui-org/react";
 import { usePathname, useRouter } from "next/navigation";
 import { deleteCookie } from "@/components/utils/setCookie";

@@ -9,10 +9,10 @@ import {
   DropdownTrigger,
   Input,
 } from "@nextui-org/react";
-import Link from "next/link";
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import LogoTitle from "@/components/shared/logoTitle";
 
 interface SignUpData {
   userId: string;
@@ -94,6 +94,11 @@ export default function SignUp() {
         return;
       }
 
+      if (signUpData.userPassword.length < 8) {
+        setErrorMessage("비밀번호는 8자 이상이어야 합니다.");
+        return;
+      }
+
       // 비밀번호 일치 여부 확인
       if (signUpData.userPassword !== passwordConfirm) {
         setPasswordMismatch(true);
@@ -163,94 +168,94 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex h-screen justify-center items-center">
-      <div className="w-96 p-8">
-        <header className="flex justify-center text-3xl font-mono m-8">
+    <div className="flex min-h-screen justify-center items-center">
+      <div className="w-full max-w-md p-8">
+        <LogoTitle />
+        {/* <header className="flex justify-center text-3xl font-mono m-8">
           회원가입
-        </header>
+        </header> */}
         <main className="flex flex-col gap-4">
-          <section className="flex flex-col gap-4">
-            <form className="flex flex-col gap-4">
-              <Input
-                type="email"
-                label="이메일"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userId: e.target.value })
-                }
-              />
-              <Input
-                type="text"
-                label="이름"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userName: e.target.value })
-                }
-              />
-              <Input
-                type="text"
-                label="닉네임"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userNickname: e.target.value })
-                }
-              />
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button className="bg-[#f5f5f5]">
-                    {signUpData.semesterCid
-                      ? semesterList.find(
-                          (semester) =>
-                            semester.semesterCid === signUpData.semesterCid
-                        )?.semesterDetailName || "기수 선택"
-                      : "기수 선택"}
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  {semesterList.map((semester) => (
-                    <DropdownItem
-                      key={semester.semesterCid}
-                      onClick={() =>
-                        setSignUpData({
-                          ...signUpData,
-                          semesterCid: semester.semesterCid,
-                        })
-                      }
-                    >
-                      {semester.semesterDetailName}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Input
-                type="password"
-                label="비밀번호"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userPassword: e.target.value })
-                }
-              />
-              <Input
-                type="password"
-                label="비밀번호 확인"
-                onChange={(e) => setPasswordConfirm(e.target.value)}
-              />
-            </form>
+          <form className="flex flex-col gap-4">
+            <Input
+              type="email"
+              label="이메일"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userId: e.target.value })
+              }
+            />
+            <Input
+              type="text"
+              label="이름"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userName: e.target.value })
+              }
+            />
+            <Input
+              type="text"
+              label="닉네임"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userNickname: e.target.value })
+              }
+            />
+            <Dropdown>
+              <DropdownTrigger>
+                <Button className="bg-[#f5f5f5]">
+                  {signUpData.semesterCid
+                    ? semesterList.find(
+                        (semester) =>
+                          semester.semesterCid === signUpData.semesterCid
+                      )?.semesterDetailName || "기수 선택"
+                    : "기수 선택"}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {semesterList.map((semester) => (
+                  <DropdownItem
+                    key={semester.semesterCid}
+                    onClick={() =>
+                      setSignUpData({
+                        ...signUpData,
+                        semesterCid: semester.semesterCid,
+                      })
+                    }
+                  >
+                    {semester.semesterDetailName}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Input
+              type="password"
+              label="비밀번호"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userPassword: e.target.value })
+              }
+            />
+            <Input
+              type="password"
+              label="비밀번호 확인"
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+            />
+          </form>
 
-            {errorMessage && (
-              <p className="flex justify-center text-red-500">{errorMessage}</p>
-            )}
+          {errorMessage && (
+            <p className="flex justify-center text-red-500">{errorMessage}</p>
+          )}
 
-            <Button
-              className="bg-main_blue font-semibold text-white"
-              onClick={handleSignup}
-            >
-              회원가입
-            </Button>
-          </section>
+          <Button
+            className="bg-main_blue font-semibold text-white"
+            onClick={handleSignup}
+          >
+            회원가입
+          </Button>
         </main>
-        <footer className="flex justify-center m-10">
-          <Link href="/auth/login">
-            <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
-              로그인
-            </Button>
-          </Link>
+        <footer className="m-10">
+          <Button
+            onClick={() => router.push("/auth/login")}
+            className="w-full bg-white border-solid border-1.5 border-main_blue text-main_blue"
+          >
+            로그인
+          </Button>
         </footer>
       </div>
     </div>
