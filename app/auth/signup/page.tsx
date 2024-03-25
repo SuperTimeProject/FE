@@ -44,7 +44,7 @@ export default function SignUp() {
   useEffect(() => {
     const fetchSemesterList = async () => {
       try {
-        const response = await publicApi.get("/semester/getAllSemester");
+        const response = await publicApi.get("/semester/all");
 
         if (response.data.success) {
           const semesterListData = response.data.semesterList;
@@ -135,7 +135,7 @@ export default function SignUp() {
       }
 
       // 이메일 중복 확인
-      const emailCheck = await publicApi.get("/auth/duplicateTest/email", {
+      const emailCheck = await publicApi.get("/auth/duplicate-test/email", {
         params: {
           userEmail: signUpData.userId,
         },

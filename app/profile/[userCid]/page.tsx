@@ -116,7 +116,7 @@ export default function Users() {
       }
 
       const nicknameCheck = await publicApi.get(
-        "/auth/duplicateTest/nickname",
+        "/auth/duplicate-test/nickname",
         {
           params: {
             nickname: editInfo.userNickname,
@@ -143,7 +143,7 @@ export default function Users() {
       });
 
       if (response.data.success) {
-        const updatedUserRes = await privateApi.get("/auth/getUserInfo");
+        const updatedUserRes = await privateApi.get("/auth/user-info");
 
         if (updatedUserRes.data.success) {
           const updatedUserInfo = updatedUserRes.data;
@@ -190,9 +190,7 @@ export default function Users() {
 
   const handleImageDelete = async () => {
     try {
-      const response = await privateApi.delete(
-        "/user/info/profileImage/delete"
-      );
+      const response = await privateApi.put("/user/info/profile-image");
       if (response.data.success) {
         alert("프로필 사진이 삭제되었습니다.");
         window.location.reload();
