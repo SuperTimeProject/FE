@@ -3,7 +3,7 @@
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { useEffect, useState } from "react";
-import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
+import { privateApi, publicApi } from "@/api/axiosConfig";
 import {
   Avatar,
   Button,
@@ -68,7 +68,7 @@ export default function Users() {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const response = await privateApi.get("/auth/getUserInfo");
+        const response = await privateApi.get("/auth/user-info");
 
         if (response.data.success) {
           setUserInfo(response.data.getUserInfo);
@@ -235,9 +235,9 @@ export default function Users() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <main>
             <p className="flex justify-center text-xl font-mono font-semibold m-4">
               마이페이지

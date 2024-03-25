@@ -38,7 +38,7 @@ export default function MyBoard() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await privateApi.get("/auth/getUserInfo");
+        const response = await privateApi.get("/auth/user-info");
         if (response.data.success) {
           setUserBoard(response.data.getUserInfo.boardList);
         }
@@ -53,7 +53,7 @@ export default function MyBoard() {
     const getUserPost = async () => {
       try {
         const response = await privateApi.get(
-          `/board/getUserPost/${currentBoardCid}/1`
+          `/board/posts/user-posts/${currentBoardCid}/1`
         );
 
         if (response.data.success) {
@@ -83,7 +83,7 @@ export default function MyBoard() {
   const postPage = async (page: number) => {
     try {
       const response = await privateApi.get(
-        `board/getUserPost/${currentBoardCid}/${page}`
+        `board/posts/user-posts/${currentBoardCid}/${page}`
       );
       setUserPost(response.data.userPostList);
       setUserBoard(response.data.boardInfo);
@@ -97,7 +97,7 @@ export default function MyBoard() {
   const getBoardPost = async (boardCid: number, page: number) => {
     try {
       const response = await privateApi.get(
-        `/board/getUserPost/${boardCid}/${page}`
+        `board/posts/user-posts/${boardCid}/${page}`
       );
 
       if (response.data.success) {
@@ -130,9 +130,9 @@ export default function MyBoard() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
             <div
               className="flex-none cursor-pointer"

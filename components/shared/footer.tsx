@@ -1,6 +1,6 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import GetUserInfo from "@/hook/getUserInfo";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -10,14 +10,17 @@ export default function Footer() {
   const [role, setRole] = useState<string>();
 
   useEffect(() => {
-    const getUser = async () => {
-      const res = await privateApi.get("/auth/getUserInfo");
-      if (res.data) {
-        setUserCid(res.data.getUserInfo.userCid);
-        setRole(res.data.getUserInfo.role);
+    async function fetchUserInfo() {
+      try {
+        const userInfo = await GetUserInfo();
+        setUserCid(userInfo.userCid);
+        setRole(userInfo.role);
+      } catch (error) {
+        console.error(error);
       }
-    };
-    getUser();
+    }
+
+    fetchUserInfo();
   }, []);
 
   const handleIconHover = (icon: string | null) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
+import Header from "@/components/shared/header";
 import LogoutButton from "@/components/shared/logoutButton";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
@@ -34,10 +35,7 @@ export default function Denied() {
   return (
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col items-center">
-        <div className="flex justify-center items-center m-4 gap-2">
-          <p className="text-4xl font-mono">SUPER</p>
-          <p className="text-4xl font-mono">TIME</p>
-        </div>
+        <Header />
         <p className="font-medium text-rose-600 text-xl m-4">
           기수 인증에 실패하였습니다.
         </p>

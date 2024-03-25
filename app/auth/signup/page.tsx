@@ -12,7 +12,7 @@ import {
 import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import LogoTitle from "@/components/shared/logoTitle";
+import Header from "@/components/shared/header";
 
 interface SignUpData {
   userId: string;
@@ -169,8 +169,8 @@ export default function SignUp() {
 
   return (
     <div className="flex min-h-screen justify-center items-center">
-      <div className="w-full max-w-md p-8">
-        <LogoTitle />
+      <div className="w-full min-w-md p-8">
+        <Header />
         {/* <header className="flex justify-center text-3xl font-mono m-8">
           회원가입
         </header> */}
