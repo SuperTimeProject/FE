@@ -1,9 +1,6 @@
 "use client";
 
-<<<<<<< HEAD
 import Header from "@/components/shared/header";
-=======
->>>>>>> e9b0302 (feat: 인증페이지 로그아웃 버튼 수정)
 import LogoutButton from "@/components/shared/logoutButton";
 import { useRouter } from "next/navigation";
 
