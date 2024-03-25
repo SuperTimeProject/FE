@@ -1,7 +1,11 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
+<<<<<<< HEAD
 import Header from "@/components/shared/header";
+=======
+import LogoTitle from "@/components/shared/logoTitle";
+>>>>>>> e9b0302 (feat: 인증페이지 로그아웃 버튼 수정)
 import LogoutButton from "@/components/shared/logoutButton";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
@@ -35,7 +39,11 @@ export default function Needed() {
   return (
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col justify-center items-center">
+<<<<<<< HEAD
         <Header />
+=======
+        <LogoTitle />
+>>>>>>> e9b0302 (feat: 인증페이지 로그아웃 버튼 수정)
         <p className="font-medium text-xl m-4">슈퍼타임 인증</p>
       </header>
       <main className="flex flex-col items-center gap-4">
