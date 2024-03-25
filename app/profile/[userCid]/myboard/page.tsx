@@ -116,7 +116,7 @@ export default function MyBoard() {
 
   const handleDelete = async (postCid: number) => {
     try {
-      const response = await privateApi.delete(`/board/delete/${postCid}`);
+      const response = await privateApi.delete(`/board/${postCid}`);
       if (response.data.success) {
         alert("게시글이 삭제되었습니다.");
       }

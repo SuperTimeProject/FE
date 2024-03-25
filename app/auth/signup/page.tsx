@@ -121,7 +121,7 @@ export default function SignUp() {
 
       // 닉네임 중복 확인
       const nicknameCheck = await publicApi.get(
-        "/auth/duplicateTest/nickname",
+        "/auth/duplicate-t dest/nickname",
         {
           params: {
             nickname: signUpData.userNickname,

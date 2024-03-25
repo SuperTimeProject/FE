@@ -39,7 +39,7 @@ export default function Community() {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await privateApi.get("/auth/getUserInfo");
+      const res = await privateApi.get("/auth/user-info");
       if (res.data.success) {
         const userBoardData: UserBoard[] = res.data.getUserInfo.boardList;
         const filteredUserBoardData = userBoardData.filter(

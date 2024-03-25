@@ -107,6 +107,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
           </Link>
         </div>
       </main>
+
       <div className="h-[450px] overflow-auto scrollbar-none mt-3">
         {errorMessage && <p>{errorMessage}</p>}
         {boardData &&
@@ -129,6 +130,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
             </Link>
           ))}
       </div>
+
       <Pagination
         showControls
         total={totalPage}
