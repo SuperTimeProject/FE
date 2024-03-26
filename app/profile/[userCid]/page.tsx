@@ -1,9 +1,8 @@
 "use client";
 
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { useEffect, useState } from "react";
-import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
 import {
   Avatar,
   Button,
@@ -22,7 +21,15 @@ import {
 
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
-import { deleteCookie } from "@/components/utils/setCookie";
+import {
+  deleteProfileImage,
+  deleteUserAccount,
+  editUserProfile,
+  getUserInfo,
+} from "@/api/user/profile";
+import { checkNickname } from "@/api/auth/authCheck";
+import LogoutButton from "@/components/shared/logoutButton";
+import { confirmUserPart, updateUserPart } from "@/api/user/semester";
 
 interface UserInfo {
   userCid: number;
@@ -66,22 +73,11 @@ export default function Users() {
   const partOptions = ["PART_FE", "PART_BE", "PART_FULL"];
 
   useEffect(() => {
-    const getUserInfo = async () => {
+    const getUserData = async () => {
       try {
-        const response = await privateApi.get("/auth/getUserInfo");
-
-        if (response.data.success) {
-          setUserInfo(response.data.getUserInfo);
-          setUserImage(response.data.userProfile);
-
-          // setEditInfo({
-          //   userNickname: response.data.getUserInfo.userNickname || "",
-          //   userProfileImage:
-          //     response.data.userProfile.userProfileFilePath || null,
-          // });
-        } else {
-          alert("로그인한 유저 정보를 불러오는데 실패했습니다.");
-        }
+        const userData = await getUserInfo();
+        setUserInfo(userData.getUserInfo);
+        setUserImage(userData.userProfile);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           alert(error.response?.data.message);
@@ -89,13 +85,13 @@ export default function Users() {
       }
     };
 
-    getUserInfo();
+    getUserData();
   }, []);
 
-  const handlePartSelect = async (selectedPart: String) => {
+  const handlePartSelect = async (selectedPart: string) => {
     try {
-      const response = await privateApi.put(`/user/part/${selectedPart}`);
-      if (response.data.success) {
+      const response = await updateUserPart(selectedPart);
+      if (response.success) {
         alert("주특기가 선택되었습니다.");
         window.location.reload();
       } else {
@@ -115,16 +111,8 @@ export default function Users() {
         return;
       }
 
-      const nicknameCheck = await publicApi.get(
-        "/auth/duplicateTest/nickname",
-        {
-          params: {
-            nickname: editInfo.userNickname,
-          },
-        }
-      );
-
-      if (nicknameCheck.data.duplicate) {
+      const isNicknameAvailable = await checkNickname(editInfo.userNickname);
+      if (!isNicknameAvailable) {
         alert("이미 사용 중인 닉네임입니다.");
         return;
       }
@@ -138,12 +126,10 @@ export default function Users() {
         formData.append("userProfileImage", editInfo.userProfileImage);
       }
 
-      const response = await privateApi.put("/user/info/edit", formData, {
-        params,
-      });
+      const response = await editUserProfile(formData, params);
 
       if (response.data.success) {
-        const updatedUserRes = await privateApi.get("/auth/getUserInfo");
+        const updatedUserRes = await getUserInfo();
 
         if (updatedUserRes.data.success) {
           const updatedUserInfo = updatedUserRes.data;
@@ -174,8 +160,8 @@ export default function Users() {
   };
 
   const confirmPart = async () => {
-    const response = await privateApi.put("/user/part/confirmed");
-    if (response.data.success) {
+    const response = await confirmUserPart();
+    if (response.success) {
       alert("주특기가 확정되었습니다.");
     }
   };
@@ -190,9 +176,7 @@ export default function Users() {
 
   const handleImageDelete = async () => {
     try {
-      const response = await privateApi.delete(
-        "/user/info/profileImage/delete"
-      );
+      const response = await deleteProfileImage();
       if (response.data.success) {
         alert("프로필 사진이 삭제되었습니다.");
         window.location.reload();
@@ -204,19 +188,9 @@ export default function Users() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      deleteCookie(); // 로컬스토리지에 토큰값 삭제
-      alert("로그아웃이 성공적으로 완료되었습니다.");
-      router.push("/auth/login");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleDeleteAccount = async () => {
     try {
-      const response = await privateApi.delete("api");
+      const response = await deleteUserAccount();
       if (response.data.success) {
         // const deleteUser = response.data.;
         // setUserInfo(deleteUser);
@@ -235,9 +209,9 @@ export default function Users() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <main>
             <p className="flex justify-center text-xl font-mono font-semibold m-4">
               마이페이지
@@ -272,7 +246,7 @@ export default function Users() {
                     </Button>
                   )}
                 </div>
-                <div className="flex flex-col justify-center items-center gap-2">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
                   <div className="flex justify-center items-center gap-2">
                     <p className="font-mono">
                       {userInfo?.semester.semesterDetailName}
@@ -433,9 +407,7 @@ export default function Users() {
                     )}
                   </ModalContent>
                 </Modal>
-                <Button variant="light" onClick={() => handleLogout()}>
-                  로그아웃
-                </Button>
+                <LogoutButton />
               </li>
             </ul>
           </main>

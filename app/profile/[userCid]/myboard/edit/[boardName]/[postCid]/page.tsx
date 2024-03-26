@@ -1,8 +1,8 @@
 "use client";
 
 import { privateApi, publicApi } from "@/api/axiosConfig";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -55,9 +55,7 @@ export default function EditPost({
   useEffect(() => {
     const getPostData = async () => {
       try {
-        const response = await privateApi.get(
-          `/board/getPost/${params.postCid}`
-        );
+        const response = await privateApi.get(`/user/posts/${params.postCid}`);
 
         if (response.data.success) {
           const getPostInfo = response.data.postInfo;
@@ -153,7 +151,7 @@ export default function EditPost({
       console.log(editData);
 
       const response = await privateApi.put(
-        `/board/edit/${postInfo?.postCid}`,
+        `/user/posts/${postInfo?.postCid}`,
         formData
       );
 
@@ -173,9 +171,9 @@ export default function EditPost({
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <main className="flex flex-col gap-2">
             <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
               <div

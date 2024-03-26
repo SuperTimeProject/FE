@@ -1,8 +1,8 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { Button, Pagination } from "@nextui-org/react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
@@ -88,9 +88,9 @@ export default function AdminInquiry() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
             <div
               className="flex-none cursor-pointer"

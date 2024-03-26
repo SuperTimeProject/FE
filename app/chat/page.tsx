@@ -2,8 +2,8 @@
 
 import { privateApi } from "@/api/axiosConfig";
 import ChatRoom from "@/components/chat/chatRoom";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { getCookie } from "@/components/utils/setCookie";
 import { CompatClient, Stomp, Message } from "@stomp/stompjs";
 import axios from "axios";
@@ -102,7 +102,11 @@ export default function Chat() {
   };
 
   // 채팅 보내기
-  const sendHandler = (roomCid: number, userCid: number, chatMessage: string) => {
+  const sendHandler = (
+    roomCid: number,
+    userCid: number,
+    chatMessage: string
+  ) => {
     if (chatMessage === "") return;
     if (client.current) {
       client.current.send(
@@ -153,15 +157,21 @@ export default function Chat() {
     }
   };
 
-  if (chatRoom === undefined || userCid === undefined) return <div>로딩중...</div>;
+  if (chatRoom === undefined || userCid === undefined)
+    return <div>로딩중...</div>;
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-          <div className="flex justify-center text-lg font-bold pb-2 ">{chatRoom.roomName}</div>
-          <div className="h-[450px] border-t-1 border-[#d1d5db] overflow-auto scrollbar-none mb-4" ref={chatRoomRef}>
+        <div className="w-full min-h-[600px] p-4 bg-white">
+          <div className="flex justify-center text-lg font-bold pb-2 ">
+            {chatRoom.roomName}
+          </div>
+          <div
+            className="h-[450px] border-t-1 border-[#d1d5db] overflow-auto scrollbar-none mb-4"
+            ref={chatRoomRef}
+          >
             <ChatRoom messages={message} />
           </div>
           <div className="flex items-center justify-around">
@@ -183,7 +193,9 @@ export default function Chat() {
               isIconOnly
               aria-label="post"
               className="bg-sub_purple float-right"
-              onClick={() => sendHandler(chatRoom.roomCid, userCid, inputMessage)}
+              onClick={() =>
+                sendHandler(chatRoom.roomCid, userCid, inputMessage)
+              }
             >
               {/* 메시지 테스트 */}
               <img src="/icons/up-arrow.png" width="25" />

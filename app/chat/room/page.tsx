@@ -7,8 +7,8 @@ import { Textarea, Button } from "@nextui-org/react";
 export default function room() {
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
-        <div className="w-96 h-[748px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+      <div className="w-full max-w-[767px] p-4 bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <main className="flex justify-between items-center mt-3 pb-6 border-b-2">
             <Link href="/chat/list">
               <img src="/icons/back.png" width="35" height="35" />

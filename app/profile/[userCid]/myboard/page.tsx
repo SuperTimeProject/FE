@@ -1,8 +1,8 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
+import Footer from "@/components/shared/footer";
+import Header from "@/components/shared/header";
 import { Button, Divider, Pagination, Tab, Tabs } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
@@ -38,7 +38,7 @@ export default function MyBoard() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await privateApi.get("/auth/getUserInfo");
+        const response = await privateApi.get("/public/auth/user-info");
         if (response.data.success) {
           setUserBoard(response.data.getUserInfo.boardList);
         }
@@ -53,7 +53,7 @@ export default function MyBoard() {
     const getUserPost = async () => {
       try {
         const response = await privateApi.get(
-          `/board/getUserPost/${currentBoardCid}/1`
+          `/user/posts/user-posts/${currentBoardCid}/1`
         );
 
         if (response.data.success) {
@@ -83,7 +83,7 @@ export default function MyBoard() {
   const postPage = async (page: number) => {
     try {
       const response = await privateApi.get(
-        `board/getUserPost/${currentBoardCid}/${page}`
+        `user/posts/user-posts/${currentBoardCid}/${page}`
       );
       setUserPost(response.data.userPostList);
       setUserBoard(response.data.boardInfo);
@@ -97,7 +97,7 @@ export default function MyBoard() {
   const getBoardPost = async (boardCid: number, page: number) => {
     try {
       const response = await privateApi.get(
-        `/board/getUserPost/${boardCid}/${page}`
+        `user/posts/user-posts/${boardCid}/${page}`
       );
 
       if (response.data.success) {
@@ -116,7 +116,7 @@ export default function MyBoard() {
 
   const handleDelete = async (postCid: number) => {
     try {
-      const response = await privateApi.delete(`/board/delete/${postCid}`);
+      const response = await privateApi.delete(`/user/posts/${postCid}`);
       if (response.data.success) {
         alert("게시글이 삭제되었습니다.");
       }
@@ -130,9 +130,9 @@ export default function MyBoard() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="max-w-[767px] flex flex-col items-center border-1 border-[#d1d5db] bg-white shadow-lg rounded-lg">
+      <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
-        <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+        <div className="w-full min-h-[600px] p-4 bg-white">
           <div className="flex items-center pl-1 pr-1 mt-3 mb-2">
             <div
               className="flex-none cursor-pointer"

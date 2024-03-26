@@ -31,7 +31,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await privateApi.get("/auth/getUserInfo");
+      const res = await privateApi.get("/public/auth/user-info");
       if (res.data.success) {
         const userBoardData = res.data.getUserInfo.boardList;
         setUserBoard(
@@ -51,7 +51,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
     const fetchBoardData = async () => {
       try {
         const response = await privateApi.get(
-          `/board/getBoard/${userBoard.boardCid}/${page}`
+          `/user/boards/${userBoard.boardCid}/${page}`
         );
         if (response.data.success) {
           setBoardData(response.data.postList);
@@ -69,14 +69,10 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
   }, [page, userBoard]);
 
   if (userBoard === null)
-    return (
-      <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
-        로딩중..
-      </div>
-    );
+    return <div className="w-full min-h-[600px] p-4 bg-white">로딩중..</div>;
 
   return (
-    <div className="w-96 h-[600px] m-2 p-4 border-1 border-[#d1d5db] bg-white">
+    <div className="w-full min-h-[600px] p-4 bg-white">
       <main className="pb-2 text-xl tracking-widest border-b-2 border-gray-700 pl-1 pr-1">
         {/* {userBoard.boardName} */}
         {/* {boardName} */}
@@ -111,6 +107,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
           </Link>
         </div>
       </main>
+
       <div className="h-[450px] overflow-auto scrollbar-none mt-3">
         {errorMessage && <p>{errorMessage}</p>}
         {boardData &&
@@ -133,6 +130,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
             </Link>
           ))}
       </div>
+
       <Pagination
         showControls
         total={totalPage}

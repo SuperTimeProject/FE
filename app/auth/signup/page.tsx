@@ -9,10 +9,13 @@ import {
   DropdownTrigger,
   Input,
 } from "@nextui-org/react";
-import Link from "next/link";
-import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
+import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Header from "@/components/shared/header";
+import { signUpUser } from "@/api/auth/authUser";
+import { checkEmail, checkNickname } from "@/api/auth/authCheck";
+import { getSemesterList } from "@/api/user/semester";
 
 interface SignUpData {
   userId: string;
@@ -44,17 +47,12 @@ export default function SignUp() {
   useEffect(() => {
     const fetchSemesterList = async () => {
       try {
-        const response = await publicApi.get("/semester/getAllSemester");
-
-        if (response.data.success) {
-          const semesterListData = response.data.semesterList;
-          setSemesterList(semesterListData);
-        } else {
-          setErrorMessage("기수를 불러오는데 실패했습니다.");
-        }
+        const semesterListData = await getSemesterList();
+        setSemesterList(semesterListData);
       } catch (error) {
-        console.error(error);
-        setErrorMessage("서버 오류로 기수를 불러오는데 실패했습니다.");
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.message);
+        }
       }
     };
 
@@ -94,6 +92,11 @@ export default function SignUp() {
         return;
       }
 
+      if (signUpData.userPassword.length < 8) {
+        setErrorMessage("비밀번호는 8자 이상이어야 합니다.");
+        return;
+      }
+
       // 비밀번호 일치 여부 확인
       if (signUpData.userPassword !== passwordConfirm) {
         setPasswordMismatch(true);
@@ -114,9 +117,13 @@ export default function SignUp() {
         return;
       }
 
-      // 닉네임 중복 확인
+      // const isNicknameAvailable = await checkNickname(signUpData.userNickname);
+      // if (!isNicknameAvailable) {
+      //   setErrorMessage("이미 사용 중인 닉네임입니다.");
+      //   return;
+      // }
       const nicknameCheck = await publicApi.get(
-        "/auth/duplicateTest/nickname",
+        "/public/auth/duplicate-test/nickname",
         {
           params: {
             nickname: signUpData.userNickname,
@@ -129,24 +136,34 @@ export default function SignUp() {
         return;
       }
 
-      // 이메일 중복 확인
-      const emailCheck = await publicApi.get("/auth/duplicateTest/email", {
-        params: {
-          userEmail: signUpData.userId,
-        },
-      });
+      // const isEmailAvailable = await checkEmail(signUpData.userId);
+      // if (!isEmailAvailable) {
+      //   setErrorMessage("이미 사용 중인 이메일 주소입니다.");
+      //   return;
+      // }
+      const emailCheck = await publicApi.get(
+        "/public/auth/duplicate-test/email",
+        {
+          params: {
+            userEmail: signUpData.userId,
+          },
+        }
+      );
 
       if (emailCheck.data.duplicate) {
         setErrorMessage("이미 사용 중인 이메일 주소입니다.");
         return;
       }
 
-      // 회원가입 요청 보내기
-      const response = await privateApi.post("/auth/signup", signUpData, {
-        data: signUpData, // JSON 형식으로 데이터 전송
-      });
+      // const response = await signUpUser(signUpData);
+      const response = await privateApi.post(
+        "/public/auth/signup",
+        signUpData,
+        {
+          data: signUpData, // JSON 형식으로 데이터 전송
+        }
+      );
 
-      // 응답 처리
       if (response.data.success) {
         setToken(response.data.token);
         alert("회원가입이 성공적으로 완료되었습니다.");
@@ -163,94 +180,94 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex h-screen justify-center items-center">
-      <div className="w-96 p-8">
-        <header className="flex justify-center text-3xl font-mono m-8">
+    <div className="flex min-h-screen justify-center items-center">
+      <div className="w-full p-8">
+        <Header />
+        {/* <header className="flex justify-center text-3xl font-mono m-8">
           회원가입
-        </header>
+        </header> */}
         <main className="flex flex-col gap-4">
-          <section className="flex flex-col gap-4">
-            <form className="flex flex-col gap-4">
-              <Input
-                type="email"
-                label="이메일"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userId: e.target.value })
-                }
-              />
-              <Input
-                type="text"
-                label="이름"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userName: e.target.value })
-                }
-              />
-              <Input
-                type="text"
-                label="닉네임"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userNickname: e.target.value })
-                }
-              />
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button className="bg-[#f5f5f5]">
-                    {signUpData.semesterCid
-                      ? semesterList.find(
-                          (semester) =>
-                            semester.semesterCid === signUpData.semesterCid
-                        )?.semesterDetailName || "기수 선택"
-                      : "기수 선택"}
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  {semesterList.map((semester) => (
-                    <DropdownItem
-                      key={semester.semesterCid}
-                      onClick={() =>
-                        setSignUpData({
-                          ...signUpData,
-                          semesterCid: semester.semesterCid,
-                        })
-                      }
-                    >
-                      {semester.semesterDetailName}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-              <Input
-                type="password"
-                label="비밀번호"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, userPassword: e.target.value })
-                }
-              />
-              <Input
-                type="password"
-                label="비밀번호 확인"
-                onChange={(e) => setPasswordConfirm(e.target.value)}
-              />
-            </form>
+          <form className="flex flex-col gap-4">
+            <Input
+              type="email"
+              label="이메일"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userId: e.target.value })
+              }
+            />
+            <Input
+              type="text"
+              label="이름"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userName: e.target.value })
+              }
+            />
+            <Input
+              type="text"
+              label="닉네임"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userNickname: e.target.value })
+              }
+            />
+            <Dropdown>
+              <DropdownTrigger>
+                <Button className="bg-[#f5f5f5]">
+                  {signUpData.semesterCid
+                    ? semesterList.find(
+                        (semester) =>
+                          semester.semesterCid === signUpData.semesterCid
+                      )?.semesterDetailName || "기수 선택"
+                    : "기수 선택"}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {semesterList.map((semester) => (
+                  <DropdownItem
+                    key={semester.semesterCid}
+                    onClick={() =>
+                      setSignUpData({
+                        ...signUpData,
+                        semesterCid: semester.semesterCid,
+                      })
+                    }
+                  >
+                    {semester.semesterDetailName}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Input
+              type="password"
+              label="비밀번호"
+              onChange={(e) =>
+                setSignUpData({ ...signUpData, userPassword: e.target.value })
+              }
+            />
+            <Input
+              type="password"
+              label="비밀번호 확인"
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+            />
+          </form>
 
-            {errorMessage && (
-              <p className="flex justify-center text-red-500">{errorMessage}</p>
-            )}
+          {errorMessage && (
+            <p className="flex justify-center text-red-500">{errorMessage}</p>
+          )}
 
-            <Button
-              className="bg-main_blue font-semibold text-white"
-              onClick={handleSignup}
-            >
-              회원가입
-            </Button>
-          </section>
+          <Button
+            className="bg-main_blue font-semibold text-white"
+            onClick={handleSignup}
+          >
+            회원가입
+          </Button>
         </main>
-        <footer className="flex justify-center m-10">
-          <Link href="/auth/login">
-            <Button className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue">
-              로그인
-            </Button>
-          </Link>
+        <footer className="m-10">
+          <Button
+            onClick={() => router.push("/auth/login")}
+            className="w-full bg-white border-solid border-1.5 border-main_blue text-main_blue"
+          >
+            로그인
+          </Button>
         </footer>
       </div>
     </div>
