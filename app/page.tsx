@@ -12,18 +12,18 @@ export default function Home() {
         <img src="/favicon.ico" width="128" height="128" />
         <Header />
       </header>
-      <section className="flex flex-col items-center gap-8 mt-8">
+      <section className="flex flex-col md:flex-row items-center gap-8 mt-8">
         <Button
           size="lg"
           onClick={() => router.push("/auth/login")}
-          className="bg-white border-1.5 border-main_blue font-semibold text-main_blue min-w-[200px] max-w-[400px]"
+          className="bg-white border-1.5 border-main_blue font-semibold text-main_blue min-w-[200px]"
         >
           로그인
         </Button>
         <Button
           size="lg"
           onClick={() => router.push("/auth/signup")}
-          className="bg-white border-1.5 border-main_blue font-semibold text-main_blue min-w-[200px] max-w-[400px]"
+          className="bg-white border-1.5 border-main_blue font-semibold text-main_blue min-w-[200px]"
         >
           회원가입
         </Button>

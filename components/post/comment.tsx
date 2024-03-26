@@ -53,7 +53,7 @@ export default function Comment({ postCid }: { postCid: number }) {
         return;
       }
 
-      const response = await privateApi.post("/comment/create", {
+      const response = await privateApi.post("user/comment/", {
         postCid: postCid,
         content: comment?.content,
       });

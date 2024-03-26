@@ -169,7 +169,7 @@ export default function SignUp() {
 
   return (
     <div className="flex min-h-screen justify-center items-center">
-      <div className="w-full min-w-md p-8">
+      <div className="w-full p-8">
         <Header />
         {/* <header className="flex justify-center text-3xl font-mono m-8">
           회원가입

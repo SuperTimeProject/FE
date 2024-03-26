@@ -19,7 +19,7 @@ export default function Header() {
   return (
     <div
       onClick={handleLogoClick}
-      className="flex justify-center items-center m-8 gap-2"
+      className="flex flex-col md:flex-row justify-center items-center m-8 gap-2"
     >
       <p className="text-4xl font-mono">SUPER</p>
       <p className="text-4xl font-mono">TIME</p>
