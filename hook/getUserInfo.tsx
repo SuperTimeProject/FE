@@ -29,7 +29,7 @@ interface UserInfo {
 
 export default async function GetUserInfo(): Promise<UserInfo> {
   try {
-    const res = await privateApi.get(`/auth/user-info`);
+    const res = await privateApi.get("/public/auth/user-info");
     return res.data.getUserInfo;
   } catch (error) {
     throw error;

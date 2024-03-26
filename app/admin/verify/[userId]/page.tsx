@@ -41,7 +41,7 @@ export default function AdminVerifyDetail({
     const getUserDetail = async () => {
       try {
         const response = await privateApi.get(
-          `/admin/pendingUser/detail/${params.userId}`
+          `/admin/pending-user/detail/${params.userId}`
         );
         console.log(response.data);
         setUserDetail(response.data);

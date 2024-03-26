@@ -9,10 +9,13 @@ import {
   DropdownTrigger,
   Input,
 } from "@nextui-org/react";
-import { publicApi, privateApi, setToken } from "@/api/axiosConfig";
+import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/shared/header";
+import { signUpUser } from "@/api/auth/authUser";
+import { checkEmail, checkNickname } from "@/api/auth/authCheck";
+import { getSemesterList } from "@/api/user/semester";
 
 interface SignUpData {
   userId: string;
@@ -44,17 +47,12 @@ export default function SignUp() {
   useEffect(() => {
     const fetchSemesterList = async () => {
       try {
-        const response = await publicApi.get("/semester/all");
-
-        if (response.data.success) {
-          const semesterListData = response.data.semesterList;
-          setSemesterList(semesterListData);
-        } else {
-          setErrorMessage("기수를 불러오는데 실패했습니다.");
-        }
+        const semesterListData = await getSemesterList();
+        setSemesterList(semesterListData);
       } catch (error) {
-        console.error(error);
-        setErrorMessage("서버 오류로 기수를 불러오는데 실패했습니다.");
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data.message);
+        }
       }
     };
 
@@ -119,9 +117,13 @@ export default function SignUp() {
         return;
       }
 
-      // 닉네임 중복 확인
+      // const isNicknameAvailable = await checkNickname(signUpData.userNickname);
+      // if (!isNicknameAvailable) {
+      //   setErrorMessage("이미 사용 중인 닉네임입니다.");
+      //   return;
+      // }
       const nicknameCheck = await publicApi.get(
-        "/auth/duplicate-t dest/nickname",
+        "/public/auth/duplicate-test/nickname",
         {
           params: {
             nickname: signUpData.userNickname,
@@ -134,24 +136,34 @@ export default function SignUp() {
         return;
       }
 
-      // 이메일 중복 확인
-      const emailCheck = await publicApi.get("/auth/duplicate-test/email", {
-        params: {
-          userEmail: signUpData.userId,
-        },
-      });
+      // const isEmailAvailable = await checkEmail(signUpData.userId);
+      // if (!isEmailAvailable) {
+      //   setErrorMessage("이미 사용 중인 이메일 주소입니다.");
+      //   return;
+      // }
+      const emailCheck = await publicApi.get(
+        "/public/auth/duplicate-test/email",
+        {
+          params: {
+            userEmail: signUpData.userId,
+          },
+        }
+      );
 
       if (emailCheck.data.duplicate) {
         setErrorMessage("이미 사용 중인 이메일 주소입니다.");
         return;
       }
 
-      // 회원가입 요청 보내기
-      const response = await privateApi.post("/auth/signup", signUpData, {
-        data: signUpData, // JSON 형식으로 데이터 전송
-      });
+      // const response = await signUpUser(signUpData);
+      const response = await privateApi.post(
+        "/public/auth/signup",
+        signUpData,
+        {
+          data: signUpData, // JSON 형식으로 데이터 전송
+        }
+      );
 
-      // 응답 처리
       if (response.data.success) {
         setToken(response.data.token);
         alert("회원가입이 성공적으로 완료되었습니다.");

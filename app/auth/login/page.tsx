@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { setCookie } from "@/components/utils/setCookie";
 import axios from "axios";
 import Header from "@/components/shared/header";
+import { loginUser } from "@/api/auth/authUser";
 
 interface LoginData {
   userId: string;
@@ -37,10 +38,12 @@ export default function Login() {
         return;
       }
 
-      const response = await privateApi.post("/auth/login", loginData, {
+      // const response = await loginUser(loginData);
+
+      const response = await privateApi.post("/public/auth/login", loginData, {
         data: loginData, // JSON 형식으로 데이터 전송
       });
-      // 응답 처리
+
       if (response.data.success) {
         setCookie(response.headers.authorization);
         router.push("/board/main");

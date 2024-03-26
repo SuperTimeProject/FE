@@ -4,14 +4,18 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "../utils/setCookie";
+import { logoutUser } from "@/api/auth/authUser";
 
 export default function LogoutButton() {
   const router = useRouter();
   const handleLogout = async () => {
     try {
-      deleteCookie(); // 로컬스토리지에 토큰값 삭제
-      alert("로그아웃이 성공적으로 완료되었습니다.");
-      router.push("/");
+      const success = await logoutUser();
+      if (success) {
+        deleteCookie(); // 로컬스토리지에 토큰값 삭제
+        alert("로그아웃이 성공적으로 완료되었습니다.");
+        router.push("/");
+      }
     } catch (error) {
       console.error(error);
     }

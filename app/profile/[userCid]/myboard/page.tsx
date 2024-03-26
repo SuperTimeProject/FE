@@ -38,7 +38,7 @@ export default function MyBoard() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await privateApi.get("/auth/user-info");
+        const response = await privateApi.get("/public/auth/user-info");
         if (response.data.success) {
           setUserBoard(response.data.getUserInfo.boardList);
         }
@@ -53,7 +53,7 @@ export default function MyBoard() {
     const getUserPost = async () => {
       try {
         const response = await privateApi.get(
-          `/board/posts/user-posts/${currentBoardCid}/1`
+          `/user/posts/user-posts/${currentBoardCid}/1`
         );
 
         if (response.data.success) {
@@ -83,7 +83,7 @@ export default function MyBoard() {
   const postPage = async (page: number) => {
     try {
       const response = await privateApi.get(
-        `board/posts/user-posts/${currentBoardCid}/${page}`
+        `user/posts/user-posts/${currentBoardCid}/${page}`
       );
       setUserPost(response.data.userPostList);
       setUserBoard(response.data.boardInfo);
@@ -97,7 +97,7 @@ export default function MyBoard() {
   const getBoardPost = async (boardCid: number, page: number) => {
     try {
       const response = await privateApi.get(
-        `board/posts/user-posts/${boardCid}/${page}`
+        `user/posts/user-posts/${boardCid}/${page}`
       );
 
       if (response.data.success) {
@@ -116,7 +116,7 @@ export default function MyBoard() {
 
   const handleDelete = async (postCid: number) => {
     try {
-      const response = await privateApi.delete(`/board/${postCid}`);
+      const response = await privateApi.delete(`/user/posts/${postCid}`);
       if (response.data.success) {
         alert("게시글이 삭제되었습니다.");
       }

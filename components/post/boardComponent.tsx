@@ -31,7 +31,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await privateApi.get("/auth/user-info");
+      const res = await privateApi.get("/public/auth/user-info");
       if (res.data.success) {
         const userBoardData = res.data.getUserInfo.boardList;
         setUserBoard(
@@ -51,7 +51,7 @@ export default function BoardComponent({ boardName }: { boardName: string }) {
     const fetchBoardData = async () => {
       try {
         const response = await privateApi.get(
-          `/board/boards/${userBoard.boardCid}/${page}`
+          `/user/boards/${userBoard.boardCid}/${page}`
         );
         if (response.data.success) {
           setBoardData(response.data.postList);

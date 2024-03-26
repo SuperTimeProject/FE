@@ -1,6 +1,6 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import { reapplyVerification } from "@/api/auth/verification";
 import Header from "@/components/shared/header";
 import LogoutButton from "@/components/shared/logoutButton";
 import { Button } from "@nextui-org/react";
@@ -25,8 +25,8 @@ export default function Denied() {
     if (uploadFile !== null) {
       formData.append("userProfileImage", uploadFile);
     }
-    const response = await privateApi.put("/verification/reapply", formData);
-    if (response.data.success) {
+    const success = await reapplyVerification(formData);
+    if (success) {
       alert("인증을 재요청하였습니다.");
       router.push("/auth/verify/pending");
     }

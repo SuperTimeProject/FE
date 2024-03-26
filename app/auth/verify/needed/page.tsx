@@ -1,6 +1,6 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import { applyVerification } from "@/api/auth/verification";
 import Header from "@/components/shared/header";
 import LogoutButton from "@/components/shared/logoutButton";
 import { Button } from "@nextui-org/react";
@@ -25,8 +25,8 @@ export default function Needed() {
     if (uploadFile !== null) {
       formData.append("userProfileImage", uploadFile);
     }
-    const response = await privateApi.post("/verification/apply", formData);
-    if (response.data.success) {
+    const success = await applyVerification(formData);
+    if (success) {
       alert("인증을 요청하였습니다.");
       router.push("/auth/verify/pending");
     }

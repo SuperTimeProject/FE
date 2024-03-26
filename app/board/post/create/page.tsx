@@ -40,7 +40,7 @@ export default function CreatePost() {
 
   useEffect(() => {
     const getBoard = async () => {
-      const res = await privateApi.get("/auth/user-info");
+      const res = await privateApi.get("/public/auth/user-info");
       if (res.data.success) {
         const userBoardData = res.data.getUserInfo.boardList;
         setBoardInfo(userBoardData);
@@ -107,7 +107,7 @@ export default function CreatePost() {
       }
 
       const response = await privateApi.post(
-        `/board/${selectedBoard.boardCid}`,
+        `/user/posts/${selectedBoard.boardCid}`,
         formData
       );
       if (response.data.success) {

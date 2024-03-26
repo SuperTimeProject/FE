@@ -28,7 +28,7 @@ export default function Comment({ postCid }: { postCid: number }) {
     const getComment = async (page: number) => {
       try {
         const response = await privateApi.get(
-          `/comment/getComment/${postCid}/${page}`
+          `/user/comment/${postCid}/${page}`
         );
 
         const commentData = response.data.commentList;
@@ -53,7 +53,7 @@ export default function Comment({ postCid }: { postCid: number }) {
         return;
       }
 
-      const response = await privateApi.post("user/comment/", {
+      const response = await privateApi.post("/user/comment/", {
         postCid: postCid,
         content: comment?.content,
       });

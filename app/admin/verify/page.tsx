@@ -32,7 +32,7 @@ export default function AdminVerify() {
   useEffect(() => {
     const getUsersInfo = async () => {
       try {
-        const response = await privateApi.get(`/admin/pendingUser/${page}`, {
+        const response = await privateApi.get(`/admin/pending-user/${page}`, {
           params: {
             valified: "PENDING",
           },

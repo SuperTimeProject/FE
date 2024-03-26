@@ -55,7 +55,7 @@ export default function EditPost({
   useEffect(() => {
     const getPostData = async () => {
       try {
-        const response = await privateApi.get(`/board/posts/${params.postCid}`);
+        const response = await privateApi.get(`/user/posts/${params.postCid}`);
 
         if (response.data.success) {
           const getPostInfo = response.data.postInfo;
@@ -151,7 +151,7 @@ export default function EditPost({
       console.log(editData);
 
       const response = await privateApi.put(
-        `/board/${postInfo?.postCid}`,
+        `/user/posts/${postInfo?.postCid}`,
         formData
       );
 
