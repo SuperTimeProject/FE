@@ -246,7 +246,7 @@ export default function Users() {
                     </Button>
                   )}
                 </div>
-                <div className="flex flex-col justify-center items-center gap-2">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
                   <div className="flex justify-center items-center gap-2">
                     <p className="font-mono">
                       {userInfo?.semester.semesterDetailName}

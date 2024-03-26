@@ -30,7 +30,7 @@ export default function Footer() {
   return (
     <footer>
       <nav className="flex justify-center items-center">
-        <ul className="flex space-x-16 p-4">
+        <ul className="flex justify-between w-full p-8">
           <li>
             <Link href="/board/main">
               <div
