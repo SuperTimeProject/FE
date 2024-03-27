@@ -26,10 +26,11 @@ import {
   deleteUserAccount,
   editUserProfile,
   getUserInfo,
+  confirmUserPart,
+  updateUserPart,
 } from "@/api/user/profile";
 import { checkNickname } from "@/api/auth/authCheck";
 import LogoutButton from "@/components/shared/logoutButton";
-import { confirmUserPart, updateUserPart } from "@/api/user/semester";
 
 interface UserInfo {
   userCid: number;

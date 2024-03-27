@@ -9,6 +9,24 @@ export const getUserInfo = async () => {
   }
 };
 
+export const updateUserPart = async (selectedPart: string) => {
+  try {
+    const response = await privateApi.put(`/user/part/${selectedPart}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const confirmUserPart = async () => {
+  try {
+    const response = await privateApi.put("/user/part/confirmed");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const editUserProfile = async (formData: FormData, params: any) => {
   try {
     const response = await privateApi.put("/user/info/edit", formData, {

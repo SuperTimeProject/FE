@@ -23,6 +23,16 @@ export default function Admin() {
               <li className="flex flex-col">
                 <Button
                   variant="bordered"
+                  onClick={() => router.push(`${pathname}/semester`)}
+                  className="flex justify-between font-semibold "
+                >
+                  <p>기수 관리</p>
+                  <p> {">"}</p>
+                </Button>
+              </li>
+              <li className="flex flex-col">
+                <Button
+                  variant="bordered"
                   onClick={() => router.push(`${pathname}/verify`)}
                   className="flex justify-between font-semibold "
                 >
@@ -30,16 +40,16 @@ export default function Admin() {
                   <p> {">"}</p>
                 </Button>
               </li>
-              {/* <li className="flex flex-col">
+              <li className="flex flex-col">
                 <Button
                   variant="bordered"
-                  // onClick={() => router.push(`${pathname}/`)}
+                  onClick={() => router.push(`${pathname}/timetable`)}
                   className="flex justify-between font-semibold "
                 >
-                  <p>게시판 관리</p>
+                  <p>시간표 관리</p>
                   <p> {">"}</p>
                 </Button>
-              </li> */}
+              </li>
               <li className="flex flex-col">
                 <Button
                   variant="bordered"

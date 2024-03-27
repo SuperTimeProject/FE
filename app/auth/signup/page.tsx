@@ -15,7 +15,7 @@ import axios from "axios";
 import Header from "@/components/shared/header";
 import { signUpUser } from "@/api/auth/authUser";
 import { checkEmail, checkNickname } from "@/api/auth/authCheck";
-import { getSemesterList } from "@/api/user/semester";
+import { getSemesterList } from "@/api/semester";
 
 interface SignUpData {
   userId: string;
