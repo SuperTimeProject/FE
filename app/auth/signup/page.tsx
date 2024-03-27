@@ -14,18 +14,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/shared/header";
 import { getSemesterList } from "@/api/semester";
-
-interface SignUpData {
-  userId: string;
-  userName: string;
-  userNickname: string;
-  semesterCid: number;
-  userPassword: string;
-}
-interface SemesterListItem {
-  semesterCid: number;
-  semesterDetailName: string;
-}
+import { Semester } from "@/api/user/profile";
+import { SignUpData, signUpUser } from "@/api/auth/authUser";
 
 export default function SignUp() {
   const router = useRouter();
@@ -37,7 +27,7 @@ export default function SignUp() {
     userPassword: "",
   });
 
-  const [semesterList, setSemesterList] = useState<SemesterListItem[]>([]);
+  const [semesterList, setSemesterList] = useState<Semester[]>([]);
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const [passwordMismatch, setPasswordMismatch] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
