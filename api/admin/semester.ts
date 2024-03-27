@@ -1,4 +1,4 @@
-import { privateApi, publicApi } from "./axiosConfig";
+import { privateApi, publicApi } from "../axiosConfig";
 
 export const getSemesterList = async () => {
   try {

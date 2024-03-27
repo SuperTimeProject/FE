@@ -1,6 +1,7 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
+import { UserBoard, UserPost } from "@/api/user/post";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Divider, Pagination, Tab, Tabs } from "@nextui-org/react";
@@ -8,17 +9,6 @@ import axios from "axios";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface UserPost {
-  postCid: number;
-  postTitle: string;
-  createdAt: string;
-}
-
-interface UserBoard {
-  boardName: string;
-  boardCid: number;
-}
 
 interface PageInfo {
   page: number;

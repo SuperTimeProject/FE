@@ -1,6 +1,7 @@
 "use client";
 
-import { getSemesterList } from "@/api/semester";
+import { getSemesterList } from "@/api/admin/semester";
+import { Semester } from "@/api/user/profile";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button } from "@nextui-org/react";
@@ -8,17 +9,12 @@ import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface SemesterData {
-  semesterCid: number;
-  semesterDetailName: string;
-}
-
 export default function AdminSemester() {
   const router = useRouter();
   const pathname = usePathname();
 
   const [page, setPage] = useState(1);
-  const [semesters, setSemesters] = useState<SemesterData[]>([]);
+  const [semesters, setSemesters] = useState<Semester[]>([]);
 
   useEffect(() => {
     const getSemesters = async () => {

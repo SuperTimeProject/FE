@@ -13,7 +13,7 @@ import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/shared/header";
-import { getSemesterList } from "@/api/semester";
+import { getSemesterList } from "@/api/admin/semester";
 import { Semester } from "@/api/user/profile";
 import { SignUpData, signUpUser } from "@/api/auth/authUser";
 

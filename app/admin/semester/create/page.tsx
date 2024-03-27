@@ -1,6 +1,6 @@
 "use client";
 
-import { createSemester } from "@/api/semester";
+import { createSemester } from "@/api/admin/semester";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Input } from "@nextui-org/react";

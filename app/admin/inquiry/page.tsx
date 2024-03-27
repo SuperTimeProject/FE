@@ -1,29 +1,19 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import {
+  InquiryList,
+  deleteInquiry,
+  getAdminInquiry,
+} from "@/api/admin/adminInquiry";
+
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Pagination } from "@nextui-org/react";
-import axios from "axios";
+
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface InquiryList {
-  inquiryCid: number;
-  author: string;
-  inquiryTitle: string;
-  inquiryContent: string;
-  answer: string;
-  createdAt: string;
-}
-
-interface PageInfo {
-  page: number;
-  totalElements: number;
-  totalPages: number;
-}
 
 export default function AdminInquiry() {
   const router = useRouter();
@@ -33,35 +23,18 @@ export default function AdminInquiry() {
   const [totalPage, setTotalPage] = useState<number>(1);
 
   useEffect(() => {
-    const getInquiry = async () => {
-      try {
-        const res = await privateApi.get(`/admin/inquiry/get/${page}`);
-
-        if (res.data.success) {
-          setInquiryData(res.data.inquiryList);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response);
-        }
-      }
+    const fetchInquiryList = async () => {
+      const inquiryList = await getAdminInquiry(page);
+      setInquiryData(inquiryList);
     };
-    getInquiry();
+    fetchInquiryList();
   }, []);
 
-  const deleteInquiry = async (inquiryCid: number) => {
-    try {
-      const res = await privateApi.delete(
-        `/admin/inquiry/delete/${inquiryCid}`
-      );
-      if (res.data.success) {
-        alert("삭제되었습니다.");
-        window.location.reload();
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data.message);
-      }
+  const handleDeleteInquiry = async (inquiryCid: number) => {
+    const success = await deleteInquiry(inquiryCid);
+    if (success) {
+      alert("삭제되었습니다.");
+      window.location.reload();
     }
   };
 
@@ -151,7 +124,9 @@ export default function AdminInquiry() {
                           size="sm"
                           variant="light"
                           className="absolute top-0 right-0 text-lg text-red-500"
-                          onClick={() => deleteInquiry(inquiry.inquiryCid)}
+                          onClick={() =>
+                            handleDeleteInquiry(inquiry.inquiryCid)
+                          }
                         >
                           x
                         </Button>
