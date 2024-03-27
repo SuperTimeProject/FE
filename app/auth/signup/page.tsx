@@ -13,8 +13,6 @@ import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/shared/header";
-import { signUpUser } from "@/api/auth/authUser";
-import { checkEmail, checkNickname } from "@/api/auth/authCheck";
 import { getSemesterList } from "@/api/semester";
 
 interface SignUpData {
@@ -117,11 +115,6 @@ export default function SignUp() {
         return;
       }
 
-      // const isNicknameAvailable = await checkNickname(signUpData.userNickname);
-      // if (!isNicknameAvailable) {
-      //   setErrorMessage("이미 사용 중인 닉네임입니다.");
-      //   return;
-      // }
       const nicknameCheck = await publicApi.get(
         "/public/auth/duplicate-test/nickname",
         {
@@ -136,11 +129,6 @@ export default function SignUp() {
         return;
       }
 
-      // const isEmailAvailable = await checkEmail(signUpData.userId);
-      // if (!isEmailAvailable) {
-      //   setErrorMessage("이미 사용 중인 이메일 주소입니다.");
-      //   return;
-      // }
       const emailCheck = await publicApi.get(
         "/public/auth/duplicate-test/email",
         {

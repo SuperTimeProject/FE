@@ -26,36 +26,15 @@ import {
   deleteUserAccount,
   editUserProfile,
   getUserInfo,
+  selectPart,
   confirmUserPart,
-  updateUserPart,
+  UserInfo,
+  EditUserInfo,
+  UserProfile,
 } from "@/api/user/profile";
-import { checkNickname } from "@/api/auth/authCheck";
+
 import LogoutButton from "@/components/shared/logoutButton";
-
-interface UserInfo {
-  userCid: number;
-  userId: string;
-  userName: string;
-  userNickname: string;
-  part: string;
-  semester: Semester;
-  userProfile: UserProfile;
-}
-interface Semester {
-  semesterCid: number;
-  semesterDetailName: string;
-  isFull: string;
-}
-interface UserProfile {
-  userProfileCid: number;
-  userProfileFileName: string;
-  userProfileFilePath: string;
-}
-
-interface EditInfo {
-  userNickname: string;
-  userProfileImage: File | null;
-}
+import { publicApi } from "@/api/axiosConfig";
 
 export default function Users() {
   const router = useRouter();
@@ -63,11 +42,10 @@ export default function Users() {
 
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [isProfileEditMode, setProfileEditMode] = useState(false);
-  const [editInfo, setEditInfo] = useState<EditInfo>({
+  const [editInfo, setEditInfo] = useState<EditUserInfo>({
     userNickname: "",
     userProfileImage: null,
   });
-
   const [userImage, setUserImage] = useState<UserProfile>();
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
 
@@ -76,9 +54,9 @@ export default function Users() {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const userData = await getUserInfo();
-        setUserInfo(userData.getUserInfo);
-        setUserImage(userData.userProfile);
+        const userInfo = await getUserInfo();
+        setUserInfo(userInfo);
+        setUserImage(userInfo.userProfile);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           alert(error.response?.data.message);
@@ -91,7 +69,7 @@ export default function Users() {
 
   const handlePartSelect = async (selectedPart: string) => {
     try {
-      const response = await updateUserPart(selectedPart);
+      const response = await selectPart(selectedPart);
       if (response.success) {
         alert("주특기가 선택되었습니다.");
         window.location.reload();
@@ -112,8 +90,16 @@ export default function Users() {
         return;
       }
 
-      const isNicknameAvailable = await checkNickname(editInfo.userNickname);
-      if (!isNicknameAvailable) {
+      const nicknameCheck = await publicApi.get(
+        "/public/auth/duplicate-test/nickname",
+        {
+          params: {
+            nickname: editInfo.userNickname,
+          },
+        }
+      );
+
+      if (nicknameCheck.data.duplicate) {
         alert("이미 사용 중인 닉네임입니다.");
         return;
       }
@@ -127,15 +113,15 @@ export default function Users() {
         formData.append("userProfileImage", editInfo.userProfileImage);
       }
 
-      const response = await editUserProfile(formData, params);
+      const editUserInfo = await editUserProfile(formData, params);
 
-      if (response.data.success) {
+      if (editUserInfo.success) {
         const updatedUserRes = await getUserInfo();
 
-        if (updatedUserRes.data.success) {
-          const updatedUserInfo = updatedUserRes.data;
+        if (updatedUserRes) {
+          const updatedUserInfo = updatedUserRes;
 
-          setUserInfo(updatedUserInfo.getUserInfo);
+          setUserInfo(updatedUserInfo);
           setUserImage(updatedUserInfo.userProfile);
           alert("프로필 수정이 완료되었습니다.");
           setProfileEditMode(false);
@@ -178,7 +164,7 @@ export default function Users() {
   const handleImageDelete = async () => {
     try {
       const response = await deleteProfileImage();
-      if (response.data.success) {
+      if (response.success) {
         alert("프로필 사진이 삭제되었습니다.");
         window.location.reload();
       }
