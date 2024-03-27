@@ -1,5 +1,35 @@
 import { privateApi } from "@/api/axiosConfig";
 
+export interface PostListItem {
+  postCid: number;
+  author: string;
+  postTitle: string;
+  postView: number;
+  createdAt: string;
+}
+
+export interface PostInfo {
+  postCid: number;
+  author: string;
+  imageList: PostImage[];
+  postTitle: string;
+  postContent: string;
+  createdAt: string;
+  postView: number;
+}
+
+export interface PostImage {
+  postImageCid: number;
+  postImageFileName: string;
+  postImageFilePath: string;
+}
+
+export interface BoardInfo {
+  page: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export interface UserPost {
   postCid: number;
   postTitle: string;

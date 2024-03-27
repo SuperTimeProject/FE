@@ -1,6 +1,11 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import {
+  CommentList,
+  NewComment,
+  createComment,
+  getComments,
+} from "@/api/user/comment";
 import { Button, Input } from "@nextui-org/react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
@@ -8,32 +13,17 @@ import { ko } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface CommentInfo {
-  author: string;
-  content: string;
-  createdAt: string; // timeStamp
-}
-
-interface CommentAdd {
-  content: string;
-}
-
 export default function Comment({ postCid }: { postCid: number }) {
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
-  const [commentData, setCommentData] = useState<CommentInfo[]>([]);
-  const [comment, setComment] = useState<CommentAdd>();
+  const [comments, setComments] = useState<CommentList[]>([]);
+  const [newComment, setNewComment] = useState<NewComment>();
 
   useEffect(() => {
-    const getComment = async (page: number) => {
+    const fetchComments = async (page: number) => {
       try {
-        const response = await privateApi.get(
-          `/user/comment/${postCid}/${page}`
-        );
-
-        const commentData = response.data.commentList;
-        console.log("댓글", commentData);
-        setCommentData(commentData);
+        const commentList = await getComments(postCid, page);
+        setComments(commentList);
       } catch (error) {
         console.error(error);
         if (axios.isAxiosError(error)) {
@@ -43,25 +33,22 @@ export default function Comment({ postCid }: { postCid: number }) {
       }
     };
 
-    getComment(page);
+    fetchComments(page);
   }, []);
 
-  const createComment = async () => {
+  const handleCreateComment = async () => {
     try {
-      if (!comment?.content) {
+      if (!newComment?.content) {
         alert("내용은 필수 입력 사항입니다.");
         return;
       }
 
-      const response = await privateApi.post("/user/comment/", {
-        postCid: postCid,
-        content: comment?.content,
-      });
-
-      if (response.data.success) {
+      const success = await createComment(postCid, newComment.content);
+      if (success) {
         alert("댓글이 작성되었습니다.");
+        setNewComment({ content: "" });
+        setPage(1);
         window.location.reload();
-        router.refresh();
       } else {
         alert("댓글 작성에 실패했습니다.");
       }
@@ -94,7 +81,7 @@ export default function Comment({ postCid }: { postCid: number }) {
 
   return (
     <div className="flex flex-col justify-between border-t-1 border-gray-500 p-2 m-1 gap-2 mt-5">
-      {commentData?.map((comment, index) => (
+      {comments?.map((comment, index) => (
         <div key={index} className="flex flex-col itesm-center gap-1 p-2">
           <div className="flex justify-between items-center">
             <p className="text-sm">{comment.author}</p>
@@ -108,13 +95,15 @@ export default function Comment({ postCid }: { postCid: number }) {
           size="sm"
           placeholder="댓글"
           name="description"
-          value={comment?.content}
-          onChange={(e) => setComment({ ...comment, content: e.target.value })}
+          value={newComment?.content}
+          onChange={(e) =>
+            setNewComment({ ...newComment, content: e.target.value })
+          }
         />
         <Button
           size="sm"
           className="bg-sub_purple font-semibold text-white"
-          onClick={createComment}
+          onClick={handleCreateComment}
         >
           등록
         </Button>

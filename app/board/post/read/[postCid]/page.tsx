@@ -40,7 +40,7 @@ export default function DetailPage({
   useEffect(() => {
     const getPostInfo = async () => {
       try {
-        const res = await privateApi.get(`board/posts/${params.postCid}`);
+        const res = await privateApi.get(`user/posts/${params.postCid}`);
         setPostInfo(res.data.postInfo);
       } catch (error) {
         if (axios.isAxiosError(error)) {
