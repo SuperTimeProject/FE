@@ -3,31 +3,11 @@
 import { privateApi } from "@/api/axiosConfig";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
-import { Button } from "@nextui-org/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Comment from "@/components/post/comment";
-
-interface Board {
-  boardCid: number;
-  boardName: string;
-}
-interface PostImage {
-  postImageCid: number;
-  postImageFileName: string;
-  postImageFilePath: string;
-}
-
-interface postInfo {
-  postCid: number;
-  author: string;
-  imageList: PostImage[];
-  postTitle: string;
-  postContent: string;
-  createdAt: string;
-  postView: number;
-}
+import { PostInfo } from "@/api/user/post";
 
 export default function DetailPage({
   params,
@@ -36,7 +16,7 @@ export default function DetailPage({
 }) {
   const route = useRouter();
   const pathName = usePathname();
-  const [postInfo, setPostInfo] = useState<postInfo>();
+  const [postInfo, setPostInfo] = useState<PostInfo>();
   useEffect(() => {
     const getPostInfo = async () => {
       try {
@@ -56,12 +36,8 @@ export default function DetailPage({
     route.back();
   };
 
-  const goComment = () => {
-    route.push(`${pathName}/comment`);
-  };
-
   return (
-    <div className="flex h-screen justify-center items-center">
+    <div className="flex min-h-screen justify-center items-center">
       <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
         <div className="w-full min-h-[600px] p-4 bg-white overflow-y-auto">

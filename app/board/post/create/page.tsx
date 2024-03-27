@@ -1,6 +1,7 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
+import { UserBoard } from "@/api/user/post";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import {
@@ -22,15 +23,11 @@ interface PostInfo {
   postContent: string;
   postImage: File[];
 }
-interface BoardInfo {
-  boardName: string;
-  boardCid: number;
-}
 
 export default function CreatePost() {
   const router = useRouter();
-  const [boardInfo, setBoardInfo] = useState<BoardInfo[]>([]);
-  const [selectedBoard, setSelectedBoard] = useState<BoardInfo | null>(null);
+  const [boardInfo, setBoardInfo] = useState<UserBoard[]>([]);
+  const [selectedBoard, setSelectedBoard] = useState<UserBoard | null>(null);
   const [postInfo, setPostInfo] = useState<PostInfo>({
     userCid: 0,
     postTitle: "",
@@ -74,7 +71,7 @@ export default function CreatePost() {
     }
   };
 
-  const boardSelect = (selectedBoard: BoardInfo) => {
+  const boardSelect = (selectedBoard: UserBoard) => {
     setSelectedBoard(selectedBoard);
   };
 
@@ -127,7 +124,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="flex h-screen justify-center items-center">
+    <div className="flex min-h-screen justify-center items-center">
       <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
         <div className="w-full min-h-[600px] p-4 bg-white">
@@ -166,7 +163,7 @@ export default function CreatePost() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <div className="h-[480px] overflow-y-auto  scrollbar-none">
+            <div className="h-[480px] overflow-y-auto scrollbar-none">
               <form className="flex flex-col gap-4">
                 <Input
                   type="text"

@@ -1,29 +1,17 @@
 "use client";
 
 import { privateApi } from "@/api/axiosConfig";
+import { PostInfo, UserBoard } from "@/api/user/post";
 import { Button, Pagination } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface UserBoard {
-  boardName: string;
-  boardCid: number;
-}
-
-interface IPostInfo {
-  author: string;
-  createdAt: string;
-  postCid: number;
-  postTitle: string;
-  postView: number;
-}
-
 export default function BoardComponent({ boardName }: { boardName: string }) {
   const route = useRouter();
 
-  const [boardData, setBoardData] = useState<IPostInfo[] | null>([]);
+  const [boardData, setBoardData] = useState<PostInfo[] | null>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [page, setPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);

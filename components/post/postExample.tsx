@@ -1,28 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-
-interface Board {
-  boardCid: number;
-  boardName: string;
-}
-
-interface IPostInfo {
-  author: string;
-  createdAt: string;
-  postCid: number;
-  postTitle: string;
-  postView: number;
-}
+import { PostInfo, UserBoard } from "@/api/user/post";
 
 export default function PostExample({
   board,
   boardData,
   length,
 }: {
-  board: Board;
-  boardData: IPostInfo[];
+  board: UserBoard;
+  boardData: PostInfo[];
   length: number;
 }) {
   const [errorMessage, setErrorMessage] = useState("");
