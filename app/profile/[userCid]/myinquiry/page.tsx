@@ -1,35 +1,11 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import { getUserInquiry, InquiryList } from "@/api/user/userInquiry";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Pagination } from "@nextui-org/react";
-import axios from "axios";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface InquiryList {
-  inquiryCid: number;
-  userId: string;
-  inquiryTitle: string;
-  inquiryContent: string;
-  imageList: InquiryImage[];
-  answer: string;
-  isClosed: string;
-}
-
-interface InquiryImage {
-  postImageCid: number;
-  postImageFileName: string;
-  postImageFilePath: string;
-}
-
-interface PageInfo {
-  page: number;
-  totalElements: number;
-  totalPages: number;
-}
 
 export default function MyInquiry() {
   const router = useRouter();
@@ -39,25 +15,12 @@ export default function MyInquiry() {
   const [totalPage, setTotalPage] = useState<number>(1);
 
   useEffect(() => {
-    const getInquiry = async () => {
-      try {
-        const res = await privateApi.get("/user/inquiry/get", {
-          params: { page: page },
-        });
-
-        if (res.data.success) {
-          const userInquiryData = res.data.inquiryList;
-          // console.log("유저 문의", userInquiryData);
-          setInquiryData(userInquiryData);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response);
-        }
-      }
+    const fetchUserInquiry = async () => {
+      const inquiryList = await getUserInquiry(page);
+      setInquiryData(inquiryList);
     };
-    getInquiry();
-  }, []);
+    fetchUserInquiry();
+  }, [page]);
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -79,16 +42,20 @@ export default function MyInquiry() {
             <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
               문의 내역
             </div>
-            <Link href={`${pathname}/request`}>
-              <Button isIconOnly className="bg-sub_purple">
-                <img
-                  src="/icons/post.png"
-                  width="30"
-                  height="30"
-                  style={{ filter: "brightness(0) invert(1)" }} // 이미지 색 white로 변경
-                />
-              </Button>
-            </Link>
+
+            <Button
+              isIconOnly
+              className="bg-sub_purple 
+              "
+              onClick={() => router.push(`${pathname}/request`)}
+            >
+              <img
+                src="/icons/post.png"
+                width="30"
+                height="30"
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
+            </Button>
           </div>
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">

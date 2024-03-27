@@ -1,39 +1,13 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import { InquiryDetail, getInquiryDetail } from "@/api/user/userInquiry";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
-import {
-  Button,
-  Divider,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Pagination,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Divider } from "@nextui-org/react";
 import axios from "axios";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface InquiryInfo {
-  inquiryCid: number;
-  userId: string;
-  inquiryTitle: string;
-  inquiryContent: string;
-  imageList: InquiryImage[];
-  answer: string;
-  isClosed: string;
-}
-
-interface InquiryImage {
-  postImageCid: number;
-  postImageFileName: string;
-  postImageFilePath: string;
-}
 
 export default function InquiryDetail({
   params,
@@ -41,17 +15,14 @@ export default function InquiryDetail({
   params: { inquiryCid: number };
 }) {
   const router = useRouter();
-  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>();
+  const [inquiryDetail, setInquiryDetail] = useState<InquiryDetail>();
 
   useEffect(() => {
-    console.log(inquiryInfo);
     const getInquiry = async () => {
       try {
-        const res = await privateApi.get(
-          `/user/inquiry/get/${params.inquiryCid}`
-        );
-        if (res.data.success) {
-          setInquiryInfo(res.data.inquiryInfo);
+        const inquiryDetail = await getInquiryDetail(params.inquiryCid);
+        if (inquiryDetail) {
+          setInquiryDetail(inquiryDetail);
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -80,7 +51,7 @@ export default function InquiryDetail({
               />
             </div>
             <div className="w-[100%] text-xl flex justify-center pl-3 pr-3">
-              <p className="text-xl">{inquiryInfo?.inquiryTitle}</p>
+              <p className="text-xl">{inquiryDetail?.inquiryTitle}</p>
             </div>
           </div>
 
@@ -88,15 +59,15 @@ export default function InquiryDetail({
           <div>
             <div className="flex flex-col p-2 m-1 gap-2">
               <div className="h-[440px] overflow-auto scrollbar-none">
-                <div className="min-h-40"> {inquiryInfo?.inquiryContent}</div>
-                {inquiryInfo?.imageList?.length !== 0 &&
-                  inquiryInfo?.imageList?.map((image) => (
+                <div className="min-h-40"> {inquiryDetail?.inquiryContent}</div>
+                {inquiryDetail?.imageList?.length !== 0 &&
+                  inquiryDetail?.imageList?.map((image) => (
                     <div className="flex justify-center pt-2 pb-2">
                       <img src={image.postImageFilePath} />
                     </div>
                   ))}
                 <Divider className="my-2" />
-                <div>{inquiryInfo?.answer}</div>
+                <div>{inquiryDetail?.answer}</div>
               </div>
             </div>
           </div>

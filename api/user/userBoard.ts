@@ -19,7 +19,7 @@ export const getUserBoardList = async () => {
     }
     return [];
   } catch (error) {
-    console.error("Error fetching user boards:", error);
+    console.error(error);
     throw error;
   }
 };
@@ -31,7 +31,7 @@ export const getUserPosts = async (boardCid: number, page: number) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching user posts:", error);
+    console.error(error);
     throw error;
   }
 };
@@ -41,7 +41,7 @@ export const deleteUserPost = async (postCid: number) => {
     const response = await privateApi.delete(`/user/posts/${postCid}`);
     return response.data;
   } catch (error) {
-    console.error("Error deleting user post:", error);
+    console.error(error);
     throw error;
   }
 };

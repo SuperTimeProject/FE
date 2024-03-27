@@ -1,6 +1,6 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import { InquiryBody, submitInquiry } from "@/api/user/userInquiry";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Divider, Input, Textarea } from "@nextui-org/react";
@@ -8,47 +8,20 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface InquiryInfo {
-  inquiryTitle: string;
-  inquiryContent: string;
-  inquiryImage: File[];
-}
-
-// interface UserInfo {
-//   userCid: number;
-//   userId: string;
-//   userName: string;
-//   userNickname: string;
-// }
-
 export default function InquiryRequest() {
-  // { userId }: { userId: string }
   const router = useRouter();
-  // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [inquiryInfo, setInquiryInfo] = useState<InquiryInfo>({
+
+  const [inquiryBody, setInquiryBody] = useState<InquiryBody>({
     inquiryTitle: "",
     inquiryContent: "",
     inquiryImage: [],
   });
 
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     const response = await privateApi.get("/auth/getUserInfo");
-
-  //     if (response.data.success) {
-  //       const userInfoData = response.data.getUserInfo;
-  //       setUserInfo(userInfoData);
-  //     }
-  //   };
-
-  //   getUserInfo();
-  // }, []);
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setInquiryInfo((prevInfo) => ({
+    setInquiryBody((prevInfo) => ({
       ...prevInfo,
       [name]: value,
     }));
@@ -58,10 +31,10 @@ export default function InquiryRequest() {
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files).slice(0, 5);
-      if (newFiles.length + inquiryInfo.inquiryImage.length > 5) {
+      if (newFiles.length + inquiryBody.inquiryImage.length > 5) {
         alert("이미지는 최대 5개까지 선택 가능합니다.");
       } else {
-        setInquiryInfo((prevInfo) => ({
+        setInquiryBody((prevInfo) => ({
           ...prevInfo,
           inquiryImage: [...prevInfo.inquiryImage, ...newFiles],
         }));
@@ -71,14 +44,14 @@ export default function InquiryRequest() {
 
   const handleInquirySubmit = async () => {
     try {
-      if (!inquiryInfo.inquiryTitle || !inquiryInfo.inquiryContent) {
+      if (!inquiryBody.inquiryTitle || !inquiryBody.inquiryContent) {
         alert("제목과 내용은 필수 입력 사항입니다.");
         return;
       }
 
       const inquiryInfoData = {
-        inquiryTitle: inquiryInfo.inquiryTitle,
-        inquiryContent: inquiryInfo.inquiryContent,
+        inquiryTitle: inquiryBody.inquiryTitle,
+        inquiryContent: inquiryBody.inquiryContent,
       };
 
       const inquiryInfoJson = JSON.stringify(inquiryInfoData);
@@ -88,13 +61,13 @@ export default function InquiryRequest() {
 
       const formData = new FormData();
       formData.append("inquiryInfo", inquiryInfoBlob);
-      for (let i = 0; i < inquiryInfo.inquiryImage.length; i++) {
-        formData.append("inquiryImage", inquiryInfo.inquiryImage[i]);
+      for (let i = 0; i < inquiryBody.inquiryImage.length; i++) {
+        formData.append("inquiryImage", inquiryBody.inquiryImage[i]);
       }
 
-      const response = await privateApi.post("/user/inquiry", formData);
+      const success = await submitInquiry(formData);
 
-      if (response.data.success) {
+      if (success) {
         alert("문의가 제출되었습니다.");
         router.back();
       }
@@ -133,14 +106,14 @@ export default function InquiryRequest() {
                   type="text"
                   label="제목"
                   name="inquiryTitle"
-                  value={inquiryInfo.inquiryTitle}
+                  value={inquiryBody.inquiryTitle}
                   onChange={handleInputChange}
                 />
                 <Divider className="my-2" />
                 <Textarea
                   placeholder="내용"
                   name="inquiryContent"
-                  value={inquiryInfo.inquiryContent}
+                  value={inquiryBody.inquiryContent}
                   onChange={handleInputChange}
                   className="h-[178px]"
                 />
@@ -162,7 +135,7 @@ export default function InquiryRequest() {
               </div>
 
               <section className="min-h-[120px] flex flex-col justify-start items-center">
-                {inquiryInfo.inquiryImage.map((file, index) => (
+                {inquiryBody.inquiryImage.map((file, index) => (
                   <img
                     key={index}
                     src={URL.createObjectURL(file)}
