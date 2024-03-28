@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   Avatar,
   Button,
+  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -41,14 +42,14 @@ export default function Users() {
   const pathname = usePathname();
 
   const [userInfo, setUserInfo] = useState<UserInfo>();
-  const [isProfileEditMode, setProfileEditMode] = useState(false);
+  const [isProfileEdit, setProfileEdit] = useState(false);
+  const [isNickNameEdit, setNickNameEdit] = useState(false);
   const [editInfo, setEditInfo] = useState<EditUserInfo>({
     userNickname: "",
     userProfileImage: null,
   });
   const [userImage, setUserImage] = useState<UserProfile>();
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // modal
-
   const partOptions = ["PART_FE", "PART_BE", "PART_FULL"];
 
   useEffect(() => {
@@ -83,7 +84,20 @@ export default function Users() {
     }
   };
 
-  const editSubmit = async () => {
+  const confirmPart = async () => {
+    try {
+      const response = await confirmUserPart();
+      if (response.success) {
+        alert("주특기가 확정되었습니다.");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
+    }
+  };
+
+  const handleNicknameChange = async () => {
     try {
       if (editInfo.userNickname.length < 2) {
         alert("닉네임은 2글자 이상이어야 합니다.");
@@ -122,13 +136,11 @@ export default function Users() {
           const updatedUserInfo = updatedUserRes;
 
           setUserInfo(updatedUserInfo);
-          setUserImage(updatedUserInfo.userProfile);
-          alert("프로필 수정이 완료되었습니다.");
-          setProfileEditMode(false);
-          // window.location.reload();
+          alert("닉네임 변경이 완료되었습니다.");
+          setNickNameEdit(false);
         }
       } else {
-        alert("프로필 수정에 실패했습니다.");
+        alert("닉네임 변경에 실패했습니다.");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -137,20 +149,50 @@ export default function Users() {
     }
   };
 
-  const handleProfileEdit = () => {
-    setProfileEditMode(true);
+  const handleProfileImageChange = async () => {
+    try {
+      const formData = new FormData();
+      if (editInfo.userProfileImage !== null) {
+        formData.append("userProfileImage", editInfo.userProfileImage);
+      }
 
+      const editUserInfo = await editUserProfile(formData, null);
+
+      if (editUserInfo.success) {
+        const updatedUserRes = await getUserInfo();
+
+        if (updatedUserRes) {
+          const updatedUserInfo = updatedUserRes;
+
+          setUserInfo(updatedUserInfo);
+          setUserImage(updatedUserInfo.userProfile);
+          alert("프로필 사진 변경이 완료되었습니다.");
+          setProfileEdit(false);
+        }
+      } else {
+        alert("프로필 사진 변경에 실패했습니다.");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
+    }
+  };
+
+  const handleNicknameEdit = () => {
+    setNickNameEdit(true);
     setEditInfo({
       userNickname: userInfo?.userNickname || "",
       userProfileImage: null,
     });
   };
 
-  const confirmPart = async () => {
-    const response = await confirmUserPart();
-    if (response.success) {
-      alert("주특기가 확정되었습니다.");
-    }
+  const handleProfileEdit = () => {
+    setProfileEdit(true);
+    setEditInfo({
+      userNickname: userInfo?.userNickname || "",
+      userProfileImage: null,
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +212,7 @@ export default function Users() {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data.message);
+        console.log(error.response?.data.message);
       }
     }
   };
@@ -207,9 +249,9 @@ export default function Users() {
               <li className="flex justify-evenly items-center p-2">
                 <div className="relative">
                   <Avatar
-                    className="w-16 h-16 bg-white"
+                    className="w-24 h-24 bg-white"
                     src={
-                      isProfileEditMode
+                      isProfileEdit
                         ? editInfo.userProfileImage
                           ? URL.createObjectURL(editInfo.userProfileImage)
                           : undefined
@@ -217,53 +259,72 @@ export default function Users() {
                     }
                   />
 
-                  {isProfileEditMode && (
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      className="absolute bottom-0 right-0 bg-white"
-                    >
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="opacity-0 absolute"
-                      />
-                      <img src="/icons/photo.png" className="w-6 h-6" />
-                    </Button>
+                  {isProfileEdit && (
+                    <>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="absolute top-0 right-0 font-bold text-red-500"
+                        onClick={handleImageDelete}
+                      >
+                        X
+                      </Button>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="absolute bottom-0 right-0"
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="opacity-0 absolute"
+                        />
+                        <img src="/icons/photo.png" className="w-6 h-6" />
+                      </Button>
+                    </>
                   )}
                 </div>
+
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
-                  <div className="flex justify-center items-center gap-2">
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
                     <p className="font-mono">
                       {userInfo?.semester.semesterDetailName}
                     </p>
-                    <Dropdown>
-                      <DropdownTrigger>
-                        <Button size="sm" variant="ghost">
-                          {userInfo?.part || "주특기 선택"}
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu>
-                        {partOptions.map((part) => (
-                          <DropdownItem
-                            key={part}
-                            onClick={() => handlePartSelect(part)}
+                    <div className="flex gap-2">
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            size="sm"
+                            variant="bordered"
+                            className="border-main_blue text-main_blue"
                           >
-                            {part}
-                          </DropdownItem>
-                        ))}
-                      </DropdownMenu>
-                    </Dropdown>
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      color="success"
-                      variant="bordered"
-                      onClick={confirmPart}
-                    >
-                      확정
-                    </Button>
+                            {userInfo?.part || "주특기 선택"}
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu>
+                          {partOptions.map((part) => (
+                            <DropdownItem
+                              key={part}
+                              onClick={() => handlePartSelect(part)}
+                            >
+                              {part}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        color="primary"
+                        onClick={confirmPart}
+                      >
+                        확정
+                      </Button>
+                    </div>
                   </div>
                   <p className="text-xs text-red-500">
                     *주특기를 선택해주세요.
@@ -273,8 +334,8 @@ export default function Users() {
               <li>
                 <div className="flex flex-col justify-center gap-2">
                   <Input
-                    isDisabled={isProfileEditMode}
-                    isReadOnly={!isProfileEditMode}
+                    isDisabled={isProfileEdit && isNickNameEdit}
+                    isReadOnly={!isProfileEdit && !isNickNameEdit}
                     size="sm"
                     type="email"
                     label="이메일"
@@ -282,8 +343,8 @@ export default function Users() {
                     value={userInfo?.userId}
                   />
                   <Input
-                    isDisabled={isProfileEditMode}
-                    isReadOnly={!isProfileEditMode}
+                    isDisabled={isProfileEdit && isNickNameEdit}
+                    isReadOnly={!isProfileEdit && !isNickNameEdit}
                     size="sm"
                     type="text"
                     label="이름"
@@ -291,13 +352,13 @@ export default function Users() {
                     value={userInfo?.userName}
                   />
                   <Input
-                    isReadOnly={!isProfileEditMode}
+                    isReadOnly={!isNickNameEdit}
                     size="sm"
                     type="text"
                     label="닉네임"
                     variant="underlined"
                     value={
-                      isProfileEditMode
+                      isNickNameEdit
                         ? editInfo.userNickname
                         : userInfo?.userNickname
                     }
@@ -312,43 +373,67 @@ export default function Users() {
               </li>
 
               <div className="flex justify-end items-center mb-4">
-                {isProfileEditMode ? (
+                {isNickNameEdit && (
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant="light"
+                      onClick={() => setNickNameEdit(false)}
+                    >
+                      취소
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={handleNicknameChange}
+                      className="bg-sub_purple text-white"
+                    >
+                      변경
+                    </Button>
+                  </div>
+                )}
+                {isProfileEdit && (
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant="light"
+                      onClick={() => setProfileEdit(false)}
+                    >
+                      취소
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={handleProfileImageChange}
+                      className="bg-sub_purple text-white"
+                    >
+                      변경
+                    </Button>
+                  </div>
+                )}
+                {!isNickNameEdit && !isProfileEdit && (
                   <>
-                    <p className="text-xs text-red-500 pr-4">
-                      *프로필 사진과 닉네임만 변경 가능합니다.
-                    </p>
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="light"
-                        onClick={() => setProfileEditMode(false)}
-                      >
-                        취소
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={editSubmit}
-                        className="bg-sub_purple text-white"
-                      >
-                        변경
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      onClick={handleNicknameEdit}
+                      className="bg-main_blue text-white mr-2"
+                    >
+                      닉네임 변경
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={handleProfileEdit}
+                      className="bg-main_blue text-white"
+                    >
+                      프로필 변경
+                    </Button>
                   </>
-                ) : (
-                  <Button
-                    size="sm"
-                    onClick={handleProfileEdit}
-                    className="bg-sub_purple text-white"
-                  >
-                    프로필 수정
-                  </Button>
                 )}
               </div>
 
               <li className="flex flex-col">
                 <Button
                   onClick={() => router.push(`${pathname}/myboard`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                  variant="bordered"
+                  className="flex justify-between font-semibold border-main_blue text-main_blue"
                 >
                   <p>내가 쓴 게시글</p>
                   <p> {">"}</p>
@@ -357,7 +442,8 @@ export default function Users() {
               <li className="flex flex-col">
                 <Button
                   onClick={() => router.push(`${pathname}/myinquiry`)}
-                  className="flex justify-between font-semibold bg-[#ffffff] border-1.5 border-sub_purple text-sub_purple"
+                  variant="bordered"
+                  className="flex justify-between font-semibold border-main_blue text-main_blue"
                 >
                   <p>문의하기</p>
                   <p> {">"}</p>
