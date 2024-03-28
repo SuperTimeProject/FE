@@ -19,7 +19,9 @@ export const getAdminInquiry = async (page: number): Promise<InquiryList[]> => {
     return [];
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log(error.response);
+      if (error.response?.status === 404) {
+        console.log(error.response?.data.message);
+      }
     }
     return [];
   }
@@ -42,7 +44,10 @@ export const submitInquiryAnswer = async (
     return res.data.success;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log(error.response?.data);
+      if (error.response?.status === 409) {
+        alert(error.response?.data.message);
+      }
+      // console.log(error.response?.data.message);
     }
     return false;
   }

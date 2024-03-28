@@ -170,7 +170,7 @@ export default function EditPost({
   };
 
   return (
-    <div className="flex h-screen justify-center items-center">
+    <div className="flex min-h-screen justify-center items-center">
       <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
         <div className="w-full min-h-[600px] p-4 bg-white">

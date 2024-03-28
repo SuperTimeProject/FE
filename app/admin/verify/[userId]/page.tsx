@@ -1,6 +1,10 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import {
+  UserList,
+  getPendingUsersDetail,
+  updateVerificationStatus,
+} from "@/api/admin/adminVerify";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import {
@@ -14,59 +18,36 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface UserDetail {
-  userCid: number;
-  userId: string;
-  userName: string;
-  userNickname: string;
-  image: {
-    authImageCid: number;
-    authImageFileName: string;
-    authImageFilePath: string;
-  };
-  semester: number;
-  valified: string;
-}
-
 export default function AdminVerifyDetail({
   params,
 }: {
   params: { userId: string };
 }) {
   const router = useRouter();
-  const [userDetail, setUserDetail] = useState<UserDetail>();
+  const [userDetail, setUserDetail] = useState<UserList>();
   const status = ["PENDING", "DENIED", "COMPLETED", "NEEDED"];
 
   useEffect(() => {
-    const getUserDetail = async () => {
+    const fetchUserDetail = async () => {
       try {
-        const response = await privateApi.get(
-          `/admin/pending-user/detail/${params.userId}`
-        );
-        console.log(response.data);
-        setUserDetail(response.data);
+        const detail = await getPendingUsersDetail(params.userId);
+        setUserDetail(detail);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          alert(error.response?.data.message);
+          console.log(error.response?.data.message);
         }
       }
     };
 
-    getUserDetail();
+    fetchUserDetail();
   }, []);
 
   const handleStatus = async (valified: string) => {
     const userid = decodeURIComponent(params.userId);
-    console.log(userid);
     try {
-      const response = await privateApi.put("/admin/verification", null, {
-        params: {
-          userId: userid,
-          valified: valified,
-        },
-      });
-      if (response.data.success) {
-        alert("인증상태가 변경되었습니다.");
+      const success = await updateVerificationStatus(userid, valified);
+      if (success) {
+        alert("인증 상태가 변경되었습니다.");
         router.back();
       }
     } catch (error) {
@@ -79,7 +60,7 @@ export default function AdminVerifyDetail({
   if (userDetail === undefined) return <div>로딩중...</div>;
 
   return (
-    <div className="flex h-screen justify-center items-center">
+    <div className="flex min-h-screen justify-center items-center">
       <div className="w-full max-w-[767px] p-4 bg-white">
         <Header />
         <div className="w-full min-h-[600px] p-4 bg-white">
@@ -101,7 +82,7 @@ export default function AdminVerifyDetail({
           </div>
 
           <div className="flex flex-col p-2 m-1 gap-2">
-            <div className="h-[430px] overflow-auto scrollbar-none flex flex-col items-center justify-center">
+            <div className="min-h-[430px] overflow-auto scrollbar-none flex flex-col items-center justify-center">
               {userDetail && (
                 <>
                   <img

@@ -1,48 +1,23 @@
 "use client";
 
-import { privateApi } from "@/api/axiosConfig";
+import { UserList, getPendingUsers } from "@/api/admin/adminVerify";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface UsersData {
-  userCid: number;
-  userId: string;
-  userName: string;
-  userNickname: string;
-  image: {
-    authImageCid: number;
-    authImageFileName: string;
-    authImageFilePath: string;
-  };
-  semester: number;
-  valified: string;
-}
-
 export default function AdminVerify() {
   const router = useRouter();
   const pathname = usePathname();
-  const [usersInfo, setUsersInfo] = useState<UsersData[]>([]);
+  const [usersInfo, setUsersInfo] = useState<UserList[]>([]);
   const [page, setPage] = useState(1);
-
-  console.log(usersInfo);
 
   useEffect(() => {
     const getUsersInfo = async () => {
       try {
-        const response = await privateApi.get(`/admin/pending-user/${page}`, {
-          params: {
-            valified: "PENDING",
-          },
-        });
-
-        if (response.data.success) {
-          setUsersInfo(response.data.userList);
-        } else {
-          alert("유저 정보를 불러오는데 실패했습니다.");
-        }
+        const users = await getPendingUsers(page);
+        setUsersInfo(users);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.data.message);
@@ -52,78 +27,6 @@ export default function AdminVerify() {
 
     getUsersInfo();
   }, []);
-
-  // useEffect(() => {
-  //   const getUsersInfo = async () => {
-  //     try {
-  //       const response = await privateApi.get(`/admin/pendingUser/${page}`, {
-  //         params: {
-  //           valified: "NEEDED",
-  //         },
-  //       });
-
-  //       if (response.data.success) {
-  //         setUsersInfo(response.data.userList);
-  //       } else {
-  //         alert("유저 정보를 불러오는데 실패했습니다.");
-  //       }
-  //     } catch (error) {
-  //       if (axios.isAxiosError(error)) {
-  //         alert(error.response?.data.message);
-  //       }
-  //     }
-  //   };
-
-  //   getUsersInfo();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getUsersInfo = async () => {
-  //     try {
-  //       const response = await privateApi.get(`/admin/pendingUser/${page}`, {
-  //         params: {
-  //           valified: "DENIED",
-  //         },
-  //       });
-
-  //       if (response.data.success) {
-  //         setUsersInfo(response.data.userList);
-  //       } else {
-  //         alert("유저 정보를 불러오는데 실패했습니다.");
-  //       }
-  //     } catch (error) {
-  //       if (axios.isAxiosError(error)) {
-  //         alert(error.response?.data.message);
-  //       }
-  //     }
-  //   };
-
-  //   getUsersInfo();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getUsersInfo = async () => {
-  //     try {
-  //       const response = await privateApi.get(`/admin/pendingUser/${page}`, {
-  //         params: {
-  //           valified: "COMPLETED",
-  //         },
-  //       });
-
-  //       if (response.data.success) {
-  //         setUsersInfo(response.data.userList);
-  //       } else {
-  //         alert("유저 정보를 불러오는데 실패했습니다.");
-  //       }
-  //     } catch (error) {
-  //       if (axios.isAxiosError(error)) {
-  //         alert(error.response?.data.message);
-  //       }
-  //     }
-  //   };
-
-  //   getUsersInfo();
-  // }, []);
 
   return (
     <div className="flex h-screen justify-center items-center">
