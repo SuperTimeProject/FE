@@ -52,16 +52,11 @@ export default function AdminSemester() {
               <p className="text-xl">기수 관리</p>
             </div>
             <Button
-              isIconOnly
-              className="bg-sub_purple"
+              size="sm"
+              className="bg-sub_purple text-white"
               onClick={() => router.push(`${pathname}/create`)}
             >
-              <img
-                src="/icons/post.png"
-                width="30"
-                height="30"
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
+              생성
             </Button>
           </div>
           <div className="flex flex-col p-2 m-1 gap-2">

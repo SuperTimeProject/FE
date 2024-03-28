@@ -149,7 +149,7 @@ export default function CreatePost() {
             <Dropdown>
               <DropdownTrigger>
                 <Button size="sm" variant="ghost">
-                  {selectedBoard?.boardName || "카테고리"}
+                  {selectedBoard?.boardName || "게시판 선택"}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>

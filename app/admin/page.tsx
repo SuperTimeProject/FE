@@ -22,9 +22,9 @@ export default function Admin() {
             <ul className="flex flex-col gap-4">
               <li className="flex flex-col">
                 <Button
-                  variant="bordered"
                   onClick={() => router.push(`${pathname}/semester`)}
-                  className="flex justify-between font-semibold "
+                  variant="bordered"
+                  className="flex justify-between font-semibold border-main_blue text-main_blue"
                 >
                   <p>기수 관리</p>
                   <p> {">"}</p>
@@ -32,9 +32,9 @@ export default function Admin() {
               </li>
               <li className="flex flex-col">
                 <Button
-                  variant="bordered"
                   onClick={() => router.push(`${pathname}/verify`)}
-                  className="flex justify-between font-semibold "
+                  variant="bordered"
+                  className="flex justify-between font-semibold border-main_blue text-main_blue"
                 >
                   <p>인증 관리</p>
                   <p> {">"}</p>
@@ -42,9 +42,9 @@ export default function Admin() {
               </li>
               <li className="flex flex-col">
                 <Button
-                  variant="bordered"
                   onClick={() => router.push(`${pathname}/timetable`)}
-                  className="flex justify-between font-semibold "
+                  variant="bordered"
+                  className="flex justify-between font-semibold border-main_blue text-main_blue"
                 >
                   <p>시간표 관리</p>
                   <p> {">"}</p>
@@ -52,9 +52,9 @@ export default function Admin() {
               </li>
               <li className="flex flex-col">
                 <Button
-                  variant="bordered"
                   onClick={() => router.push(`${pathname}/inquiry`)}
-                  className="flex justify-between font-semibold "
+                  variant="bordered"
+                  className="flex justify-between font-semibold border-main_blue text-main_blue"
                 >
                   <p>문의 관리</p>
                   <p> {">"}</p>
