@@ -1,4 +1,3 @@
-import axios from "axios";
 import { privateApi } from "../axiosConfig";
 
 export interface InquiryList {
@@ -18,12 +17,7 @@ export const getAdminInquiry = async (page: number): Promise<InquiryList[]> => {
     }
     return [];
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        console.log(error.response?.data.message);
-      }
-    }
-    return [];
+    throw error;
   }
 };
 
@@ -43,13 +37,7 @@ export const submitInquiryAnswer = async (
     );
     return res.data.success;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 409) {
-        alert(error.response?.data.message);
-      }
-      // console.log(error.response?.data.message);
-    }
-    return false;
+    throw error;
   }
 };
 
@@ -58,9 +46,6 @@ export const deleteInquiry = async (inquiryCid: number): Promise<boolean> => {
     const res = await privateApi.delete(`/admin/inquiry/${inquiryCid}`);
     return res.data.success;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response);
-    }
-    return false;
+    throw error;
   }
 };

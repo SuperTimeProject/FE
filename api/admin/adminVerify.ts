@@ -1,4 +1,3 @@
-import axios from "axios";
 import { privateApi } from "@/api/axiosConfig";
 
 export interface UserList {
@@ -27,10 +26,7 @@ export const getPendingUsers = async (page: number): Promise<UserList[]> => {
     }
     return [];
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response?.data.message);
-    }
-    return [];
+    throw error;
   }
 };
 
@@ -43,9 +39,6 @@ export const getPendingUsersDetail = async (
     );
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response?.data.message);
-    }
     throw error;
   }
 };
@@ -63,9 +56,6 @@ export const updateVerificationStatus = async (
     });
     return response.data.success;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      alert(error.response?.data.message);
-    }
-    return false;
+    throw error;
   }
 };

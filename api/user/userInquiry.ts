@@ -1,5 +1,4 @@
 import { privateApi } from "@/api/axiosConfig";
-import axios from "axios";
 
 export interface InquiryList {
   inquiryCid: number;
@@ -28,10 +27,7 @@ export const getUserInquiry = async (page: number): Promise<InquiryList[]> => {
     }
     return [];
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response);
-    }
-    return [];
+    throw error;
   }
 };
 
@@ -50,10 +46,7 @@ export const submitInquiry = async (formData: FormData) => {
     }
     return false;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response);
-    }
-    return false;
+    throw error;
   }
 };
 
@@ -75,9 +68,6 @@ export const getInquiryDetail = async (inquiryCid: number) => {
     }
     return null;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log(error.response?.data);
-    }
-    return null;
+    throw error;
   }
 };

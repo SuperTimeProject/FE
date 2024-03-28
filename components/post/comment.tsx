@@ -25,10 +25,8 @@ export default function Comment({ postCid }: { postCid: number }) {
         const commentList = await getComments(postCid, page);
         setComments(commentList);
       } catch (error) {
-        console.error(error);
         if (axios.isAxiosError(error)) {
-          console.log(error.response?.status);
-          console.log(error.response?.data);
+          console.log(error.response?.data.message);
         }
       }
     };

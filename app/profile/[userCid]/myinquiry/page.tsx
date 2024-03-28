@@ -4,6 +4,7 @@ import { getUserInquiry, InquiryList } from "@/api/user/userInquiry";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Pagination } from "@nextui-org/react";
+import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,11 +17,17 @@ export default function MyInquiry() {
 
   useEffect(() => {
     const fetchUserInquiry = async () => {
-      const inquiryList = await getUserInquiry(page);
-      setInquiryData(inquiryList);
+      try {
+        const inquiryList = await getUserInquiry(page);
+        setInquiryData(inquiryList);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data.message);
+        }
+      }
     };
     fetchUserInquiry();
-  }, [page]);
+  }, []);
 
   return (
     <div className="flex h-screen justify-center items-center">

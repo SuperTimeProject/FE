@@ -9,6 +9,7 @@ import {
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { Button, Pagination } from "@nextui-org/react";
+import axios from "axios";
 
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -24,17 +25,31 @@ export default function AdminInquiry() {
 
   useEffect(() => {
     const fetchInquiryList = async () => {
-      const inquiryList = await getAdminInquiry(page);
-      setInquiryData(inquiryList);
+      try {
+        const inquiryList = await getAdminInquiry(page);
+        setInquiryData(inquiryList);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
+            console.log(error.response?.data.message);
+          }
+        }
+      }
     };
     fetchInquiryList();
   }, []);
 
   const handleDeleteInquiry = async (inquiryCid: number) => {
-    const success = await deleteInquiry(inquiryCid);
-    if (success) {
-      alert("삭제되었습니다.");
-      window.location.reload();
+    try {
+      const success = await deleteInquiry(inquiryCid);
+      if (success) {
+        alert("삭제되었습니다.");
+        window.location.reload();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
     }
   };
 

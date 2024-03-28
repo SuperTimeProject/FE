@@ -36,13 +36,21 @@ export default function AdminAnswer({
 
   const handleAnswerSubmit = async () => {
     if (!inquiryDetail) return;
-    const success = await submitInquiryAnswer(
-      params.inquiryCid,
-      inquiryDetail.answer || ""
-    );
-    if (success) {
-      alert("답변이 완료되었습니다.");
-      router.back();
+    try {
+      const success = await submitInquiryAnswer(
+        params.inquiryCid,
+        inquiryDetail.answer || ""
+      );
+      if (success) {
+        alert("답변이 완료되었습니다.");
+        router.back();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          alert(error.response?.data.message);
+        }
+      }
     }
   };
 

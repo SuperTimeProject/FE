@@ -14,7 +14,7 @@ export default function AdminVerify() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const getUsersInfo = async () => {
+    const fetchPendingUsers = async () => {
       try {
         const users = await getPendingUsers(page);
         setUsersInfo(users);
@@ -25,7 +25,7 @@ export default function AdminVerify() {
       }
     };
 
-    getUsersInfo();
+    fetchPendingUsers();
   }, []);
 
   return (
