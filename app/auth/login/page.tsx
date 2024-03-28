@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { setCookie } from "@/components/utils/setCookie";
 import axios from "axios";
 import Header from "@/components/shared/header";
-import { LoginData, loginUser } from "@/api/auth/authUser";
+import { LoginData } from "@/api/auth/authUser";
 
 export default function Login() {
   const router = useRouter();

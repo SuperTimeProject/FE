@@ -36,6 +36,7 @@ import {
 
 import LogoutButton from "@/components/shared/logoutButton";
 import { publicApi } from "@/api/axiosConfig";
+import { checkNickname } from "@/api/auth/authUser";
 
 export default function Users() {
   const router = useRouter();
@@ -104,16 +105,8 @@ export default function Users() {
         return;
       }
 
-      const nicknameCheck = await publicApi.get(
-        "/public/auth/duplicate-test/nickname",
-        {
-          params: {
-            nickname: editInfo.userNickname,
-          },
-        }
-      );
-
-      if (nicknameCheck.data.duplicate) {
+      const isNicknameDuplicate = await checkNickname(editInfo.userNickname);
+      if (isNicknameDuplicate) {
         alert("이미 사용 중인 닉네임입니다.");
         return;
       }
@@ -385,7 +378,7 @@ export default function Users() {
                     <Button
                       size="sm"
                       onClick={handleNicknameChange}
-                      className="bg-sub_purple text-white"
+                      className="bg-main_blue text-white"
                     >
                       변경
                     </Button>
@@ -403,7 +396,7 @@ export default function Users() {
                     <Button
                       size="sm"
                       onClick={handleProfileImageChange}
-                      className="bg-sub_purple text-white"
+                      className="bg-main_blue text-white"
                     >
                       변경
                     </Button>

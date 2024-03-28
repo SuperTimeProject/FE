@@ -36,23 +36,16 @@ export default function Denied() {
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col items-center">
         <Header />
-        <p className="font-medium text-rose-600 text-xl m-4">
-          기수 인증에 실패하였습니다.
+        <p className="font-medium text-rose-500 text-xl m-4">
+          인증에 실패하였습니다.
         </p>
       </header>
       <main className="flex flex-col items-center gap-4">
         <section className="flex flex-col items-center gap-4">
-          {uploadFile && (
-            <img
-              src={URL.createObjectURL(uploadFile)}
-              alt="Uploaded Preview"
-              className="m-2"
-            />
-          )}
-
           <Button
             size="sm"
-            className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+            variant="bordered"
+            className="font-semibold border-main_blue text-main_blue min-w-[200px]"
           >
             이미지 업로드
             <input
@@ -62,11 +55,19 @@ export default function Denied() {
               className="opacity-0 absolute"
             />
           </Button>
+          {uploadFile && (
+            <img
+              src={URL.createObjectURL(uploadFile)}
+              alt="Uploaded Preview"
+              className="m-2"
+            />
+          )}
         </section>
 
         <Button
           size="sm"
-          className="bg-[#ffffff] border-solid border-1.5 border-main_blue text-main_blue"
+          variant="bordered"
+          className="font-semibold border-main_blue text-main_blue min-w-[200px]"
           onClick={verifyReq}
         >
           인증 다시하기

@@ -16,14 +16,16 @@ export default function Home() {
         <Button
           size="lg"
           onClick={() => router.push("/auth/login")}
-          className="bg-white border-1.5 border-main_blue font-semibold text-main_blue min-w-[200px]"
+          variant="bordered"
+          className="font-semibold border-main_blue text-main_blue min-w-[300px]"
         >
           로그인
         </Button>
         <Button
           size="lg"
           onClick={() => router.push("/auth/signup")}
-          className="bg-white border-1.5 border-main_blue font-semibold text-main_blue min-w-[200px]"
+          variant="bordered"
+          className="font-semibold border-main_blue text-main_blue min-w-[300px]"
         >
           회원가입
         </Button>

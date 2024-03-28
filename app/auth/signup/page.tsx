@@ -9,13 +9,13 @@ import {
   DropdownTrigger,
   Input,
 } from "@nextui-org/react";
-import { privateApi, publicApi, setToken } from "@/api/axiosConfig";
+import { privateApi, setToken } from "@/api/axiosConfig";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/shared/header";
 import { getSemesterList } from "@/api/admin/semester";
 import { Semester } from "@/api/user/profile";
-import { SignUpData, signUpUser } from "@/api/auth/authUser";
+import { SignUpData, checkEmail, checkNickname } from "@/api/auth/authUser";
 
 export default function SignUp() {
   const router = useRouter();
@@ -63,7 +63,6 @@ export default function SignUp() {
         return;
       }
 
-      // Email 형식 검사
       const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailFormat.test(signUpData.userId)) {
         setErrorMessage("올바른 이메일 주소를 입력해주세요.");
@@ -105,35 +104,20 @@ export default function SignUp() {
         return;
       }
 
-      const nicknameCheck = await publicApi.get(
-        "/public/auth/duplicate-test/nickname",
-        {
-          params: {
-            nickname: signUpData.userNickname,
-          },
-        }
-      );
-
-      if (nicknameCheck.data.duplicate) {
-        setErrorMessage("이미 사용 중인 닉네임입니다.");
-        return;
-      }
-
-      const emailCheck = await publicApi.get(
-        "/public/auth/duplicate-test/email",
-        {
-          params: {
-            userEmail: signUpData.userId,
-          },
-        }
-      );
-
-      if (emailCheck.data.duplicate) {
+      const isEmailDuplicate = await checkEmail(signUpData.userId);
+      if (isEmailDuplicate) {
         setErrorMessage("이미 사용 중인 이메일 주소입니다.");
         return;
       }
 
+      const isNicknameDuplicate = await checkNickname(signUpData.userNickname);
+      if (isNicknameDuplicate) {
+        setErrorMessage("이미 사용 중인 닉네임입니다.");
+        return;
+      }
+
       // const response = await signUpUser(signUpData);
+
       const response = await privateApi.post(
         "/public/auth/signup",
         signUpData,

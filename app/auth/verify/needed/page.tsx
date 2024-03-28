@@ -36,21 +36,13 @@ export default function Needed() {
     <div className="flex flex-col h-screen justify-center items-center">
       <header className="flex flex-col justify-center items-center">
         <Header />
-        <p className="font-medium text-xl m-4">슈퍼타임 인증</p>
       </header>
       <main className="flex flex-col items-center gap-4">
         <section className="flex flex-col items-center gap-4">
-          {uploadFile && (
-            <img
-              src={URL.createObjectURL(uploadFile)}
-              alt="Uploaded Preview"
-              className="min-h-16 m-2"
-            />
-          )}
-
           <Button
             size="sm"
-            className="bg-white border-solid border-1.5 border-main_blue text-main_blue"
+            variant="bordered"
+            className="font-semibold border-main_blue text-main_blue min-w-[200px]"
           >
             이미지 업로드
             <input
@@ -60,11 +52,19 @@ export default function Needed() {
               className="opacity-0 absolute"
             />
           </Button>
+          {uploadFile && (
+            <img
+              src={URL.createObjectURL(uploadFile)}
+              alt="Uploaded Preview"
+              className="m-2"
+            />
+          )}
         </section>
 
         <Button
           size="sm"
-          className="bg-white border-solid border-1.5 border-main_blue text-main_blue"
+          variant="bordered"
+          className="font-semibold border-main_blue text-main_blue min-w-[200px]"
           onClick={verifyReq}
         >
           인증하기

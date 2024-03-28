@@ -1,5 +1,4 @@
 import { privateApi, publicApi } from "../axiosConfig";
-
 export interface LoginData {
   userId: string;
   userPassword: string;
@@ -12,23 +11,23 @@ export interface SignUpData {
   userPassword: string;
 }
 
-export async function signUpUser(signUpData: SignUpData) {
-  try {
-    const response = await privateApi.post("/public/auth/signup", signUpData);
-    return response.data.success;
-  } catch (error) {
-    throw error;
-  }
-}
+// export async function signUpUser(signUpData: SignUpData) {
+//   try {
+//     const response = await privateApi.post("/public/auth/signup", signUpData);
+//     return response.data.success;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
-export async function loginUser(loginData: LoginData) {
-  try {
-    const response = await privateApi.post("/public/auth/login", loginData);
-    return response.data.success;
-  } catch (error) {
-    throw error;
-  }
-}
+// export async function loginUser(loginData: LoginData) {
+//   try {
+//     const response = await privateApi.post("/public/auth/login", loginData);
+//     return response.data.success;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 export async function checkNickname(nickname: string) {
   try {
